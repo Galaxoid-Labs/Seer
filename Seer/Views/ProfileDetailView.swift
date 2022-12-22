@@ -24,6 +24,8 @@ struct ProfileDetailView: View {
         return contactLists.filter("publicKey = %@", userProfile.publicKey).first
     }
     
+    @Environment(\.openURL) private var openURL
+    
     var body: some View {
         
         ScrollViewReader { reader in
@@ -31,67 +33,126 @@ struct ProfileDetailView: View {
             List {
                 
                 VStack {
-                    HStack(alignment: .top) {
+                    
+                    HStack(alignment: .center) {
                         AnimatedImage(url: userProfile.avatarUrl)
-                            .placeholder {
-                                Color.secondary.opacity(0.2)
-                                    .overlay(
-                                        Image(systemName: "person.fill")
-                                            .imageScale(.large)
-                                    )
-                            }
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .background(
-                                Color.secondary.opacity(0.2)
+                                Image(systemName: "person.crop.circle.fill").foregroundColor(.secondary).font(.system(size: 60))
                             )
                             .frame(width: 60, height: 60)
-                            .cornerRadius(8)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            if let name = userProfile.name, name.isValidName() {
-                                Text("@"+name)
-                                    .font(.system(.title3, weight: .bold))
-                            }
-                            HStack(alignment: .top) {
-                                Image(systemName: "key.fill")
-                                Text(userProfile.publicKey)
-                            }
-                            .font(.system(.caption))
-                            .foregroundColor(.secondary)
-                        }
+                            .cornerRadius(30)
                         
                         Spacer()
+                        
+                        if !userProfile.lud06.isEmpty {
+                            
+                            if SeerApp.getAvailableWallets().count > 0 {
+                                Menu {
+                                    
+                                    ForEach(SeerApp.getAvailableWallets()) { wallet in
+                                        Button(action: {
+                                            if let url = SeerApp.get(lnurl: userProfile.lud06, withScheme: wallet.scheme.rawValue) {
+                                                openURL(url)
+                                            }
+                                        }) {
+                                            Text(wallet.name)
+                                        }
+                                    }
+    //                                Button(action: {
+    //
+    //                                }) {
+    //                                    Label("Add", systemImage: "plus.circle")
+    //                                }
+    //                                Button(action: {
+    //
+    //                                }) {
+    //                                    Label("Delete", systemImage: "minus.circle")
+    //                                }
+    //                                Button(action: {
+    //
+    //                                }) {
+    //                                    Label("Edit", systemImage: "pencil.circle")
+    //                                }
+                                } label: {
+                                    Image(systemName: "bolt.fill")
+                                        .foregroundColor(.orange)
+                                        .frame(height: 20)
+                                }
+                                .buttonStyle(.bordered)
+                            } else {
+                                Button(action: {}) {
+                                    Image(systemName: "bolt.fill")
+                                        .foregroundColor(.orange)
+                                        .frame(height: 20)
+                                }
+                                .buttonStyle(.bordered)
+                            }
+
+                        }
+                        
+                        if userProfile.publicKey != nostrData.selectedOwnerUserProfile?.publicKey {
+                            
+                            Button(action: {}) {
+                                Image(systemName: "text.bubble.fill")
+                                    .frame(height: 20)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        
+                        if userProfile.publicKey != nostrData.selectedOwnerUserProfile?.publicKey {
+                            
+                            Button(action: {}) {
+                                Text("Follow")
+                                    .font(.callout)
+                                    .frame(height: 20)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        
                     }
-                    
-                    Spacer(minLength: 16)
                     
                     HStack {
-                        Button(action: {}) {
-                            Text("Follow")
-                        }
-                        .buttonStyle(.borderedProminent)
                         
-                        Button(action: {}) {
-                            Image(systemName: "text.bubble")
+                        VStack(alignment: .leading, spacing: 4) {
+                            
+                            if !userProfile.displayName.isEmpty {
+                                Text(userProfile.displayName)
+                                    .font(.system(.title3, weight: .bold))
+                            }
+                            
+                            if let name = userProfile.name, name.isValidName() {
+                                Text("@"+name)
+                                    .font(.subheadline)
+                            }
+                            
+                            Button(action: {}) {
+                                HStack(alignment: .center) {
+                                    Image(systemName: "key.fill")
+                                        .font(.caption2)
+                                    Text(userProfile.bech32PublicKey)
+                                        .frame(width: 150)
+                                        .lineLimit(1)
+                                        .truncationMode(.middle)
+                                        .font(.caption)
+//                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.top, 4)
+                            .buttonStyle(.plain)
+                            .buttonBorderShape(.capsule)
+                            .foregroundColor(.accentColor)
+
                         }
-                        .buttonStyle(.bordered)
+                        
                         Spacer()
-                    }
-                    .padding(.leading, 72)
-                    
-                    if let about = userProfile.aboutFormatted {
-                        Spacer(minLength: 16)
                         
-                        Text(about)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                            .font(.body)
                     }
-
+                    
                     Divider()
-                        .padding(.vertical, 4)
-
+                        .padding(.bottom, 4)
+                    
                     if let contactList {
                         HStack(spacing: 12) {
                             Button(action: {
@@ -103,7 +164,7 @@ struct ProfileDetailView: View {
                                     .foregroundColor(.secondary)
                                 +
                                 Text(" \(contactList.following.count)")
-                                
+
                             }
                             .buttonStyle(.plain)
 
@@ -122,7 +183,7 @@ struct ProfileDetailView: View {
                         }
                         .font(.caption)
                         .fontWeight(.medium)
-                        
+
                     } else {
                         HStack {
                             Text("Calculating followers and following...")
@@ -135,8 +196,7 @@ struct ProfileDetailView: View {
                     }
 
                 }
-                .padding()
-                .cardStyle()
+                .listRowSeparator(.hidden)
                 .background(GeometryReader {
                                 Color.clear.preference(key: ViewOffsetKey.self,
                                     value: -$0.frame(in: .named("scroll")).origin.y)
@@ -150,16 +210,45 @@ struct ProfileDetailView: View {
                 }
 
             }
-            .listStyle(.plain)
+            .padding(.top, -24) // Handle weird padding when insetgrouped?
+            .listStyle(.insetGrouped)
 #if os(iOS)
             .background(Color(UIColor.systemGroupedBackground))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("")
 #endif
             .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    AnimatedImage(url: userProfile.avatarUrl)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .background(
+                            Image(systemName: "person.crop.circle.fill").foregroundColor(.secondary).font(.system(size: 30))
+                        )
+                        .frame(width: 30, height: 30)
+                        .cornerRadius(15)
+                        .opacity(showTitle ? 1.0 : 0.0)
+                }
+            }
+            .toolbar {
                 ToolbarItem(placement: .principal) {
-                    UserProfileNavigationTitle(userProfile: userProfile)
-                        .opacity(showTitle ? 1.0 : 0)
+                    VStack {
+                        if let name = userProfile.name, name.isValidName()  {
+                            Text("@"+name)
+                                .font(.system(.subheadline, weight: .bold))
+                        }
+                        HStack(alignment: .center, spacing: 4) {
+                            Image(systemName: "key.fill")
+                                .imageScale(.small)
+                            Text(userProfile.bech32PublicKey.prefix(12))
+                        }
+                        .font(.system(.caption, weight: .bold))
+                        .foregroundColor(.secondary)
+                    }
+                    .onTapGesture {
+                        UIPasteboard.general.string = userProfile.bech32PublicKey
+                    }
+                    .opacity(showTitle ? 1.0 : 0.0)
                 }
             }
             .coordinateSpace(name: "scroll")

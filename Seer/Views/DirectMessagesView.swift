@@ -63,7 +63,7 @@ struct DirectMessagesView: View {
                     
                 }
             }
-            .listStyle(.grouped)
+            .listStyle(.insetGrouped)
             .navigationDestination(for: Navigation.NavUserProfile.self) { nav in
                 ProfileDetailView(userProfile: nav.userProfile)
             }
@@ -131,7 +131,7 @@ struct DirectMessageListViewRow: View {
             VStack (alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     if let name = userProfile.name, name.isValidName()  {
-                        Text(name)
+                        Text("@"+name)
                             .font(.system(.subheadline, weight: .bold))
                     }
                     HStack(alignment: .center, spacing: 4) {
@@ -148,7 +148,7 @@ struct DirectMessageListViewRow: View {
                         .font(.caption)
                 }
                 
-                Text(userProfile.getLatestMessage()?.decryptedContent() ?? "Not sure?")
+                Text(userProfile.getLatestMessage()?.decryptedContent ?? "Not sure?")
                     .font(.callout)
                     .lineLimit(2)
                     .foregroundColor(.secondary)

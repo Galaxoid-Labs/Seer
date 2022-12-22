@@ -16,6 +16,8 @@ class REncryptedDirectMessage: Object, ObjectKeyIdentifiable {
     @Persisted var content: String
     @Persisted var createdAt: Date
     
+    @Persisted var decryptedContent: String
+    
     @Persisted var userProfile: RUserProfile?
     @Persisted var toUserProfile: RUserProfile?
     
@@ -30,7 +32,41 @@ class REncryptedDirectMessage: Object, ObjectKeyIdentifiable {
         return nil
     }
     
-    func decryptedContent() -> String {
+    var contentFormatted: AttributedString? {
+        if !decryptedContent.isEmpty {
+            return try? AttributedString(markdown: decryptedContent,
+                                         options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))
+        }
+        return nil
+    }
+    
+    var imageUrl: URL? {
+        if let content = contentFormatted {
+            for run in content.runs {
+                if let link = run.link {
+                    if link.absoluteURL.isImageType() {
+                        return link.absoluteURL
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    var videoUrl: URL? {
+        if let content = contentFormatted {
+            for run in content.runs {
+                if let link = run.link {
+                    if link.absoluteURL.isVideoType() {
+                        return link.absoluteURL
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    func decryptContent() -> String {
         if let ownerUserProfile = NostrData.shared.selectedOwnerUserProfile,
             userProfile?.publicKey == ownerUserProfile.publicKey || toUserProfile?.publicKey == ownerUserProfile.publicKey {
             

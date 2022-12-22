@@ -22,7 +22,7 @@ class NostrData: ObservableObject {
     static let shared = NostrData()
     
     private init() {
-        let config = Realm.Configuration(schemaVersion: 10)
+        let config = Realm.Configuration(schemaVersion: 11)
         Realm.Configuration.defaultConfiguration = config
         self.realm = try! Realm()
         self.realm.autorefresh = true

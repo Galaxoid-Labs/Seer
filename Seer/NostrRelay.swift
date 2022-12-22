@@ -15,6 +15,11 @@ class NostrRelay: NSObject {
         var name: String?
         var about: String?
         var picture: String?
+        var nip05: String?
+        var lud06: String?
+        var lud16: String?
+        var display_name: String?
+        var website: String?
     }
     
     let urlString: String
@@ -63,7 +68,7 @@ class NostrRelay: NSObject {
     }
     
     func publish(event: Event) {
-        if let message = try? ClientMessage.event(event).string(), let sub = directMessageToSub, connected {
+        if let message = try? ClientMessage.event(event).string(), connected {
             print(message)
             self.webSocketTask?.send(.string(message), completionHandler: { error in
                 if let error {
@@ -335,81 +340,91 @@ class NostrRelay: NSObject {
     private func parse(_ message: RelayMessage) {
         switch message {
         case .event(let id, let event):
-            switch event.kind {
-            case .setMetadata:
-                
-                guard let userProfile = RUserProfile.create(with: event) else {
-                    return
-                }
-                
-                if self.bootstrapedProfiles {
-                    realm.writeAsync {
-                        self.realm.add(userProfile, update: .modified)
+            
+            if event.verified() {
+                switch event.kind {
+                case .setMetadata:
+                    
+                    guard let userProfile = RUserProfile.create(with: event) else {
+                        return
                     }
-                } else {
-                    self.tempProfiles.append(userProfile)
-                }
-                
-            case .textNote: ()
-            case .recommentServer: ()
-            case .encryptedDirectMessage:
-                if !event.content.isEmpty, event.content.contains("?iv="), let toPublickey = event.tags.first(where: { $0.id == "p"})?.otherInformation.first {
                     
-                    @ThreadSafe var message = realm.object(ofType: REncryptedDirectMessage.self, forPrimaryKey: event.id)
+                    if event.publicKey == "32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245" {
+                        print(event)
+                    }
                     
-                    if message == nil {
-                        let directMessage = REncryptedDirectMessage.create(with: event)
-                        
-                        @ThreadSafe var profile = realm.object(ofType: RUserProfile.self, forPrimaryKey: event.publicKey)
-                        if profile != nil {
-                            directMessage.userProfile = profile
-                        } else {
-                            directMessage.userProfile = RUserProfile.createEmpty(withPublicKey: event.publicKey)
+                    if self.bootstrapedProfiles {
+                        realm.writeAsync {
+                            self.realm.add(userProfile, update: .modified)
                         }
+                    } else {
+                        self.tempProfiles.append(userProfile)
+                    }
+                    
+                case .textNote: ()
+                case .recommentServer: ()
+                case .encryptedDirectMessage:
+                    if !event.content.isEmpty, event.content.contains("?iv="), let toPublickey = event.tags.first(where: { $0.id == "p"})?.otherInformation.first {
+
+                        @ThreadSafe var message = realm.object(ofType: REncryptedDirectMessage.self, forPrimaryKey: event.id)
                         
-                        @ThreadSafe var toProfile = realm.object(ofType: RUserProfile.self, forPrimaryKey: toPublickey)
-                        if toProfile != nil {
-                            directMessage.toUserProfile = toProfile
-                        } else {
-                            directMessage.toUserProfile = RUserProfile.createEmpty(withPublicKey: toPublickey)
-                        }
-                        
-                        if self.bootstrapedDirectMessagesTo && self.bootstrapedDirectMessagesFrom {
-                            realm.writeAsync {
-                                self.realm.add(directMessage, update: .modified)
-                            } onComplete: { err in
-                                if let err {
-                                    print(err)
-                                } else {
-                                    self.subscribeProfiles()
-                                }
+                        if message == nil {
+                            let directMessage = REncryptedDirectMessage.create(with: event)
+                            
+                            @ThreadSafe var profile = realm.object(ofType: RUserProfile.self, forPrimaryKey: event.publicKey)
+                            if profile != nil {
+                                directMessage.userProfile = profile
+                            } else {
+                                directMessage.userProfile = RUserProfile.createEmpty(withPublicKey: event.publicKey)
                             }
-                        } else {
-                            self.tempDirectMessages.append(directMessage)
-                        }
-                        
-                        if id == self.directMessageToSub?.id {
-                            self.lastSeenDirectMessageToTimestamp = event.createdAt
-                        } else if id == self.directMessageFromSub?.id {
-                            self.lastSeenDirectMessageFromTimestamp = event.createdAt
+                            
+                            @ThreadSafe var toProfile = realm.object(ofType: RUserProfile.self, forPrimaryKey: toPublickey)
+                            if toProfile != nil {
+                                directMessage.toUserProfile = toProfile
+                            } else {
+                                directMessage.toUserProfile = RUserProfile.createEmpty(withPublicKey: toPublickey)
+                            }
+                            
+                            directMessage.decryptedContent = directMessage.decryptContent()
+                            
+                            if self.bootstrapedDirectMessagesTo && self.bootstrapedDirectMessagesFrom {
+                                realm.writeAsync {
+                                    self.realm.add(directMessage, update: .modified)
+                                } onComplete: { err in
+                                    if let err {
+                                        print(err)
+                                    } else {
+                                        self.subscribeProfiles()
+                                    }
+                                }
+                            } else {
+                                self.tempDirectMessages.append(directMessage)
+                            }
+                            
+                            if id == self.directMessageToSub?.id {
+                                self.lastSeenDirectMessageToTimestamp = event.createdAt
+                            } else if id == self.directMessageFromSub?.id {
+                                self.lastSeenDirectMessageFromTimestamp = event.createdAt
+                            }
+                            
                         }
                         
                     }
-                    
-                }
-            case .custom(let kind):
-                if kind == 3 { // Contact list
-                    if let contactSub = self.contactListSubs.first(where: { $0.subscription.id == id }) {
-                        if let indexOf = self.contactListSubs.firstIndex(where: { $0.subscription.id == id }) {
-                            if contactSub.subType == "following" {
-                                self.contactListSubs[indexOf].publicKeys = Set(event.tags.compactMap({ $0.otherInformation.first }))
-                            } else if contactSub.subType == "followedBy" {
-                                self.contactListSubs[indexOf].publicKeys.update(with: event.publicKey)
+                case .custom(let kind):
+                    if kind == 3 { // Contact list
+                        if let contactSub = self.contactListSubs.first(where: { $0.subscription.id == id }) {
+                            if let indexOf = self.contactListSubs.firstIndex(where: { $0.subscription.id == id }) {
+                                if contactSub.subType == "following" {
+                                    self.contactListSubs[indexOf].publicKeys = Set(event.tags.compactMap({ $0.otherInformation.first }))
+                                } else if contactSub.subType == "followedBy" {
+                                    self.contactListSubs[indexOf].publicKeys.update(with: event.publicKey)
+                                }
                             }
                         }
                     }
                 }
             }
+            
         case .notice(let notice):
             print(notice)
         case .other(let others): ()

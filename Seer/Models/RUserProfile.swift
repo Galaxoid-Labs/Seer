@@ -14,8 +14,12 @@ class RUserProfile: Object, ObjectKeyIdentifiable {
     @Persisted var name: String
     @Persisted var about: String
     @Persisted var picture: String
+    @Persisted var nip05: String
+    @Persisted var lud06: String
+    @Persisted var lud16: String
+    @Persisted var displayName: String
+    @Persisted var website: String
     @Persisted var createdAt: Date
-    @Persisted var selected: Bool
     
     var avatarUrl: URL? {
         return URL(string: picture)
@@ -57,12 +61,18 @@ extension RUserProfile {
         do {
             let decoder = JSONDecoder()
             let eventData = try decoder.decode(NostrRelay.SetMetaDataEventData.self, from: Data(event.content.utf8))
-            return RUserProfile(value: ["publicKey": event.publicKey,
+            let value: [String: Any] = ["publicKey": event.publicKey,
                                         "name": eventData.name ?? "",
                                         "about": eventData.about ?? "",
                                         "picture": eventData.picture ?? "",
+                                        "nip05": eventData.nip05 ?? "",
+                                        "lud06": eventData.lud06 ?? "",
+                                        "lud16": eventData.lud16 ?? "",
+                                        "website": eventData.website ?? "",
+                                        "displayName": eventData.display_name ?? "",
                                         "createdAt": Date(timeIntervalSince1970: Double(event.createdAt.timestamp)),
-                                       ])
+            ]
+            return RUserProfile(value: value)
         } catch {
             print(error)
             return nil
@@ -74,10 +84,15 @@ extension RUserProfile {
     }
     
     static let preview = RUserProfile(value: [
-        "publicKey": "lasdfjenandlfieasdnf",
-        "name": "Zao",
+        "publicKey": "c5cfda98d01f152b3493d995eed4cdb4d9e55a973925f6f9ea24769a5a21e778",
+        "name": "ismyhc",
         "about": "Founder and CEO at Galaxoid Labs. Working on lots of cool stuff around Bitcoin.",
-        "picture": "",
+        "picture": "https://pbs.twimg.com/profile_images/1571992959591096326/ZKY_3l2x_400x400.jpg",
+        "nip05": "galaxoidlabs.com",
+        "lud06": "lnurl1dp68gurn8ghj7ctsdyh85etzv4jx2efwd9hj7a3s9aex2ut4v4ehgttnw3shg6tr943ksctjvajhxte4v4nxve3kvdnz6cfe893z6drxvgcz6c34vcez6wfsxsmxgvecvsukgceevgt8jy",
+        "lud16": "ismyhc@zbd.gg",
+        "website": "jacob@galaxoidlabs.com",
+        "displayName": "Jacob Davis",
         "createdAt": Date(),
     ])
 }

@@ -47,6 +47,48 @@ struct SeerApp: App {
     }
 }
 
+enum LNWalletScheme: String, Codable {
+    case muun, breez, strike, zebedee, walletofsatoshi, sparkwallet, cashapp
+}
+
+struct LNWallet: Codable, Identifiable {
+    var id: String {
+        return scheme.rawValue
+    }
+    let name: String
+    let scheme: LNWalletScheme
+}
+
+let wallets = [
+    LNWallet(name: "Muun", scheme: .muun),
+    LNWallet(name: "Breez", scheme: .breez),
+    LNWallet(name: "Strike", scheme: .strike),
+    LNWallet(name: "ZEBEDEE", scheme: .zebedee),
+    LNWallet(name: "Wallet Of Satoshi", scheme: .walletofsatoshi),
+    LNWallet(name: "Spark", scheme: .sparkwallet),
+    LNWallet(name: "Cash App", scheme: .cashapp),
+]
+
+extension SeerApp {
+    
+    static func getAvailableWallets() -> [LNWallet] {
+        return wallets.filter({ SeerApp.canOpen(scheme: $0.scheme) })
+    }
+    
+    static func canOpen(scheme: LNWalletScheme) -> Bool {
+        if UIApplication.shared.canOpenURL(URL(string: "\(scheme.rawValue)://")!) {
+            return true
+        }
+        return false
+    }
+    
+    static func get(lnurl: String, withScheme scheme: String) -> URL? {
+        print("\(scheme):\(lnurl)")
+        return URL(string: "\(scheme):\(lnurl)")
+    }
+    
+}
+
 #if os(macOS)
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidChangeOcclusionState(_ notification: Notification) {

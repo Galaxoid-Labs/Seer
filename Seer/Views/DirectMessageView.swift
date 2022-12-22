@@ -8,7 +8,8 @@
 import SwiftUI
 import RealmSwift
 import SDWebImageSwiftUI
-//import NostrKit
+import AZVideoPlayer
+import AVFoundation
 
 struct DirectMessageView: View {
     
@@ -41,46 +42,15 @@ struct DirectMessageView: View {
                 .opacity(0.1)
                 .edgesIgnoringSafeArea(.all)
                 .overlay(
-                    LinearGradient(gradient: Gradient(colors: [.clear, .clear, Color(.systemBackground)]), startPoint: .top, endPoint: .bottom)
+                    LinearGradient(gradient: Gradient(colors: [.clear, .clear, Color(.systemBackground).opacity(0.5)]), startPoint: .top, endPoint: .bottom)
                         .blendMode(.luminosity)
                 )
             
             ScrollViewReader { reader in
                 List {
                     ForEach(directMessages) { dm in
-                        HStack {
-                            if dm.publicKey == nostrData.selectedOwnerUserProfile?.publicKey {
-                                Spacer(minLength: 16)
-                                VStack(alignment: .trailing, spacing: 8) {
-                                    Text(dm.createdAt, style: .relative)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Text(dm.decryptedContent())
-                                        .padding(8)
-                                        .background(
-                                            Color.accentColor
-                                        )
-                                        .cornerRadius(12)
-                                        .foregroundColor(.white)
-                                }
-
-                                    
-                            } else {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(dm.createdAt, style: .relative)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Text(dm.decryptedContent())
-                                        .padding(8)
-                                        .background(
-                                            Color(.systemGray5)
-                                        )
-                                        .cornerRadius(12)
-                                }
-                                Spacer(minLength: 16)
-                            }
-                        }
-                        .textSelection(.enabled)
+                        DirectMessageCellView(directMessage: dm,
+                                              owner: dm.publicKey == nostrData.selectedOwnerUserProfile?.publicKey)
                     }
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
@@ -114,7 +84,7 @@ struct DirectMessageView: View {
             ToolbarItem(placement: .principal) {
                 VStack {
                     if let name = userProfile.name, name.isValidName()  {
-                        Text(name)
+                        Text("@"+name)
                             .font(.system(.subheadline, weight: .bold))
                     }
                     HStack(alignment: .center, spacing: 4) {
@@ -134,7 +104,7 @@ struct DirectMessageView: View {
             
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 ZStack {
                     Text(messageText)
                         .font(.system(.body))
@@ -149,37 +119,45 @@ struct DirectMessageView: View {
                         .focused($inputFocused)
                         .font(.system(.body))
                         .scrollContentBackground(.hidden)
-                        .padding(12)
+                        .padding(.horizontal, 8)
                         .frame(height: min(textEditorHeight, maxHeight))
                         .background {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 16)
                                     .fill(Color(.systemBackground))
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(style: .init(lineWidth: 0.5))
+                                    .fill(Color(.systemGray4))
                             }
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(style: .init(lineWidth: 0.5))
-                                .fill(Color(.systemGray4))
                         }
                         .contentShape(Rectangle())
                 }
-                //.padding(20)
-                Button(action: {
-                    if !messageText.isEmpty {
-                        if nostrData.createEncyrpedDirectMessageEvent(withContent: messageText, forPublicKey: userProfile.publicKey) {
-                            messageText = ""
-                            inputFocused = false
+
+                if !messageText.isEmpty {
+                    Button(action: {
+                        if !messageText.isEmpty {
+                            if nostrData.createEncyrpedDirectMessageEvent(withContent: messageText, forPublicKey: userProfile.publicKey) {
+                                withAnimation {
+                                    messageText = ""
+                                    inputFocused = false
+                                }
+                            }
                         }
+                    }) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .background(
+                                Circle()
+                                    .foregroundColor(.white)
+                            )
                     }
-                }) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .resizable()
-                        .frame(width: 35, height: 35)
+                    .disabled(messageText.isEmpty)
                 }
-                .disabled(messageText.isEmpty)
             }
-            .padding()
+            .padding(12)
             .background(
-                .thinMaterial,
+                .ultraThinMaterial,
                 ignoresSafeAreaEdges: .bottom
             )
             .overlay(alignment: .top) {
@@ -201,6 +179,85 @@ struct DirectMessageView: View {
         static func reduce(value: inout Value, nextValue: () -> Value) {
             value = value + nextValue()
         }
+    }
+}
+
+struct DirectMessageCellView: View {
+    
+    @ObservedRealmObject var directMessage: REncryptedDirectMessage
+    let owner: Bool
+    
+    var body: some View {
+        HStack {
+            
+            if owner {
+                Spacer(minLength: 16)
+            }
+            
+            VStack(alignment: owner ? .trailing : .leading, spacing: 8) {
+                Text(directMessage.createdAt, style: .relative)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                VStack {
+                    
+                    if let videoUrl = directMessage.videoUrl {
+                        
+                        VStack(spacing: 0) {
+                            AZVideoPlayer(player: AVPlayer(url: videoUrl))
+                                .frame(height: 200)
+                                .shadow(radius: 0)
+                            HStack {
+                                Image(systemName: "rectangle.and.hand.point.up.left.fill")
+                                    .font(.body)
+                                    .fontWeight(.regular)
+                                Text("Tap Image to watch video")
+                                //Spacer()
+                            }
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .padding(8)
+                        }
+                        .background(.secondary.opacity(0.3))
+                        .cornerRadius(8)
+                        
+                    } else if let imageUrl = directMessage.imageUrl {
+                        VStack {
+                            AnimatedImage(url: imageUrl)
+                                .placeholder {
+                                    Color.secondary.opacity(0.2)
+                                        .overlay(
+                                            Image(systemName: "photo")
+                                                .imageScale(.large)
+                                                .scaleEffect(3.0)
+                                        )
+                                }
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .scaledToFit()
+                                .cornerRadius(8)
+                        }
+                    }
+                    
+                    Text(directMessage.contentFormatted ?? "")
+                        .foregroundColor(owner ? .white : Color(.label))
+                        .tint(owner ? .white : .accentColor)
+                    
+                }
+                .padding(8)
+                .background(
+                    owner ? Color.accentColor : Color(.systemGray5)
+                )
+                .cornerRadius(12)
+
+            }
+            
+            if !owner {
+                Spacer(minLength: 16)
+            }
+
+        }
+        .textSelection(.enabled)
     }
 }
 
