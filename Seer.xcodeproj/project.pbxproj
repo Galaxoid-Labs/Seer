@@ -1,0 +1,604 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		474E3947298C09530060D256 /* SeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3946298C09530060D256 /* SeerApp.swift */; };
+		474E3949298C09530060D256 /* DesktopMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3948298C09530060D256 /* DesktopMainView.swift */; };
+		474E394B298C09540060D256 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 474E394A298C09540060D256 /* Assets.xcassets */; };
+		474E394F298C09540060D256 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 474E394E298C09540060D256 /* Preview Assets.xcassets */; };
+		474E3958298C0B130060D256 /* NostrKit in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3957298C0B130060D256 /* NostrKit */; };
+		474E395A298C0B9B0060D256 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3959298C0B9B0060D256 /* AppState.swift */; };
+		474E395D298C0D790060D256 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 474E395C298C0D790060D256 /* SDWebImageSwiftUI */; };
+		474E3960298C0D830060D256 /* SDWebImageSVGCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 474E395F298C0D830060D256 /* SDWebImageSVGCoder */; };
+		474E3962298C0E290060D256 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3961298C0E290060D256 /* Navigation.swift */; };
+		474E3966298C15D70060D256 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3965298C15D70060D256 /* Realm */; };
+		474E3968298C15D70060D256 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3967298C15D70060D256 /* RealmSwift */; };
+		474E396A298C16030060D256 /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3969298C16030060D256 /* Relay.swift */; };
+		474E396C298C5FE70060D256 /* OwnerKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E396B298C5FE70060D256 /* OwnerKey.swift */; };
+		474E3970298C66650060D256 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 474E396F298C66650060D256 /* KeychainSwift */; };
+		474E3972298C78240060D256 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3971298C78240060D256 /* DesignSystem.swift */; };
+		474E3975298C79F90060D256 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3974298C79F90060D256 /* WelcomeView.swift */; };
+		474E3978298C8F2D0060D256 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3977298C8F2D0060D256 /* KeychainAccess */; };
+		474E397A298D70790060D256 /* PublicKeyMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3979298D70790060D256 /* PublicKeyMetaData.swift */; };
+		474E397C298DA8050060D256 /* RelayToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E397B298DA8050060D256 /* RelayToggleView.swift */; };
+		474E3981298DB59A0060D256 /* RelayManagmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3980298DB59A0060D256 /* RelayManagmentView.swift */; };
+		474E3984298DB6F80060D256 /* SwiftyPing in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3983298DB6F80060D256 /* SwiftyPing */; };
+		474E3986298EE6FD0060D256 /* RelayConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3985298EE6FD0060D256 /* RelayConnection.swift */; };
+		474E3988298FF38A0060D256 /* EncryptedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3987298FF38A0060D256 /* EncryptedMessage.swift */; };
+		474E398A299003B90060D256 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3989299003B90060D256 /* Extensions.swift */; };
+		474E398D299037670060D256 /* RootEncryptedMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E398C299037670060D256 /* RootEncryptedMessageView.swift */; };
+		474E398F2990378E0060D256 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E398E2990378E0060D256 /* AvatarView.swift */; };
+		474E39932991509D0060D256 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E39922991509D0060D256 /* SidebarView.swift */; };
+		474E3997299155630060D256 /* MessagesContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3996299155630060D256 /* MessagesContentView.swift */; };
+		474E3999299158320060D256 /* MessagesDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3998299158320060D256 /* MessagesDetailView.swift */; };
+		474E399B29915F6A0060D256 /* EncryptedMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E399A29915F6A0060D256 /* EncryptedMessageBubbleView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		474E3943298C09530060D256 /* Seer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		474E3946298C09530060D256 /* SeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerApp.swift; sourceTree = "<group>"; };
+		474E3948298C09530060D256 /* DesktopMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopMainView.swift; sourceTree = "<group>"; };
+		474E394A298C09540060D256 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		474E394C298C09540060D256 /* Seer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Seer.entitlements; sourceTree = "<group>"; };
+		474E394E298C09540060D256 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		474E3959298C0B9B0060D256 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		474E3961298C0E290060D256 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+		474E3969298C16030060D256 /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
+		474E396B298C5FE70060D256 /* OwnerKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerKey.swift; sourceTree = "<group>"; };
+		474E3971298C78240060D256 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		474E3974298C79F90060D256 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		474E3979298D70790060D256 /* PublicKeyMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetaData.swift; sourceTree = "<group>"; };
+		474E397B298DA8050060D256 /* RelayToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayToggleView.swift; sourceTree = "<group>"; };
+		474E3980298DB59A0060D256 /* RelayManagmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayManagmentView.swift; sourceTree = "<group>"; };
+		474E3985298EE6FD0060D256 /* RelayConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayConnection.swift; sourceTree = "<group>"; };
+		474E3987298FF38A0060D256 /* EncryptedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedMessage.swift; sourceTree = "<group>"; };
+		474E3989299003B90060D256 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		474E398C299037670060D256 /* RootEncryptedMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootEncryptedMessageView.swift; sourceTree = "<group>"; };
+		474E398E2990378E0060D256 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		474E39922991509D0060D256 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		474E3996299155630060D256 /* MessagesContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesContentView.swift; sourceTree = "<group>"; };
+		474E3998299158320060D256 /* MessagesDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesDetailView.swift; sourceTree = "<group>"; };
+		474E399A29915F6A0060D256 /* EncryptedMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedMessageBubbleView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		474E3940298C09530060D256 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				474E3970298C66650060D256 /* KeychainSwift in Frameworks */,
+				474E3960298C0D830060D256 /* SDWebImageSVGCoder in Frameworks */,
+				474E3978298C8F2D0060D256 /* KeychainAccess in Frameworks */,
+				474E395D298C0D790060D256 /* SDWebImageSwiftUI in Frameworks */,
+				474E3966298C15D70060D256 /* Realm in Frameworks */,
+				474E3968298C15D70060D256 /* RealmSwift in Frameworks */,
+				474E3984298DB6F80060D256 /* SwiftyPing in Frameworks */,
+				474E3958298C0B130060D256 /* NostrKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		474E393A298C09530060D256 = {
+			isa = PBXGroup;
+			children = (
+				474E3945298C09530060D256 /* Seer */,
+				474E3944298C09530060D256 /* Products */,
+				474E396E298C66650060D256 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		474E3944298C09530060D256 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				474E3943298C09530060D256 /* Seer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		474E3945298C09530060D256 /* Seer */ = {
+			isa = PBXGroup;
+			children = (
+				474E3973298C79E70060D256 /* Views */,
+				474E3963298C14FB0060D256 /* Models */,
+				474E3959298C0B9B0060D256 /* AppState.swift */,
+				474E3961298C0E290060D256 /* Navigation.swift */,
+				474E3946298C09530060D256 /* SeerApp.swift */,
+				474E3948298C09530060D256 /* DesktopMainView.swift */,
+				474E3971298C78240060D256 /* DesignSystem.swift */,
+				474E3985298EE6FD0060D256 /* RelayConnection.swift */,
+				474E3989299003B90060D256 /* Extensions.swift */,
+				474E394A298C09540060D256 /* Assets.xcassets */,
+				474E394C298C09540060D256 /* Seer.entitlements */,
+				474E394D298C09540060D256 /* Preview Content */,
+			);
+			path = Seer;
+			sourceTree = "<group>";
+		};
+		474E394D298C09540060D256 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				474E394E298C09540060D256 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		474E3963298C14FB0060D256 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				474E3969298C16030060D256 /* Relay.swift */,
+				474E396B298C5FE70060D256 /* OwnerKey.swift */,
+				474E3979298D70790060D256 /* PublicKeyMetaData.swift */,
+				474E3987298FF38A0060D256 /* EncryptedMessage.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		474E396E298C66650060D256 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		474E3973298C79E70060D256 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				474E398B299037390060D256 /* Components */,
+				474E3974298C79F90060D256 /* WelcomeView.swift */,
+				474E397B298DA8050060D256 /* RelayToggleView.swift */,
+				474E3980298DB59A0060D256 /* RelayManagmentView.swift */,
+				474E39922991509D0060D256 /* SidebarView.swift */,
+				474E3996299155630060D256 /* MessagesContentView.swift */,
+				474E3998299158320060D256 /* MessagesDetailView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		474E398B299037390060D256 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				474E398C299037670060D256 /* RootEncryptedMessageView.swift */,
+				474E398E2990378E0060D256 /* AvatarView.swift */,
+				474E399A29915F6A0060D256 /* EncryptedMessageBubbleView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		474E3942298C09530060D256 /* Seer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 474E3952298C09540060D256 /* Build configuration list for PBXNativeTarget "Seer" */;
+			buildPhases = (
+				474E393F298C09530060D256 /* Sources */,
+				474E3940298C09530060D256 /* Frameworks */,
+				474E3941298C09530060D256 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Seer;
+			packageProductDependencies = (
+				474E3957298C0B130060D256 /* NostrKit */,
+				474E395C298C0D790060D256 /* SDWebImageSwiftUI */,
+				474E395F298C0D830060D256 /* SDWebImageSVGCoder */,
+				474E3965298C15D70060D256 /* Realm */,
+				474E3967298C15D70060D256 /* RealmSwift */,
+				474E396F298C66650060D256 /* KeychainSwift */,
+				474E3977298C8F2D0060D256 /* KeychainAccess */,
+				474E3983298DB6F80060D256 /* SwiftyPing */,
+			);
+			productName = Seer;
+			productReference = 474E3943298C09530060D256 /* Seer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		474E393B298C09530060D256 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					474E3942298C09530060D256 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 474E393E298C09530060D256 /* Build configuration list for PBXProject "Seer" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 474E393A298C09530060D256;
+			packageReferences = (
+				474E3956298C0B130060D256 /* XCRemoteSwiftPackageReference "NostrKit" */,
+				474E395B298C0D790060D256 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				474E395E298C0D830060D256 /* XCRemoteSwiftPackageReference "SDWebImageSVGCoder" */,
+				474E3964298C15D70060D256 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				474E396D298C648B0060D256 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				474E3976298C8F2D0060D256 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+				474E3982298DB6F80060D256 /* XCRemoteSwiftPackageReference "SwiftyPing" */,
+			);
+			productRefGroup = 474E3944298C09530060D256 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				474E3942298C09530060D256 /* Seer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		474E3941298C09530060D256 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				474E394F298C09540060D256 /* Preview Assets.xcassets in Resources */,
+				474E394B298C09540060D256 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		474E393F298C09530060D256 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				474E397C298DA8050060D256 /* RelayToggleView.swift in Sources */,
+				474E3986298EE6FD0060D256 /* RelayConnection.swift in Sources */,
+				474E397A298D70790060D256 /* PublicKeyMetaData.swift in Sources */,
+				474E395A298C0B9B0060D256 /* AppState.swift in Sources */,
+				474E398D299037670060D256 /* RootEncryptedMessageView.swift in Sources */,
+				474E3999299158320060D256 /* MessagesDetailView.swift in Sources */,
+				474E39932991509D0060D256 /* SidebarView.swift in Sources */,
+				474E398F2990378E0060D256 /* AvatarView.swift in Sources */,
+				474E3949298C09530060D256 /* DesktopMainView.swift in Sources */,
+				474E3997299155630060D256 /* MessagesContentView.swift in Sources */,
+				474E3947298C09530060D256 /* SeerApp.swift in Sources */,
+				474E3975298C79F90060D256 /* WelcomeView.swift in Sources */,
+				474E3988298FF38A0060D256 /* EncryptedMessage.swift in Sources */,
+				474E3962298C0E290060D256 /* Navigation.swift in Sources */,
+				474E3981298DB59A0060D256 /* RelayManagmentView.swift in Sources */,
+				474E396A298C16030060D256 /* Relay.swift in Sources */,
+				474E396C298C5FE70060D256 /* OwnerKey.swift in Sources */,
+				474E3972298C78240060D256 /* DesignSystem.swift in Sources */,
+				474E399B29915F6A0060D256 /* EncryptedMessageBubbleView.swift in Sources */,
+				474E398A299003B90060D256 /* Extensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		474E3950298C09540060D256 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		474E3951298C09540060D256 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		474E3953298C09540060D256 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Seer/Seer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Seer/Preview Content\"";
+				DEVELOPMENT_TEAM = MHMRS5FLW6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Seer;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.galaxoidlabs.Seer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		474E3954298C09540060D256 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Seer/Seer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Seer/Preview Content\"";
+				DEVELOPMENT_TEAM = MHMRS5FLW6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Seer;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.galaxoidlabs.Seer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		474E393E298C09530060D256 /* Build configuration list for PBXProject "Seer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				474E3950298C09540060D256 /* Debug */,
+				474E3951298C09540060D256 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		474E3952298C09540060D256 /* Build configuration list for PBXNativeTarget "Seer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				474E3953298C09540060D256 /* Debug */,
+				474E3954298C09540060D256 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		474E3956298C0B130060D256 /* XCRemoteSwiftPackageReference "NostrKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Galaxoid-Labs/NostrKit.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		474E395B298C0D790060D256 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		474E395E298C0D830060D256 /* XCRemoteSwiftPackageReference "SDWebImageSVGCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSVGCoder.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		474E3964298C15D70060D256 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		474E396D298C648B0060D256 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		474E3976298C8F2D0060D256 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		474E3982298DB6F80060D256 /* XCRemoteSwiftPackageReference "SwiftyPing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/samiyr/SwiftyPing.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		474E3957298C0B130060D256 /* NostrKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E3956298C0B130060D256 /* XCRemoteSwiftPackageReference "NostrKit" */;
+			productName = NostrKit;
+		};
+		474E395C298C0D790060D256 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E395B298C0D790060D256 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+		474E395F298C0D830060D256 /* SDWebImageSVGCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E395E298C0D830060D256 /* XCRemoteSwiftPackageReference "SDWebImageSVGCoder" */;
+			productName = SDWebImageSVGCoder;
+		};
+		474E3965298C15D70060D256 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E3964298C15D70060D256 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		474E3967298C15D70060D256 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E3964298C15D70060D256 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		474E396F298C66650060D256 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E396D298C648B0060D256 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
+		};
+		474E3977298C8F2D0060D256 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E3976298C8F2D0060D256 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+		474E3983298DB6F80060D256 /* SwiftyPing */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 474E3982298DB6F80060D256 /* XCRemoteSwiftPackageReference "SwiftyPing" */;
+			productName = SwiftyPing;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 474E393B298C09530060D256 /* Project object */;
+}
