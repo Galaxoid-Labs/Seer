@@ -26,12 +26,15 @@ struct MessagesContentView: View {
     
     var body: some View {
         ZStack {
-            TileBackground()
-            List(filteredPublicKeyMetaData, selection: $navigation.contentValue) { publicKeyMetaData in
-                NavigationLink(value: Navigation.ContentValue(publicKeyMetaData: publicKeyMetaData,
-                                                              ownerKey: navigation.sidebarValue.ownerKey)) {
-                    RootEncryptedMessageView(publicKeyMetaData: publicKeyMetaData)
+            if filteredPublicKeyMetaData.count > 0 {
+                List(filteredPublicKeyMetaData, selection: $navigation.contentValue) { publicKeyMetaData in
+                    NavigationLink(value: Navigation.ContentValue(publicKeyMetaData: publicKeyMetaData,
+                                                                  ownerKey: navigation.sidebarValue.ownerKey)) {
+                        RootEncryptedMessageView(publicKeyMetaData: publicKeyMetaData)
+                    }
                 }
+            } else {
+                Text("No messages...")
             }
         }
         .navigationSplitViewColumnWidth(350)

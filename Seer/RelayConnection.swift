@@ -209,6 +209,16 @@ class RelayConnection: NSObject {
         self.directMessageFromSub = nil
     }
     
+    func publish(event: Event) {
+        if let message = try? ClientMessage.event(event).string(), connected {
+            self.webSocketTask?.send(.string(message), completionHandler: { error in
+                if let error {
+                    print(error)
+                }
+            })
+        }
+    }
+    
     private func parse(_ message: RelayMessage) {
         switch message {
         case .event(let id, let event): ()
@@ -353,16 +363,6 @@ class RelayConnection: NSObject {
                     }
                 })
             }
-        }
-    }
-    
-    private func publish(event: Event) {
-        if let message = try? ClientMessage.event(event).string(), connected {
-            self.webSocketTask?.send(.string(message), completionHandler: { error in
-                if let error {
-                    print(error)
-                }
-            })
         }
     }
     

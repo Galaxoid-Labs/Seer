@@ -55,6 +55,9 @@ struct SidebarView: View {
             }
         }
         .navigationSplitViewColumnWidth(250)
+        .onChange(of: navigation.sidebarValue) { newValue in
+            navigation.contentValue = Navigation.ContentValue(publicKeyMetaData: nil, ownerKey: nil)
+        }
         
     }
 }
