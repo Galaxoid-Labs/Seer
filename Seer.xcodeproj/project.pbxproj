@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4717420F29958A3700F1E9D6 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4717420E29958A3700F1E9D6 /* RichTextKit */; };
+		471FCBBD29A0051900208776 /* s1.png in Resources */ = {isa = PBXBuildFile; fileRef = 471FCBBC29A0051900208776 /* s1.png */; };
 		474E3947298C09530060D256 /* SeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3946298C09530060D256 /* SeerApp.swift */; };
 		474E3949298C09530060D256 /* DesktopMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3948298C09530060D256 /* DesktopMainView.swift */; };
 		474E394B298C09540060D256 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 474E394A298C09540060D256 /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		471FCBBC29A0051900208776 /* s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = s1.png; sourceTree = "<group>"; };
 		474E3943298C09530060D256 /* Seer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		474E3946298C09530060D256 /* SeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerApp.swift; sourceTree = "<group>"; };
 		474E3948298C09530060D256 /* DesktopMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopMainView.swift; sourceTree = "<group>"; };
@@ -87,9 +89,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		471FCBBB29A0050C00208776 /* Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				471FCBBC29A0051900208776 /* s1.png */,
+			);
+			path = Screenshots;
+			sourceTree = "<group>";
+		};
 		474E393A298C09530060D256 = {
 			isa = PBXGroup;
 			children = (
+				471FCBBB29A0050C00208776 /* Screenshots */,
 				474E3945298C09530060D256 /* Seer */,
 				474E3944298C09530060D256 /* Products */,
 				474E396E298C66650060D256 /* Frameworks */,
@@ -254,6 +265,7 @@
 			files = (
 				474E394F298C09540060D256 /* Preview Assets.xcassets in Resources */,
 				474E394B298C09540060D256 /* Assets.xcassets in Resources */,
+				471FCBBD29A0051900208776 /* s1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
