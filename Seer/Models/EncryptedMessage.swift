@@ -36,7 +36,6 @@ class EncryptedMessage: Object, ObjectKeyIdentifiable {
             for run in runs {
                 if run.link != nil {
                     attr?[run.range].underlineStyle = .single
-                    attr?[run.range].foregroundColor = Color.red
                 }
             }
         }

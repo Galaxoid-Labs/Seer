@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4717420F29958A3700F1E9D6 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4717420E29958A3700F1E9D6 /* RichTextKit */; };
 		471FCBBD29A0051900208776 /* s1.png in Resources */ = {isa = PBXBuildFile; fileRef = 471FCBBC29A0051900208776 /* s1.png */; };
 		474E3947298C09530060D256 /* SeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3946298C09530060D256 /* SeerApp.swift */; };
 		474E3949298C09530060D256 /* DesktopMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3948298C09530060D256 /* DesktopMainView.swift */; };
@@ -28,7 +27,7 @@
 		474E3978298C8F2D0060D256 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3977298C8F2D0060D256 /* KeychainAccess */; };
 		474E397A298D70790060D256 /* PublicKeyMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3979298D70790060D256 /* PublicKeyMetaData.swift */; };
 		474E397C298DA8050060D256 /* RelayToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E397B298DA8050060D256 /* RelayToggleView.swift */; };
-		474E3981298DB59A0060D256 /* RelayManagmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3980298DB59A0060D256 /* RelayManagmentView.swift */; };
+		474E3981298DB59A0060D256 /* SettingsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3980298DB59A0060D256 /* SettingsRelayView.swift */; };
 		474E3984298DB6F80060D256 /* SwiftyPing in Frameworks */ = {isa = PBXBuildFile; productRef = 474E3983298DB6F80060D256 /* SwiftyPing */; };
 		474E3986298EE6FD0060D256 /* RelayConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3985298EE6FD0060D256 /* RelayConnection.swift */; };
 		474E3988298FF38A0060D256 /* EncryptedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3987298FF38A0060D256 /* EncryptedMessage.swift */; };
@@ -39,6 +38,10 @@
 		474E3997299155630060D256 /* MessagesContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3996299155630060D256 /* MessagesContentView.swift */; };
 		474E3999299158320060D256 /* MessagesDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E3998299158320060D256 /* MessagesDetailView.swift */; };
 		474E399B29915F6A0060D256 /* EncryptedMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E399A29915F6A0060D256 /* EncryptedMessageBubbleView.swift */; };
+		4763CE9D29A3E4FA009F2404 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763CE9C29A3E4FA009F2404 /* SettingsView.swift */; };
+		4763CEA029A3F6FF009F2404 /* SettingsAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763CE9F29A3F6FF009F2404 /* SettingsAccountsView.swift */; };
+		4763CEA229A3FD17009F2404 /* SettingsAccountsListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763CEA129A3FD17009F2404 /* SettingsAccountsListRowView.swift */; };
+		4763CEA429A41DF9009F2404 /* SettingsAccountsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763CEA329A41DF9009F2404 /* SettingsAccountsRelayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,7 +60,7 @@
 		474E3974298C79F90060D256 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		474E3979298D70790060D256 /* PublicKeyMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetaData.swift; sourceTree = "<group>"; };
 		474E397B298DA8050060D256 /* RelayToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayToggleView.swift; sourceTree = "<group>"; };
-		474E3980298DB59A0060D256 /* RelayManagmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayManagmentView.swift; sourceTree = "<group>"; };
+		474E3980298DB59A0060D256 /* SettingsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRelayView.swift; sourceTree = "<group>"; };
 		474E3985298EE6FD0060D256 /* RelayConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayConnection.swift; sourceTree = "<group>"; };
 		474E3987298FF38A0060D256 /* EncryptedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedMessage.swift; sourceTree = "<group>"; };
 		474E3989299003B90060D256 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -67,6 +70,10 @@
 		474E3996299155630060D256 /* MessagesContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesContentView.swift; sourceTree = "<group>"; };
 		474E3998299158320060D256 /* MessagesDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesDetailView.swift; sourceTree = "<group>"; };
 		474E399A29915F6A0060D256 /* EncryptedMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedMessageBubbleView.swift; sourceTree = "<group>"; };
+		4763CE9C29A3E4FA009F2404 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4763CE9F29A3F6FF009F2404 /* SettingsAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountsView.swift; sourceTree = "<group>"; };
+		4763CEA129A3FD17009F2404 /* SettingsAccountsListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountsListRowView.swift; sourceTree = "<group>"; };
+		4763CEA329A41DF9009F2404 /* SettingsAccountsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountsRelayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +86,6 @@
 				474E3978298C8F2D0060D256 /* KeychainAccess in Frameworks */,
 				474E395D298C0D790060D256 /* SDWebImageSwiftUI in Frameworks */,
 				474E3966298C15D70060D256 /* Realm in Frameworks */,
-				4717420F29958A3700F1E9D6 /* RichTextKit in Frameworks */,
 				474E3968298C15D70060D256 /* RealmSwift in Frameworks */,
 				474E3984298DB6F80060D256 /* SwiftyPing in Frameworks */,
 				474E3958298C0B130060D256 /* NostrKit in Frameworks */,
@@ -163,10 +169,10 @@
 		474E3973298C79E70060D256 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4763CE9E29A3F4BB009F2404 /* Settings */,
 				474E398B299037390060D256 /* Components */,
 				474E3974298C79F90060D256 /* WelcomeView.swift */,
 				474E397B298DA8050060D256 /* RelayToggleView.swift */,
-				474E3980298DB59A0060D256 /* RelayManagmentView.swift */,
 				474E39922991509D0060D256 /* SidebarView.swift */,
 				474E3996299155630060D256 /* MessagesContentView.swift */,
 				474E3998299158320060D256 /* MessagesDetailView.swift */,
@@ -180,8 +186,20 @@
 				474E398C299037670060D256 /* RootEncryptedMessageView.swift */,
 				474E398E2990378E0060D256 /* AvatarView.swift */,
 				474E399A29915F6A0060D256 /* EncryptedMessageBubbleView.swift */,
+				4763CEA129A3FD17009F2404 /* SettingsAccountsListRowView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4763CE9E29A3F4BB009F2404 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				474E3980298DB59A0060D256 /* SettingsRelayView.swift */,
+				4763CE9C29A3E4FA009F2404 /* SettingsView.swift */,
+				4763CE9F29A3F6FF009F2404 /* SettingsAccountsView.swift */,
+				4763CEA329A41DF9009F2404 /* SettingsAccountsRelayView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,7 +227,6 @@
 				474E396F298C66650060D256 /* KeychainSwift */,
 				474E3977298C8F2D0060D256 /* KeychainAccess */,
 				474E3983298DB6F80060D256 /* SwiftyPing */,
-				4717420E29958A3700F1E9D6 /* RichTextKit */,
 			);
 			productName = Seer;
 			productReference = 474E3943298C09530060D256 /* Seer.app */;
@@ -247,7 +264,6 @@
 				474E396D298C648B0060D256 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				474E3976298C8F2D0060D256 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				474E3982298DB6F80060D256 /* XCRemoteSwiftPackageReference "SwiftyPing" */,
-				4717420D29958A3700F1E9D6 /* XCRemoteSwiftPackageReference "RichTextKit" */,
 			);
 			productRefGroup = 474E3944298C09530060D256 /* Products */;
 			projectDirPath = "";
@@ -276,21 +292,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4763CE9D29A3E4FA009F2404 /* SettingsView.swift in Sources */,
 				474E397C298DA8050060D256 /* RelayToggleView.swift in Sources */,
 				474E3986298EE6FD0060D256 /* RelayConnection.swift in Sources */,
 				474E397A298D70790060D256 /* PublicKeyMetaData.swift in Sources */,
 				474E395A298C0B9B0060D256 /* AppState.swift in Sources */,
 				474E398D299037670060D256 /* RootEncryptedMessageView.swift in Sources */,
+				4763CEA229A3FD17009F2404 /* SettingsAccountsListRowView.swift in Sources */,
 				474E3999299158320060D256 /* MessagesDetailView.swift in Sources */,
 				474E39932991509D0060D256 /* SidebarView.swift in Sources */,
 				474E398F2990378E0060D256 /* AvatarView.swift in Sources */,
 				474E3949298C09530060D256 /* DesktopMainView.swift in Sources */,
+				4763CEA429A41DF9009F2404 /* SettingsAccountsRelayView.swift in Sources */,
 				474E3997299155630060D256 /* MessagesContentView.swift in Sources */,
 				474E3947298C09530060D256 /* SeerApp.swift in Sources */,
 				474E3975298C79F90060D256 /* WelcomeView.swift in Sources */,
+				4763CEA029A3F6FF009F2404 /* SettingsAccountsView.swift in Sources */,
 				474E3988298FF38A0060D256 /* EncryptedMessage.swift in Sources */,
 				474E3962298C0E290060D256 /* Navigation.swift in Sources */,
-				474E3981298DB59A0060D256 /* RelayManagmentView.swift in Sources */,
+				474E3981298DB59A0060D256 /* SettingsRelayView.swift in Sources */,
 				474E396A298C16030060D256 /* Relay.swift in Sources */,
 				474E396C298C5FE70060D256 /* OwnerKey.swift in Sources */,
 				474E3972298C78240060D256 /* DesignSystem.swift in Sources */,
@@ -515,14 +535,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4717420D29958A3700F1E9D6 /* XCRemoteSwiftPackageReference "RichTextKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielsaidi/RichTextKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.5.1;
-			};
-		};
 		474E3956298C0B130060D256 /* XCRemoteSwiftPackageReference "NostrKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Galaxoid-Labs/NostrKit.git";
@@ -582,11 +594,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4717420E29958A3700F1E9D6 /* RichTextKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4717420D29958A3700F1E9D6 /* XCRemoteSwiftPackageReference "RichTextKit" */;
-			productName = RichTextKit;
-		};
 		474E3957298C0B130060D256 /* NostrKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 474E3956298C0B130060D256 /* XCRemoteSwiftPackageReference "NostrKit" */;

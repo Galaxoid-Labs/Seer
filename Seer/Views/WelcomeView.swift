@@ -109,12 +109,13 @@ struct WelcomeView: View {
                 .padding(.bottom)
             }
             .overlay(alignment: .topTrailing) {
-                Button(action: {}) {
-                    Image(systemName: "point.3.filled.connected.trianglepath.dotted")
+                Button(action: {
+                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                }) {
+                    Image(systemName: "network")
                 }
                 .buttonStyle(.bordered)
                 .padding(12)
-                .help("Hasdf")
             }
             .background(.black.opacity(0.95))
             

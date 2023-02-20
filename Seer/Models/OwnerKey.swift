@@ -77,7 +77,12 @@ extension OwnerKey {
     }
     
     static let preview = OwnerKey(value: [
-        "publicKey": "lasdfjenandlfieasdnf",
+        "publicKey": "npub1ch8a4xxsru2jkdynmx27a4xdknv72k5h8yjld702y3mf5k3puauqmszh48",
+        "selected": true
+    ])
+    
+    static let preview2 = OwnerKey(value: [
+        "publicKey": "npub1ch8a4xxsru2jkdynmx27a4xdknv72k5h8yjld70",
         "selected": true
     ])
     

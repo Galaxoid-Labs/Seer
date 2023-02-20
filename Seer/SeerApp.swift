@@ -58,6 +58,13 @@ struct SeerApp: App {
                 print("👁️ Seer => Entered Unknown Phase")
             }
         }
+        
+        #if os(macOS)
+        Settings {
+            SettingsView()
+                .environmentObject(appState)
+        }
+        #endif
     }
 }
 

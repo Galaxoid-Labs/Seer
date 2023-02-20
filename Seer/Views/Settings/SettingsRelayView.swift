@@ -1,5 +1,5 @@
 //
-//  RelayManagmentView.swift
+//  SettingsRelayView.swift
 //  Seer
 //
 //  Created by Jacob Davis on 2/3/23.
@@ -9,9 +9,11 @@ import SwiftUI
 import RealmSwift
 import SwiftyPing
 
-struct RelayManagmentView: View {
+struct SettingsRelayView: View {
     
     @EnvironmentObject private var appState: AppState
+    
+    @Environment(\.dismiss) private var dismiss
     
     @ObservedResults(Relay.self) var relays
     
@@ -21,10 +23,7 @@ struct RelayManagmentView: View {
 
     var body: some View {
         VStack {
-            
-            Text("Relay Managment")
-                .font(.headline)
-            
+
             HStack {
 
                 if selectedRelays.count > 0 {
@@ -59,7 +58,6 @@ struct RelayManagmentView: View {
                     }) {
                         Image(systemName: "plus")
                     }
-                    .buttonStyle(.borderedProminent)
                     .disabled(!relayInputText.validRelayURL)
                 }
                 
@@ -88,7 +86,6 @@ struct RelayManagmentView: View {
 
         }
         .padding()
-        .frame(minWidth: 800, minHeight: 400)
         .task {
             await checkPings()
         }
@@ -157,9 +154,9 @@ struct RelayManagmentView: View {
     }
 }
 
-struct RelayManagmentView_Previews: PreviewProvider {
+struct SettingsRelayView_Previews: PreviewProvider {
     static var previews: some View {
-        RelayManagmentView()
+        SettingsRelayView()
             .environmentObject(AppState.shared)
     }
 }

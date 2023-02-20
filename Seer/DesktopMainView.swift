@@ -21,7 +21,6 @@ struct DesktopMainView: View {
     
     @State private var columnVisibility = NavigationSplitViewVisibility.automatic
     @State private var showWelcome = false
-    @State private var showRelayManager = false
     
     var selectedOwnerKey: OwnerKey? {
         return navigation.sidebarValue.ownerKey
@@ -39,13 +38,6 @@ struct DesktopMainView: View {
                                     self.showWelcome = true
                                 } label: {
                                     Image(systemName: "plus")
-                                }
-                            }
-                            ToolbarItem {
-                                Button {
-                                    self.showRelayManager = true
-                                } label: {
-                                    Image(systemName: "point.3.filled.connected.trianglepath.dotted")
                                 }
                             }
                         }
@@ -78,9 +70,6 @@ struct DesktopMainView: View {
         .sheet(isPresented: $showWelcome) {
             WelcomeView()
                 .frame(width: 300, height: 500)
-        }
-        .sheet(isPresented: $showRelayManager) {
-            RelayManagmentView()
         }
         .onAppear {
             if ownerKeys.count == 0 {
