@@ -43,7 +43,8 @@ extension Relay {
         return [
             Relay(value: ["url": "wss://nostr-relay.untethr.me", "updatedAt": Date.distantPast]),
             Relay(value: ["url": "wss://brb.io", "updatedAt": Date.distantPast]),
-            Relay(value: ["url": "wss://relay.nostr.bg", "updatedAt": Date.distantPast])
+            Relay(value: ["url": "wss://relay.nostr.bg", "updatedAt": Date.distantPast]),
+            Relay(value: ["url": "wss://eden.nostr.land", "updatedAt": Date.distantPast])
         ]
     }
     

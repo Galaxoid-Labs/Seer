@@ -27,25 +27,39 @@ struct RootEncryptedMessageView: View {
             
             HStack(alignment: .top, spacing: 12) {
                 
-                AvatarView(avatarUrl: publicKeyMetaData.picture, size: 40)
+                if publicKeyMetaData.picture.isEmpty {
+                    Image(systemName: "person.crop.circle.fill")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 40))
+                } else {
+                    AvatarView(avatarUrl: publicKeyMetaData.picture, size: 40)
+                }
+                
                 
                 VStack (alignment: .leading, spacing: 2) {
                     
                     HStack(spacing: 4) {
-                        if let name = publicKeyMetaData.name, name.isValidName()  {
-                            Text("@"+name)
+                        
+                        HStack(spacing: 4) {
+                            Text(publicKeyMetaData.bestPublicName)
                                 .font(.system(.subheadline, weight: .bold))
                                 .lineLimit(1)
+                            if publicKeyMetaData.nip05Verified {
+                                ZStack {
+                                    Circle()
+                                        .frame(width: 10)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .imageScale(.large)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .imageScale(.medium)
+                                        .foregroundColor(.accentColor)
+                                }
+
+                            }
                         }
-                        HStack(alignment: .center, spacing: 4) {
-                            Image(systemName: "key.fill")
-                                .imageScale(.small)
-                            Text(publicKeyMetaData.bech32PublicKey?.prefix(12) ?? "")
-                        }
-                        .lineLimit(1)
-                        .font(.system(.caption, weight: .bold))
-                        .foregroundColor(.secondary)
-                        
+
                         Spacer()
                         Text((publicKeyMetaData.getLatestMessage()?.createdAt ?? .now), style: .offset)
                             .foregroundColor(.secondary)

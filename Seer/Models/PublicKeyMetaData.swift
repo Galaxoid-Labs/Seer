@@ -16,12 +16,56 @@ class PublicKeyMetaData: Object, ObjectKeyIdentifiable {
     @Persisted var name: String
     @Persisted var about: String
     @Persisted var picture: String
+    @Persisted var nip05: String
+    @Persisted var lud06: String
+    @Persisted var lud16: String
     @Persisted var createdAt: Date
     
-    @Persisted var foundOnRelayIds: MutableSet<String>
+    @Persisted var nip05Verified: Bool
+    
+    @Persisted var relayUrls: MutableSet<String>
     
     var bech32PublicKey: String? {
         KeyPair.bech32PublicKey(fromHex: publicKey)
+    }
+    
+    var bestPublicName: String {
+        if !nip05.isEmpty {
+            return nip05.replacingOccurrences(of: "_@", with: "")
+        } else if !name.isEmpty {
+            return name
+        } else {
+            return bech32PublicKey ?? publicKey
+        }
+    }
+    
+    var legitNipO5: Bool {
+        if let nip05Components {
+            return nip05Components.count == 2 // TODO: Better check here...
+        }
+        return false
+    }
+    
+    var nip05Components: [String]? {
+        if !nip05.isEmpty {
+            return nip05.components(separatedBy: "@")
+        }
+        return nil
+    }
+    
+    var nip05Url: URL? {
+        guard let nip05Components else { return nil }
+        if nip05Components.count != 2 {
+            return nil
+        }
+        return URL(string: "https://\(nip05Components[1])/.well-known/nostr.json?name=\(nip05Components[0])")
+    }
+    
+    func bestPublicNameIsKey() -> Bool {
+        if nip05.isEmpty && name.isEmpty {
+            return true
+        }
+        return false
     }
     
     func getLatestMessage() -> EncryptedMessage? {
@@ -32,7 +76,18 @@ class PublicKeyMetaData: Object, ObjectKeyIdentifiable {
     }
     
     func hasUnreadMessages() -> Bool {
-        return ((try? Realm().objects(EncryptedMessage.self).where({ $0.read == false }).first != nil ? true : false) != nil)
+        return ((try? Realm()
+            .objects(EncryptedMessage.self).where({ $0.read == false })
+            .first != nil ? true : false) != nil)
+    }
+    
+    func hasBeenContactBy(ownerKey: OwnerKey) -> Bool {
+        if let _ = try? Realm().objects(EncryptedMessage.self)
+            .where({ $0.publicKey == ownerKey.publicKey && $0.toPublicKey == publicKey })
+            .first {
+            return true
+        }
+        return false
     }
 
 }
@@ -52,6 +107,9 @@ extension PublicKeyMetaData {
             retval.name = contentData.name ?? ""
             retval.about = contentData.about ?? ""
             retval.picture = contentData.picture ?? ""
+            retval.lud06 = contentData.lud06 ?? ""
+            retval.lud16 = contentData.lud16 ?? ""
+            retval.nip05 = contentData.nip05 ?? ""
         }
         return retval
     }
@@ -79,5 +137,44 @@ extension PublicKeyMetaData {
         "displayName": "Jacob Davis",
         "createdAt": Date(),
     ])
+    
+    @MainActor
+    func updateNip05Verified() async {
+        
+        guard let url = nip05Url else {
+            return
+        }
+        
+        guard let namePart = nip05Components?.first else {
+            return
+        }
+        
+        let urlRequest = URLRequest(url: url)
+        if let res = try? await URLSession.shared.data(for: urlRequest) {
+            DispatchQueue.main.async {
+                let decoder = JSONDecoder()
+                if let info = try? decoder.decode(Nip05Response.self, from: res.0) {
+                    Task {
+                        if let thawed = self.thaw() {
+                            do {
+                                try await Realm().writeAsync {
+                                    thawed.nip05Verified = (info.names?[namePart] == self.publicKey)
+                                }
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    }
+                } else {
+                    print("Unable to decode relay information")
+                }
+            }
+        }
+    }
+    
+    struct Nip05Response: Codable {
+        let names: [String: String]?
+        let relays: [String: [String]]?
+    }
     
 }

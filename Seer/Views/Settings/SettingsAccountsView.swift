@@ -24,7 +24,7 @@ struct SettingsAccountsView: View {
         HStack {
             
             GroupBox {
-                List(ownerKeys) { ownerKey in
+                List(ownerKeys, selection: $selectedOwnerKey) { ownerKey in
                     SettingsAccountsListRowView(ownerKey: ownerKey, selectedOwnerKey: $selectedOwnerKey)
                 }
                 .listStyle(.bordered)
@@ -37,9 +37,12 @@ struct SettingsAccountsView: View {
                 Form {
                     
                     Section("") {
-                        LazyVStack(alignment: .center) {
-                            AvatarView(avatarUrl: selectedOwnerKey?.publicKeyMetaData?.picture ?? "", size: 75)
+                        if let selectedOwnerKey, let picture = selectedOwnerKey.publicKeyMetaData?.picture, !picture.isEmpty {
+                            LazyVStack(alignment: .center) {
+                                AvatarView(avatarUrl: picture, size: 75)
+                            }
                         }
+
                         TextField("Picture", text: .constant(selectedOwnerKey?.publicKeyMetaData?.picture ?? ""))
                     }
 

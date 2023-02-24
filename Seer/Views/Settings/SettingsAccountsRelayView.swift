@@ -40,14 +40,19 @@ struct SettingsAccountsRelayView: View {
                         set: {
                            if let index = relayModels.firstIndex(where: { $0.id == relayModel.id }) {
                                relayModels[index].metaDataIsOn = $0
+                               print(relayModels[index].metaDataIsOn)
                                if let realm = try? Realm(), let ownerKey {
                                    realm.writeAsync {
-                                       let o = realm.object(ofType: OwnerKey.self, forPrimaryKey: ownerKey.publicKey)
-                                       if relayModels[index].metaDataIsOn {
-                                           o?.metaDataRelayIds.insert(relayModel.url)
-                                       } else {
-                                           o?.metaDataRelayIds.remove(relayModel.url)
+                                       if let o = realm.object(ofType: OwnerKey.self, forPrimaryKey: ownerKey.publicKey) {
+                                           if relayModels[index].metaDataIsOn {
+                                               o.metaDataRelayIds.insert(relayModel.url)
+                                               print("ADDED")
+                                           } else {
+                                               o.metaDataRelayIds.remove(relayModel.url)
+                                               print("REMOVED")
+                                           }
                                        }
+
                                    }
                                }
                            }
@@ -84,7 +89,7 @@ struct SettingsAccountsRelayView: View {
                 print("Changed here...")
             }
         }
-        .task {
+        .onAppear {
             if let ownerKey {
                 self.relayModels.removeAll()
                 let relays = Array(globalRelays)

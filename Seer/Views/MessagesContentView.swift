@@ -16,28 +16,59 @@ struct MessagesContentView: View {
     @ObservedResults(PublicKeyMetaData.self) var publicKeyMetaDataResults
     @ObservedResults(EncryptedMessage.self) var encryptedMessageResults
     
-    var filteredPublicKeyMetaData: [PublicKeyMetaData] {
+    var inboxData: [PublicKeyMetaData] {
         guard let ownerKey = navigation.sidebarValue.ownerKey else { return [] }
-        return Array(Set(Array(encryptedMessageResults
+        let messages = encryptedMessageResults
             .filter({ $0.publicKey == ownerKey.publicKey || $0.toPublicKey == ownerKey.publicKey })
-            .compactMap({ $0.getOtherPublicMetaData(whereOwnerKey: ownerKey) }))))
+        let uniquePublicKeyMetaData = Set(messages
+            .compactMap({ $0.getOtherPublicMetaData(whereOwnerKey: ownerKey) }))
+            .filter({ $0.hasBeenContactBy(ownerKey: ownerKey) })
+        return Array(uniquePublicKeyMetaData)
+            .sorted(by: { $0.getLatestMessage()?.createdAt ?? .now > $1.getLatestMessage()?.createdAt ?? .now })
+    }
+    
+    var unknownData: [PublicKeyMetaData] {
+        guard let ownerKey = navigation.sidebarValue.ownerKey else { return [] }
+        let messages = encryptedMessageResults
+            .filter({ $0.publicKey == ownerKey.publicKey || $0.toPublicKey == ownerKey.publicKey })
+        let uniquePublicKeyMetaData = Set(messages
+            .compactMap({ $0.getOtherPublicMetaData(whereOwnerKey: ownerKey) }))
+            .filter({ $0.hasBeenContactBy(ownerKey: ownerKey) == false })
+        return Array(uniquePublicKeyMetaData)
             .sorted(by: { $0.getLatestMessage()?.createdAt ?? .now > $1.getLatestMessage()?.createdAt ?? .now })
     }
     
     var body: some View {
         ZStack {
-            if filteredPublicKeyMetaData.count > 0 {
-                List(filteredPublicKeyMetaData, selection: $navigation.contentValue) { publicKeyMetaData in
-                    NavigationLink(value: Navigation.ContentValue(publicKeyMetaData: publicKeyMetaData,
-                                                                  ownerKey: navigation.sidebarValue.ownerKey)) {
-                        RootEncryptedMessageView(publicKeyMetaData: publicKeyMetaData)
+            
+            switch navigation.sidebarValue.filter {
+            case "inbox":
+                if inboxData.count > 0 {
+                    List(inboxData, selection: $navigation.contentValue) { publicKeyMetaData in
+                        NavigationLink(value: Navigation.ContentValue(publicKeyMetaData: publicKeyMetaData,
+                                                                      ownerKey: navigation.sidebarValue.ownerKey)) {
+                            RootEncryptedMessageView(publicKeyMetaData: publicKeyMetaData)
+                        }
                     }
+                } else {
+                    Text("No messages...")
                 }
-            } else {
-                Text("No messages...")
+            case "unknown":
+                if unknownData.count > 0 {
+                    List(unknownData, selection: $navigation.contentValue) { publicKeyMetaData in
+                        NavigationLink(value: Navigation.ContentValue(publicKeyMetaData: publicKeyMetaData,
+                                                                      ownerKey: navigation.sidebarValue.ownerKey)) {
+                            RootEncryptedMessageView(publicKeyMetaData: publicKeyMetaData)
+                        }
+                    }
+                } else {
+                    Text("No messages...")
+                }
+            default: Text("No messages...")
             }
+            
         }
-        .navigationSplitViewColumnWidth(350)
+        .navigationSplitViewColumnWidth(400)
     }
 }
 

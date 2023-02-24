@@ -23,8 +23,7 @@ class RelayConnection: NSObject {
 
     var authors: Set<String> = []
     
-//    var lastSeenDirectMessageToTimestamp: Timestamp?
-//    var lastSeenDirectMessageFromTimestamp: Timestamp?
+    var lastSeenDirectMessagTo: Date? = nil
     var bootstrapedDirectMessagesTo = false
     var bootstrapedDirectMessagesFrom = false
 
@@ -45,11 +44,13 @@ class RelayConnection: NSObject {
             if connected {
                 self.disconnect()
             }
-            let request = URLRequest(url: url)
-            let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
-            self.webSocketTask = session.webSocketTask(with: request)
-            self.webSocketTask?.resume()
-            self.receiveMessage()
+            //DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                let request = URLRequest(url: url)
+                let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+                self.webSocketTask = session.webSocketTask(with: request)
+                self.webSocketTask?.resume()
+                self.receiveMessage()
+            //}
         }
     }
     
@@ -63,7 +64,20 @@ class RelayConnection: NSObject {
         
         let messages = realm.objects(EncryptedMessage.self)
         let messagePublicKeys = Set(Array(messages.compactMap({ $0.toPublicKey })) + Array(messages.compactMap({ $0.publicKey })))
-        let authors = Set(Array(realm.objects(PublicKeyMetaData.self)).map({ $0.publicKey }) + messagePublicKeys)
+        var authors = Set(Array(realm.objects(PublicKeyMetaData.self)).map({ $0.publicKey }) + messagePublicKeys)
+        
+        let ownerKeys = self.realm.objects(OwnerKey.self)
+
+        authors = authors.filter { publicKey in
+            if let indexOf = ownerKeys.firstIndex(where: { ownerKey in
+                ownerKey.publicKey == publicKey
+            }) {
+                let ownerKey = ownerKeys[indexOf]
+                return ownerKey.metaDataRelayIds.contains(relayUrl)
+            } else {
+                return true
+            }
+        }
         
         if self.authors != authors {
             self.authors = authors
@@ -115,26 +129,39 @@ class RelayConnection: NSObject {
     func subscribeDirectMessages(reusingSubscription: Bool = true) {
         
         // TODO: Only get OwnerKeys that have this relay in its list
-        let ownerKeys = self.realm.objects(OwnerKey.self)
+        let ownerKeys = self.realm.objects(OwnerKey.self).filter { ownerKey in
+            return ownerKey.messageRelayIds.contains(self.relayUrl)
+        }
         
         if ownerKeys.count > 0 {
             
             let ownerPublicKeys = Array(ownerKeys.map({ $0.publicKey }))
             
+            // Grab latest message we have for this relay
+            lastSeenDirectMessagTo = realm.objects(EncryptedMessage.self)
+                .where({ $0.toPublicKey.in(ownerPublicKeys) && $0.relayUrls.contains(relayUrl) })
+                .sorted(by: { $0.createdAt < $1.createdAt})
+                .last.map({ $0.createdAt })
+            
+            var timeStamp: Timestamp? = nil
+            if let lastSeenDirectMessagTo {
+                timeStamp = Timestamp(date: lastSeenDirectMessagTo)
+            }
+
             if let directMessageToSub {
                 if reusingSubscription {
                     self.directMessageToSub = Subscription(filters: [
-                        .init(eventKinds: [.encryptedDirectMessage], pubKeyTags: ownerPublicKeys)
+                        .init(eventKinds: [.encryptedDirectMessage], pubKeyTags: ownerPublicKeys, since: timeStamp)
                     ], id: directMessageToSub.id)
                 } else {
                     unsubscribeDirectToMessages()
                     self.directMessageToSub = Subscription(filters: [
-                        .init(eventKinds: [.encryptedDirectMessage], pubKeyTags: ownerPublicKeys)
+                        .init(eventKinds: [.encryptedDirectMessage], pubKeyTags: ownerPublicKeys, since: timeStamp)
                     ])
                 }
             } else {
                 self.directMessageToSub = Subscription(filters: [
-                    .init(eventKinds: [.encryptedDirectMessage], pubKeyTags: ownerPublicKeys)
+                    .init(eventKinds: [.encryptedDirectMessage], pubKeyTags: ownerPublicKeys, since: timeStamp)
                 ])
             }
             
@@ -233,12 +260,18 @@ class RelayConnection: NSObject {
 
                     @ThreadSafe var foundPublicKeyMetaData = realm.object(ofType: PublicKeyMetaData.self, forPrimaryKey: publicKeyMetaData.publicKey)
                     if let foundPublicKeyMetaData {
+                        if !foundPublicKeyMetaData.relayUrls.contains(relayUrl) {
+                           realm.writeAsync {
+                               foundPublicKeyMetaData.relayUrls.insert(self.relayUrl)
+                           }
+                        }
                         if publicKeyMetaData.createdAt > foundPublicKeyMetaData.createdAt {
                             realm.writeAsync {
                                 self.realm.add(publicKeyMetaData, update: .modified)
                             }
                         }
                     } else {
+                        publicKeyMetaData.relayUrls.insert(relayUrl)
                         realm.writeAsync {
                             self.realm.add(publicKeyMetaData, update: .modified)
                         }
@@ -250,15 +283,16 @@ class RelayConnection: NSObject {
                     if !event.content.isEmpty, event.content.contains("?iv="), let toPublicKey = event.tags.first(where: { $0.id == "p"})?.otherInformation.first {
 
                         @ThreadSafe var foundMessage = realm.object(ofType: EncryptedMessage.self, forPrimaryKey: event.id)
+                        @ThreadSafe var foundProfile = realm.object(ofType: PublicKeyMetaData.self, forPrimaryKey: event.publicKey)
+                        @ThreadSafe var foundToProfile = realm.object(ofType: PublicKeyMetaData.self, forPrimaryKey: toPublicKey)
 
                         if foundMessage == nil {
                             let message = EncryptedMessage.create(from: event)
                             message.toPublicKey = toPublicKey
                             message.relayUrls.insert(relayUrl)
                             message.setDecryptedContent()
+                            message.read = realm.objects(OwnerKey.self).where({ $0.publicKey == event.publicKey }).first != nil // Always set ours to read
                             
-                            //print(message.decrytedContent)
-
                             realm.writeAsync {
                                 self.realm.add(message, update: .modified)
                             } onComplete: { err in
@@ -270,6 +304,20 @@ class RelayConnection: NSObject {
                         } else if let relayUrls = foundMessage?.relayUrls, !relayUrls.contains(relayUrl) {
                             realm.writeAsync {
                                 foundMessage?.relayUrls.insert(self.relayUrl)
+                            }
+                        }
+                        
+                        if foundProfile == nil && foundToProfile == nil {
+                            realm.writeAsync {
+                                self.realm.add([PublicKeyMetaData.create(withPublicKey: event.publicKey), PublicKeyMetaData.create(withPublicKey: toPublicKey)], update: .modified)
+                            }
+                        } else if foundProfile == nil {
+                            realm.writeAsync {
+                                self.realm.add(PublicKeyMetaData.create(withPublicKey: event.publicKey), update: .modified)
+                            }
+                        } else if foundToProfile == nil {
+                            realm.writeAsync {
+                                self.realm.add(PublicKeyMetaData.create(withPublicKey: toPublicKey), update: .modified)
                             }
                         }
 
@@ -303,9 +351,21 @@ class RelayConnection: NSObject {
                     }
 
                     // MARK: - Handle DM EOSE
-                    if subscriptionId == directMessageToSub?.id || subscriptionId == directMessageFromSub?.id {
-                        print("👁️ Seer => Direct Messages EOSE - Sub ID: \(subscriptionId), Relay URL: \(relayUrl)")
-                        self.subscribeProfiles()
+                    
+                    if subscriptionId == directMessageToSub?.id {
+                        self.bootstrapedDirectMessagesTo = true
+                        print("👁️ Seer => TO Direct Messages EOSE - Sub ID: \(subscriptionId)\n    Relay URL: \(relayUrl)")
+                        if self.bootstrapedDirectMessagesTo && self.bootstrapedDirectMessagesFrom {
+                            self.subscribeProfiles()
+                        }
+                    }
+                    
+                    if subscriptionId == directMessageFromSub?.id {
+                        self.bootstrapedDirectMessagesFrom = true
+                        print("👁️ Seer => FROM Direct Messages EOSE - Sub ID: \(subscriptionId)\n    Relay URL: \(relayUrl)")
+                        if self.bootstrapedDirectMessagesTo && self.bootstrapedDirectMessagesFrom {
+                            self.subscribeProfiles()
+                        }
                     }
 
                 }
@@ -352,7 +412,7 @@ class RelayConnection: NSObject {
     private func startPing() {
         DispatchQueue.main.async {
             self.pingTimer?.invalidate()
-            self.pingTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { [weak self] timer in
+            self.pingTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] timer in
                 self?.webSocketTask?.sendPing(pongReceiveHandler: { error in
                     if let error = error {
                         print("👁️ Seer => 🔌 Ping sent to Relay Connected at URL: \(self?.relayUrl ?? "") Failed with Error \(error.localizedDescription)")

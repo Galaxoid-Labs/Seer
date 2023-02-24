@@ -12,13 +12,15 @@ import KeychainAccess
 class AppState: ObservableObject {
     
     var relays: Set<RelayConnection> = []
+    var checkUnverifiedTimer: Timer?
+    var checkVerifiedTimer: Timer?
 
     static let shared = AppState()
     
     let realm: Realm
     
     private init() {
-        var config = Realm.Configuration(schemaVersion: 3)
+        var config = Realm.Configuration(schemaVersion: 12)
         config.deleteRealmIfMigrationNeeded = true
         Realm.Configuration.defaultConfiguration = config
         self.realm = try! Realm()
@@ -27,6 +29,29 @@ class AppState: ObservableObject {
 //            self.realm.deleteAll()
 //        }
 //        print(Keychain(service: "seer").allKeys())
+        DispatchQueue.main.async {
+
+            // Check eligible if not already verified at startup
+            Task {
+                await self.checkNip05UnVerified()
+            }
+
+            // Check eligible if not already verified
+            self.checkUnverifiedTimer?.invalidate()
+            self.checkUnverifiedTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { [weak self] timer in
+                Task {
+                    await self?.checkNip05UnVerified()
+                }
+            }
+
+            // Check the currently verified to see if something happend and they arent verified anymore
+            self.checkVerifiedTimer?.invalidate()
+            self.checkVerifiedTimer = Timer.scheduledTimer(withTimeInterval: 3600.0, repeats: true) { [weak self] timer in
+                Task {
+                    await self?.checkNip05Verified()
+                }
+            }
+        }
     }
     
     func bootstrapRelays() {
@@ -58,6 +83,7 @@ class AppState: ObservableObject {
         for relay in relays {
             relay.connect()
         }
+        print(self.relays.count)
     }
     
     @MainActor
@@ -71,7 +97,7 @@ class AppState: ObservableObject {
                 }
             }
             if self.realm.object(ofType: PublicKeyMetaData.self, forPrimaryKey: keyPair.publicKey) == nil {
-                try? realm.write {
+                realm.writeAsync {
                     self.realm.add(PublicKeyMetaData.create(withPublicKey: keyPair.publicKey))
                 }
             }
@@ -90,6 +116,33 @@ class AppState: ObservableObject {
             for relay in relays {
                 group.addTask {
                     await relay.updateInfo()
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    func checkNip05Verified() async -> Void {
+        let publicKeyMetaDatas = self.realm.objects(PublicKeyMetaData.self).where({ $0.nip05Verified == true })
+        await withTaskGroup(of: Void.self) { group in
+            for publicKeyMetaData in publicKeyMetaDatas {
+                group.addTask {
+                    await publicKeyMetaData.updateNip05Verified()
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    func checkNip05UnVerified() async -> Void {
+        let publicKeyMetaDatas = self.realm.objects(PublicKeyMetaData.self)
+            .where({ $0.nip05Verified == false })
+        await withTaskGroup(of: Void.self) { group in
+            for publicKeyMetaData in publicKeyMetaDatas {
+                if publicKeyMetaData.legitNipO5 {
+                    group.addTask {
+                        await publicKeyMetaData.updateNip05Verified()
+                    }
                 }
             }
         }

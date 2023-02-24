@@ -22,41 +22,25 @@ struct SidebarView: View {
                 Section {
                     NavigationLink(value: Navigation.SidebarValue(filter: "inbox", ownerKey: ownerKey)) {
                         Label("Inbox", systemImage: "bubble.left")
-                            .badge(ownerKey.getTotalUnreadCount())
+                            .badge(ownerKey.getInboxUnreadCount())
                     }
                     NavigationLink(value: Navigation.SidebarValue(filter: "unknown", ownerKey: ownerKey)) {
                         Label("Unknown", systemImage: "questionmark.bubble")
+                            .badge(ownerKey.getUknownUnreadCount())
                     }
                     NavigationLink(value: Navigation.SidebarValue(filter: "hidden", ownerKey: ownerKey)) {
                         Label("Hidden", systemImage: "eye.slash")
                     }
                 } header: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "key.fill")
-                            .imageScale(.large)
-                            .frame(width: 24, height: 24)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .opacity(0.1)
-                            )
-                            .padding(4)
-                        VStack(alignment: .leading) {
-                            if let name = ownerKey.publicKeyMetaData?.name, !name.isEmpty {
-                                Text(name)
-                                    .bold()
-                                    .foregroundColor(.secondary)
-                            }
-                            Text(ownerKey.bech32PublicKey ?? "")
-                        }
-                    }
-                    .truncationMode(.middle)
-                    .padding(.trailing, 8)
+                    Text(ownerKey.bestPublicName)
+                        .truncationMode(.middle)
+                        .padding(.trailing, 8)
                 }
             }
         }
         .navigationSplitViewColumnWidth(250)
         .onChange(of: navigation.sidebarValue) { newValue in
-            navigation.contentValue = Navigation.ContentValue(publicKeyMetaData: nil, ownerKey: nil)
+            navigation.contentValue = Navigation.ContentValue(publicKeyMetaData: nil, ownerKey: newValue.ownerKey)
         }
         
     }

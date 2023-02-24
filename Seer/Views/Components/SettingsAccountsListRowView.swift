@@ -24,11 +24,7 @@ struct SettingsAccountsListRowView: View {
                 )
                 .padding(.trailing, 4)
             LazyVStack(alignment: .leading) {
-                if let name = ownerKey.publicKeyMetaData?.name, !name.isEmpty {
-                    Text(name)
-                        .bold()
-                }
-                Text(ownerKey.publicKey ?? "")
+                Text(ownerKey.bestPublicName)
                     .lineLimit(1)
             }
             .truncationMode(.middle)
