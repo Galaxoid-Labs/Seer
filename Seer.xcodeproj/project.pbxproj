@@ -8,18 +8,58 @@
 
 /* Begin PBXBuildFile section */
 		47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DE92BB341EC00A06030 /* SeerApp.swift */; };
-		47202DEC2BB341EC00A06030 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DEB2BB341EC00A06030 /* ContentView.swift */; };
+		47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DEB2BB341EC00A06030 /* MacOSRootView.swift */; };
 		47202DEE2BB341ED00A06030 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47202DED2BB341ED00A06030 /* Assets.xcassets */; };
 		47202DF22BB341ED00A06030 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47202DF12BB341ED00A06030 /* Preview Assets.xcassets */; };
+		47202DFA2BB3420B00A06030 /* NostrClient in Frameworks */ = {isa = PBXBuildFile; productRef = 47202DF92BB3420B00A06030 /* NostrClient */; };
+		47202DFC2BB4A9EA00A06030 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DFB2BB4A9EA00A06030 /* WelcomeView.swift */; };
+		47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */; };
+		47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B562C1B37F5003A1827 /* MacOSMessageDetailView.swift */; };
+		47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B592C1B3B3A003A1827 /* MacOSGroupListView.swift */; };
+		47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */; };
+		47310B5F2C208A3E003A1827 /* NostrClient in Frameworks */ = {isa = PBXBuildFile; productRef = 47310B5E2C208A3E003A1827 /* NostrClient */; };
+		47583DFB2BC45F5B001A25E2 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 47583DFA2BC45F5B001A25E2 /* KeychainAccess */; };
+		47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */; };
+		47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */; };
+		47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1E2BC47B28001A25E2 /* AppState.swift */; };
+		477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EC2C1A0C6E0016067B /* EventMessage.swift */; };
+		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; };
+		478597632BD155B900609EE2 /* SettingsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597622BD155B900609EE2 /* SettingsAccountView.swift */; };
+		478597652BD157C000609EE2 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597642BD157C000609EE2 /* PreviewData.swift */; };
+		478597682BD15EBF00609EE2 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */; };
+		4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976A2BD15EFC00609EE2 /* AvatarView.swift */; };
+		4785976E2BD1640900609EE2 /* SettingsAccountListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976D2BD1640900609EE2 /* SettingsAccountListRowView.swift */; };
+		478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976F2BD1917500609EE2 /* SimpleGroup.swift */; };
+		478894C22BCEB28D00A3A7FB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C12BCEB28D00A3A7FB /* SettingsView.swift */; };
+		478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C32BCEBB7D00A3A7FB /* Relay.swift */; };
+		47E3675A2BD039FB00FAE46D /* SettingsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E367592BD039FB00FAE46D /* SettingsRelayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		47202DE62BB341EC00A06030 /* Seer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47202DE92BB341EC00A06030 /* SeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerApp.swift; sourceTree = "<group>"; };
-		47202DEB2BB341EC00A06030 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		47202DEB2BB341EC00A06030 /* MacOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRootView.swift; sourceTree = "<group>"; };
 		47202DED2BB341ED00A06030 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47202DEF2BB341ED00A06030 /* Seer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Seer.entitlements; sourceTree = "<group>"; };
 		47202DF12BB341ED00A06030 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		47202DFB2BB4A9EA00A06030 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSGroupListRowView.swift; sourceTree = "<group>"; };
+		47310B562C1B37F5003A1827 /* MacOSMessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageDetailView.swift; sourceTree = "<group>"; };
+		47310B592C1B3B3A003A1827 /* MacOSGroupListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSGroupListView.swift; sourceTree = "<group>"; };
+		47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSidebarView.swift; sourceTree = "<group>"; };
+		47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerAccount.swift; sourceTree = "<group>"; };
+		47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
+		47583E1E2BC47B28001A25E2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		477FA2EC2C1A0C6E0016067B /* EventMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMessage.swift; sourceTree = "<group>"; };
+		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
+		478597622BD155B900609EE2 /* SettingsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountView.swift; sourceTree = "<group>"; };
+		478597642BD157C000609EE2 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		4785976A2BD15EFC00609EE2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		4785976D2BD1640900609EE2 /* SettingsAccountListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountListRowView.swift; sourceTree = "<group>"; };
+		4785976F2BD1917500609EE2 /* SimpleGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleGroup.swift; sourceTree = "<group>"; };
+		478894C12BCEB28D00A3A7FB /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		478894C32BCEBB7D00A3A7FB /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
+		47E367592BD039FB00FAE46D /* SettingsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRelayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +67,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47310B5F2C208A3E003A1827 /* NostrClient in Frameworks */,
+				478597682BD15EBF00609EE2 /* SDWebImageSwiftUI in Frameworks */,
+				47583DFB2BC45F5B001A25E2 /* KeychainAccess in Frameworks */,
+				47202DFA2BB3420B00A06030 /* NostrClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,8 +96,8 @@
 		47202DE82BB341EC00A06030 /* Seer */ = {
 			isa = PBXGroup;
 			children = (
-				47202DE92BB341EC00A06030 /* SeerApp.swift */,
-				47202DEB2BB341EC00A06030 /* ContentView.swift */,
+				47583E212BC481B2001A25E2 /* MacOS */,
+				47583E202BC481A3001A25E2 /* Shared */,
 				47202DED2BB341ED00A06030 /* Assets.xcassets */,
 				47202DEF2BB341ED00A06030 /* Seer.entitlements */,
 				47202DF02BB341ED00A06030 /* Preview Content */,
@@ -67,6 +111,88 @@
 				47202DF12BB341ED00A06030 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		47310B552C1B37C7003A1827 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				47310B562C1B37F5003A1827 /* MacOSMessageDetailView.swift */,
+				47310B592C1B3B3A003A1827 /* MacOSGroupListView.swift */,
+			);
+			path = Messages;
+			sourceTree = "<group>";
+		};
+		47310B582C1B3AE2003A1827 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */,
+				47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		47583DFC2BC45FA8001A25E2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */,
+				47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */,
+				478894C32BCEBB7D00A3A7FB /* Relay.swift */,
+				478597642BD157C000609EE2 /* PreviewData.swift */,
+				4785976F2BD1917500609EE2 /* SimpleGroup.swift */,
+				477FA2EC2C1A0C6E0016067B /* EventMessage.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		47583E202BC481A3001A25E2 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				478597692BD15EC700609EE2 /* Components */,
+				47583DFC2BC45FA8001A25E2 /* Models */,
+				47202DE92BB341EC00A06030 /* SeerApp.swift */,
+				47583E1E2BC47B28001A25E2 /* AppState.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		47583E212BC481B2001A25E2 /* MacOS */ = {
+			isa = PBXGroup;
+			children = (
+				47310B582C1B3AE2003A1827 /* Components */,
+				47310B552C1B37C7003A1827 /* Messages */,
+				478894C02BCEB27E00A3A7FB /* Settings */,
+				47202DFB2BB4A9EA00A06030 /* WelcomeView.swift */,
+				47202DEB2BB341EC00A06030 /* MacOSRootView.swift */,
+				47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */,
+			);
+			path = MacOS;
+			sourceTree = "<group>";
+		};
+		478597692BD15EC700609EE2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4785976A2BD15EFC00609EE2 /* AvatarView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4785976C2BD163F900609EE2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4785976D2BD1640900609EE2 /* SettingsAccountListRowView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		478894C02BCEB27E00A3A7FB /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4785976C2BD163F900609EE2 /* Components */,
+				478894C12BCEB28D00A3A7FB /* SettingsView.swift */,
+				47E367592BD039FB00FAE46D /* SettingsRelayView.swift */,
+				478597622BD155B900609EE2 /* SettingsAccountView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +211,12 @@
 			dependencies = (
 			);
 			name = Seer;
+			packageProductDependencies = (
+				47202DF92BB3420B00A06030 /* NostrClient */,
+				47583DFA2BC45F5B001A25E2 /* KeychainAccess */,
+				478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */,
+				47310B5E2C208A3E003A1827 /* NostrClient */,
+			);
 			productName = Seer;
 			productReference = 47202DE62BB341EC00A06030 /* Seer.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +245,11 @@
 				Base,
 			);
 			mainGroup = 47202DDD2BB341EB00A06030;
+			packageReferences = (
+				47583DF92BC45F5B001A25E2 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+				478597662BD15EBE00609EE2 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				47310B5D2C208A3E003A1827 /* XCRemoteSwiftPackageReference "NostrClient" */,
+			);
 			productRefGroup = 47202DE72BB341EC00A06030 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -139,8 +276,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47202DEC2BB341EC00A06030 /* ContentView.swift in Sources */,
+				478894C22BCEB28D00A3A7FB /* SettingsView.swift in Sources */,
+				4785976E2BD1640900609EE2 /* SettingsAccountListRowView.swift in Sources */,
+				4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */,
+				47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */,
+				47E3675A2BD039FB00FAE46D /* SettingsRelayView.swift in Sources */,
+				47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */,
+				478597652BD157C000609EE2 /* PreviewData.swift in Sources */,
+				47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */,
+				47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */,
+				478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */,
+				478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */,
+				47202DFC2BB4A9EA00A06030 /* WelcomeView.swift in Sources */,
+				47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */,
+				47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */,
+				47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */,
+				478597632BD155B900609EE2 /* SettingsAccountView.swift in Sources */,
 				47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */,
+				47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */,
+				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
+				477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,6 +514,55 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		47310B5D2C208A3E003A1827 /* XCRemoteSwiftPackageReference "NostrClient" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Galaxoid-Labs/NostrClient";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		47583DF92BC45F5B001A25E2 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		478597662BD15EBE00609EE2 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		47202DF92BB3420B00A06030 /* NostrClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NostrClient;
+		};
+		47310B5E2C208A3E003A1827 /* NostrClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47310B5D2C208A3E003A1827 /* XCRemoteSwiftPackageReference "NostrClient" */;
+			productName = NostrClient;
+		};
+		47583DFA2BC45F5B001A25E2 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47583DF92BC45F5B001A25E2 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+		478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 478597662BD15EBE00609EE2 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 47202DDE2BB341EB00A06030 /* Project object */;
 }
