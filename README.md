@@ -3,6 +3,12 @@
 ### Here be dragons 🚨🚨🚨
 This repo is a work in progress. Its not ready for outside consumption at the moment, but will be soon. Im providing the code here simply for review and transparency. When its ready I will provide binaries for testing.
 
+![Image1](Screenshots/screen.png)
+
+![Image2](Screenshots/screen1.png)
+
+![Image3](Screenshots/screen2.png)
+
 ## Overview
 Seer is a powerful, open-source application designed for seamless group communication within the Nostr protocol utlizing [Nip29](https://github.com/nostr-protocol/nips/blob/master/29.md). Built using Swift, it is optimized for all Apple platforms including macOS, iOS, iPadOS, and potentially visionOS.
 
