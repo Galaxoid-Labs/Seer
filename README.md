@@ -16,6 +16,7 @@ Seer is a powerful, open-source application designed for seamless group communic
 - **On Device Language Conversion:** Utilzing apples on-device language api, the app can make it easy to convert conversations to the users native language.
 - **Key Metadata Management**: Profile management made easy
 - **Kind 10002 List Support:** The app respects relay lists as it should.
+- **Push Notification Support:** The app will provide optional push notification support. Allowing the user to be notified when new messages related to them arrive.
 
 ## Overall Motivation
 We rely on group communication tools that are not open and have many of the same issues as current social protocols. With Nip29, the idea is to allow people stand up their own Nostr relay's and manage their own group communication. We are striving for making nip29 relay deployment as simple as deploying a server and running a single command. Allowing the user to select configurations at deploy stage. This is crucial. We need more people running relays and less "Mega relays". This is how we decentralize. If you get banned from a group and you want your voice to be heard, standup your own relay. It should be simple.
