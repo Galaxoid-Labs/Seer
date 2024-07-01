@@ -28,23 +28,22 @@ struct MacOSRootView: View {
                     .filter({ $0.groupId == selectedGroup?.id ?? ""})
                     .sorted(by: { $0.createdAt < $1.createdAt })
     }
+    
+    @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     var body: some View {
         ZStack {
             
-            NavigationSplitView {
-
-                MacOSSidebarView()
-                    .frame(minWidth: 200)
-
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                MacOSSidebarView(columnVisibility: $columnVisibility)
+                    .frame(minWidth: 250)
             } content: {
                 MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, eventMessages: eventMessages)
                     .frame(minWidth: 300)
             } detail: {
                 MacOSMessageDetailView(selectedGroup: $selectedGroup)
-                    .navigationTitle("Hello")
+                    .frame(minWidth: 500)
             }
-            .navigationTitle("Hello")
             
         }
         .sheet(isPresented: $appState.showWelcome) {

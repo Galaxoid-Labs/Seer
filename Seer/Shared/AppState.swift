@@ -64,31 +64,72 @@ class AppState: ObservableObject {
 //        
     }
     
-    @MainActor func connectAndSubscribeAllRelays() {
+    
+    
+    @MainActor func connectAllNip29Relays() {
         let descriptor = FetchDescriptor<Relay>()
         if let relays = try? modelContainer?.mainContext.fetch(descriptor) {
             for relay in relays {
                 nostrClient.add(relayWithUrl: relay.url, subscriptions: [
-                    Subscription(filters: [
-                        EventFilter(eventKinds: [
-                            EventKind.custom(9)
-                        ], tags: [Tag(id: "h", otherInformation: "534b6866", "85536866")]),
-                    ], id: "chat-messages"),
+//                    Subscription(filters: [
+//                        EventFilter(eventKinds: [
+//                            EventKind.custom(9)
+//                        ], tags: [Tag(id: "h", otherInformation: "82a67966", "10b37966")]),
+//                    ], id: "chat-messages"),
 //                    Subscription(filters: [
 //                        EventFilter(authors: ["c5cfda98d01f152b3493d995eed4cdb4d9e55a973925f6f9ea24769a5a21e778"], eventKinds: [
 //                            EventKind.custom(10009)
 //                        ]),
 //                    ], id: "group-list"),
                     Subscription(filters: [
-                        EventFilter(eventKinds: [
-                            EventKind.custom(39000)
+                        Filter(kinds: [
+                            Kind.custom(39000)
                         ])
                     ], id: "group-list")
                 ])
-                nostrClient.connect(relayWithUrl: relay.url)
             }
             self.selectedRelay = relays.first
         }
+    }
+    
+//    @MainActor func subscribeAllGroups() {
+//        let descriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.metadataOnly == false })
+//        if let relays = try? modelContainer?.mainContext.fetch(descriptor) {
+//            for relay in relays {
+//                nostrClient.add(relayWithUrl: relay.url, subscriptions: [
+////                    Subscription(filters: [
+////                        EventFilter(eventKinds: [
+////                            EventKind.custom(9)
+////                        ], tags: [Tag(id: "h", otherInformation: "82a67966", "10b37966")]),
+////                    ], id: "chat-messages"),
+////                    Subscription(filters: [
+////                        EventFilter(authors: ["c5cfda98d01f152b3493d995eed4cdb4d9e55a973925f6f9ea24769a5a21e778"], eventKinds: [
+////                            EventKind.custom(10009)
+////                        ]),
+////                    ], id: "group-list"),
+//                    Subscription(filters: [
+//                        EventFilter(eventKinds: [
+//                            EventKind.custom(39000)
+//                        ])
+//                    ], id: "group-list")
+//                ])
+//            }
+//            self.selectedRelay = relays.first
+//        }
+//    }
+    
+    @MainActor func subscribeGroups(withRelayUrl relayUrl: String) {
+        let descriptor = FetchDescriptor<SimpleGroup>()
+        if let groups = try? modelContainer?.mainContext.fetch(descriptor) {
+            let groupIds = groups.map({ $0.id })
+            let sub = Subscription(filters: [
+                Filter(kinds: [
+                    Kind.custom(9)
+                ], tags: [Tag(id: "h", otherInformation: groupIds)]),
+            ], id: "chat-messages")
+            nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
+        }
+        
     }
     
     public func remove(relaysWithUrl relayUrls: [String]) {
@@ -209,14 +250,14 @@ extension AppState: NostrClientDelegate {
         case .event(let id, let event):
             if event.isValid() {
                 switch event.kind {
-                    case EventKind.setMetadata:
+                    case Kind.setMetadata:
                         processMetadata(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case EventKind.custom(39000):
+                    case Kind.custom(39000):
                         processChatGroupData(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case EventKind.custom(9):
+                    case Kind.custom(9):
                         processChatMessageData(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case EventKind.custom(10009): ()
-                    case EventKind.custom(10002):
+                    case Kind.custom(10009): ()
+                    case Kind.custom(10002):
                         processOwnerAccountListData(event: event, relayUrl: relayUrl, subscriptionId: id)
                     default:
                         print(event.kind)
@@ -230,6 +271,11 @@ extension AppState: NostrClientDelegate {
             print(id, acceptance, message)
         case .eose(let id):
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
+                if id == "group-list" {
+                    Task {
+                        await subscribeGroups(withRelayUrl: relayUrl)
+                    }
+                }
         case .closed(let id, let message):
             print(id, message)
         case .other(let other):

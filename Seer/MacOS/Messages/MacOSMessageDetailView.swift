@@ -40,7 +40,7 @@ struct MacOSMessageDetailView: View {
                 .opacity(0.1)
                 .edgesIgnoringSafeArea(.all)
                 .overlay(
-                    LinearGradient(gradient: Gradient(colors: [.clear, Color("Secondary").opacity(0.1)]), startPoint: .top, endPoint: .bottom)
+                    LinearGradient(gradient: Gradient(colors: [.clear, Color.secondary.opacity(0.2)]), startPoint: .bottom, endPoint: .top)
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
@@ -61,6 +61,12 @@ struct MacOSMessageDetailView: View {
                 }
             }
         }
+//        .overlay(alignment: .top, content: {
+//            Rectangle()
+//                .fill(.white)
+//                .frame(height: 40)
+//                .offset(y: -40)
+//        })
         .safeAreaInset(edge: .bottom) {
             if selectedGroup != nil {
                 ZStack(alignment: .leading) {
@@ -115,15 +121,50 @@ struct MacOSMessageDetailView: View {
             }
 
         }
-        
+        .toolbar {
+            ToolbarItemGroup(placement: .automatic) {
+                Spacer()
+//                HStack {
+//                    Button(action: { print("Add tapped") }) {
+//                        Image(systemName: "plus")
+//                    }
+//                    
+//                    Button(action: { print("Edit tapped") }) {
+//                        Image(systemName: "pencil")
+//                    }
+//                    
+//                    Button(action: { print("Share tapped") }) {
+//                        Image(systemName: "square.and.arrow.up")
+//                    }
+                
+                Button(action: {}) {
+                    Image(systemName: "info.circle")
+                        .fontWeight(.semibold)
+                        .offset(y: 1)
+                }
+
+//                    
+//                    Menu {
+//                        Button("Compact", action: { print("Delete tapped") })
+//                    } label: {
+//                        Image(systemName: "ellipsis.circle")
+//                    }
+//                }
+//                .padding(.horizontal, 6)
+//                .padding(.vertical, 2)
+//                .background(.thickMaterial)
+//                .clipShape(Capsule())
+            }
+        }
     }
     
     func send(withText text: String) {
         guard let currentOwnerAccount else { return }
         guard let key = currentOwnerAccount.getKeyPair() else { return }
         guard let relayUrl = selectedGroup?.relayUrl else { return }
+        guard let groupId = selectedGroup?.id else { return }
     
-        var event = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .custom(9), tags: [Tag(id: "h", otherInformation: "85536866")], content: text)
+        var event = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .custom(9), tags: [Tag(id: "h", otherInformation: groupId)], content: text)
         do {
             try event.sign(with: key)
         } catch {

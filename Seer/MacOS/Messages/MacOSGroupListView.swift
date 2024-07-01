@@ -22,7 +22,7 @@ struct MacOSGroupListView: View {
     }
     
     var body: some View {
-        
+       
         List(selection: $selectedGroup) {
             ForEach(groups, id: \.id) { group in
                 NavigationLink(value: group) {
@@ -31,7 +31,20 @@ struct MacOSGroupListView: View {
             }
         }
         .listStyle(.automatic)
-        
+        .toolbar {
+            ToolbarItemGroup(placement: .automatic) {
+                Spacer()
+                Button(action: { print("Add tapped") }) {
+                    Image(systemName: "plus.circle")
+                }
+                
+                if let selectedGroup {
+                    ShareLink(item: selectedGroup.relayUrl + "'" + selectedGroup.id)
+                }
+                
+            }
+            
+        }
     }
 }
 

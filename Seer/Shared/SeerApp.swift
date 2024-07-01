@@ -52,17 +52,21 @@ struct SeerApp: App {
                 .task {
                     //appState.modelContainer = PreviewData.container
                     appState.modelContainer = sharedModelContainer
-                    appState.connectAndSubscribeAllRelays()
+                    appState.connectAllNip29Relays()
                     appState.tryBootstrapingOwnerAccountMetadataRelays()
                 }
+//                .presentedWindowStyle(.automatic)
+//                .presentedWindowToolbarStyle(.automatic)
 #endif
         }
         .modelContainer(sharedModelContainer)
         .defaultSize(SeerApp.defaultSize)
 #if os(macOS)
-        .windowStyle(.titleBar)
-        //.windowToolbarStyle(.expanded)
-        //.windowToolbarStyle(.unified(showsTitle: true))
+        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unifiedCompact)
+//        .windowToolbarStyle(.expanded)
+//        //.windowToolbarStyle(.expanded)
+//        //.windowToolbarStyle(.unifiedCompact(showsTitle: true))
 #endif
         .onChange(of: scenePhase, { oldPhase, newPhase in
             switch newPhase {

@@ -11,16 +11,6 @@ import NostrClient
 
 @Model final class Relay: Identifiable {
     
-    struct RelayInformation: Codable {
-        var name: String?
-        var description: String?
-        var pubkey: String?
-        var contact: String?
-        var supported_nips: [Int]?
-        var software: String?
-        var version: String?
-    }
-    
     @Attribute(.unique) let url: String
     var name: String
     var desc: String
@@ -31,9 +21,10 @@ import NostrClient
     var version: String
     var updatedAt: Date
     var metadataOnly: Bool
+    var icon: String
     
     init(url: String, name: String = "", desc: String = "", publicKey: String = "", contact: String = "", supportedNips: Set<Int> = [],
-         software: String = "", version: String = "", updatedAt: Date = .now, metadataOnly: Bool = false) {
+         software: String = "", version: String = "", updatedAt: Date = .now, metadataOnly: Bool = false, icon: String = "") {
         self.url = url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         self.name = name
         self.desc = desc
@@ -44,6 +35,7 @@ import NostrClient
         self.version = version
         self.updatedAt = updatedAt
         self.metadataOnly = metadataOnly
+        self.icon = icon
     }
     
     var httpUrl: URL? {
@@ -57,40 +49,21 @@ import NostrClient
         return supportedNips.contains(29)
     }
     
-    func fetchRelayInfo() async -> (url: String, info: RelayInformation)? {
-        guard let httpUrl else {
-            return nil
-        }
-        
-        var urlRequest = URLRequest(url: httpUrl)
-        urlRequest.setValue("application/nostr+json", forHTTPHeaderField: "Accept")
-        
-        if let res = try? await URLSession.shared.data(for: urlRequest) {
-            let decoder = JSONDecoder()
-            let info = try? decoder.decode(RelayInformation.self, from: res.0)
-            return (url: self.url, info: info) as? (url: String, info: Relay.RelayInformation)
-        }
-        
-        return nil
-    }
-    
     func updateRelayInfo() async -> Void {
-        let relayInfo = await self.fetchRelayInfo()
-        if let relayInfo {
+        if let relayInfo = await NostrClient.fetchRelayInfo(relayUrl: url) {
             self.name = relayInfo.info.name ?? self.name
             self.desc = relayInfo.info.description ?? self.desc
-            self.publicKey = relayInfo.info.pubkey ?? self.publicKey
+            self.publicKey = relayInfo.info.publicKey ?? self.publicKey
             self.contact = relayInfo.info.contact ?? self.contact
-            if let nips = relayInfo.info.supported_nips {
-                self.supportedNips = Set(nips)
-                if !nips.contains(29) {
-                    self.metadataOnly = true
-                } else {
-                    self.metadataOnly = false
-                }
+            self.supportedNips = Set(relayInfo.info.supportedNips)
+            if self.supportedNips.contains(29) {
+                self.metadataOnly = true
+            } else {
+                self.metadataOnly = false
             }
             self.software = relayInfo.info.software ?? self.software
             self.version = relayInfo.info.version ?? self.version
+            self.icon = relayInfo.info.icon ?? self.icon
         }
     }
 
