@@ -31,37 +31,37 @@ class AppState: ObservableObject {
     }
     
     @MainActor func tryBootstrapingOwnerAccountMetadataRelays() {
-//        let accountDescriptor = FetchDescriptor<OwnerAccount>(predicate: #Predicate { $0.selected })
-//        if let account = try? modelContainer?.mainContext.fetch(accountDescriptor).first {
-//            
-//            let relaysDescriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.metadataOnly })
-//            if let relays = try? modelContainer?.mainContext.fetch(relaysDescriptor) {
-//                if relays.isEmpty {
-//                    let r = Relay(url: "wss://user.kindpag.es", metadataOnly: true)
-//                    modelContainer?.mainContext.insert(r)
-//                    tryBootstrapingOwnerAccountMetadataRelays()
-//                } else {
-//                    
-//                    for relay in relays {
-//                        nostrClient.add(relayWithUrl: relay.url, subscriptions: [
-//                            Subscription(filters: [
-//                                EventFilter(authors: [account.publicKey], eventKinds: [
-//                                    .setMetadata, .custom(10002)
-//                                ])
-//                            ], id: "owner-metadata")
-//                        ])
-//                        nostrClient.connect(relayWithUrl: relay.url)
-//                    }
-//                    
-//                }
-//            }
-//            
-//        }
-//        
-//        Task {
-//            await updateRelayInformationForAll()
-//        }
-//        
+        let accountDescriptor = FetchDescriptor<OwnerAccount>(predicate: #Predicate { $0.selected })
+        if let account = try? modelContainer?.mainContext.fetch(accountDescriptor).first {
+            
+            let relaysDescriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.metadataOnly == true })
+            if let relays = try? modelContainer?.mainContext.fetch(relaysDescriptor) {
+                if relays.isEmpty {
+                    let r = Relay(url: "wss://relay.damus.io", metadataOnly: true)
+                    modelContainer?.mainContext.insert(r)
+                    tryBootstrapingOwnerAccountMetadataRelays()
+                } else {
+                    
+                    for relay in relays {
+                        nostrClient.add(relayWithUrl: relay.url, subscriptions: [
+                            Subscription(filters: [
+                                Filter(authors: [account.publicKey], kinds: [
+                                    .setMetadata, .custom(10002)
+                                ])
+                            ], id: "owner-metadata")
+                        ])
+                        nostrClient.connect(relayWithUrl: relay.url)
+                    }
+                    
+                }
+            }
+            
+        }
+        
+        Task {
+            await updateRelayInformationForAll()
+        }
+        
     }
     
     
@@ -71,16 +71,6 @@ class AppState: ObservableObject {
         if let relays = try? modelContainer?.mainContext.fetch(descriptor) {
             for relay in relays {
                 nostrClient.add(relayWithUrl: relay.url, subscriptions: [
-//                    Subscription(filters: [
-//                        EventFilter(eventKinds: [
-//                            EventKind.custom(9)
-//                        ], tags: [Tag(id: "h", otherInformation: "82a67966", "10b37966")]),
-//                    ], id: "chat-messages"),
-//                    Subscription(filters: [
-//                        EventFilter(authors: ["c5cfda98d01f152b3493d995eed4cdb4d9e55a973925f6f9ea24769a5a21e778"], eventKinds: [
-//                            EventKind.custom(10009)
-//                        ]),
-//                    ], id: "group-list"),
                     Subscription(filters: [
                         Filter(kinds: [
                             Kind.custom(39000)
@@ -91,32 +81,6 @@ class AppState: ObservableObject {
             self.selectedRelay = relays.first
         }
     }
-    
-//    @MainActor func subscribeAllGroups() {
-//        let descriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.metadataOnly == false })
-//        if let relays = try? modelContainer?.mainContext.fetch(descriptor) {
-//            for relay in relays {
-//                nostrClient.add(relayWithUrl: relay.url, subscriptions: [
-////                    Subscription(filters: [
-////                        EventFilter(eventKinds: [
-////                            EventKind.custom(9)
-////                        ], tags: [Tag(id: "h", otherInformation: "82a67966", "10b37966")]),
-////                    ], id: "chat-messages"),
-////                    Subscription(filters: [
-////                        EventFilter(authors: ["c5cfda98d01f152b3493d995eed4cdb4d9e55a973925f6f9ea24769a5a21e778"], eventKinds: [
-////                            EventKind.custom(10009)
-////                        ]),
-////                    ], id: "group-list"),
-//                    Subscription(filters: [
-//                        EventFilter(eventKinds: [
-//                            EventKind.custom(39000)
-//                        ])
-//                    ], id: "group-list")
-//                ])
-//            }
-//            self.selectedRelay = relays.first
-//        }
-//    }
     
     @MainActor func subscribeGroups(withRelayUrl relayUrl: String) {
         let descriptor = FetchDescriptor<SimpleGroup>()

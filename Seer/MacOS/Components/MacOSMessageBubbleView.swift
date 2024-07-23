@@ -5,6 +5,7 @@
 //  Created by Jacob Davis on 6/12/24.
 //
 
+#if os(macOS)
 import SwiftUI
 import SwiftData
 import Translation
@@ -49,7 +50,7 @@ struct MacOSMessageBubbleView: View {
                     }
                 }
                 
-                VStack {
+                VStack(alignment: .leading) {
                     Text(eventMessage.contentFormatted ?? "")
                         .foregroundStyle(.white)
                 }
@@ -62,6 +63,22 @@ struct MacOSMessageBubbleView: View {
                 .onLongPressGesture {
                     showTranslation = true
                 }
+                //.frame(maxWidth: 400)
+                
+                if let links = eventMessage.urls["links"] {
+                    ForEach(links, id: \.self) { link in
+                        
+                        Link(destination: link) {
+                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
+                        }
+                        .buttonStyle(.plain)
+
+                    }
+                }
+                
+                Text(eventMessage.createdAt.formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
             }
             
@@ -74,7 +91,7 @@ struct MacOSMessageBubbleView: View {
 #Preview {
     
     let container = PreviewData.container
-    let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on?")
+    let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on? https://www.autosport.com https://galaxoidlabs.com https://opensats.org/blog/bitcoin-grants-july-2024")
     
     return ZStack {
         Image("tile_pattern_2")
@@ -101,3 +118,4 @@ struct MacOSMessageBubbleView: View {
     }
 
 }
+#endif

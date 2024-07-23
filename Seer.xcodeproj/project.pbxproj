@@ -8,33 +8,38 @@
 
 /* Begin PBXBuildFile section */
 		47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DE92BB341EC00A06030 /* SeerApp.swift */; };
-		47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DEB2BB341EC00A06030 /* MacOSRootView.swift */; };
+		47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DEB2BB341EC00A06030 /* MacOSRootView.swift */; platformFilters = (macos, ); };
 		47202DEE2BB341ED00A06030 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47202DED2BB341ED00A06030 /* Assets.xcassets */; };
 		47202DF22BB341ED00A06030 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47202DF12BB341ED00A06030 /* Preview Assets.xcassets */; };
 		47202DFA2BB3420B00A06030 /* NostrClient in Frameworks */ = {isa = PBXBuildFile; productRef = 47202DF92BB3420B00A06030 /* NostrClient */; };
-		47202DFC2BB4A9EA00A06030 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DFB2BB4A9EA00A06030 /* WelcomeView.swift */; };
-		47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */; };
-		47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B562C1B37F5003A1827 /* MacOSMessageDetailView.swift */; };
-		47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B592C1B3B3A003A1827 /* MacOSGroupListView.swift */; };
-		47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */; };
+		47202DFC2BB4A9EA00A06030 /* MacOSWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DFB2BB4A9EA00A06030 /* MacOSWelcomeView.swift */; };
+		47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */; platformFilters = (macos, ); };
+		47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B562C1B37F5003A1827 /* MacOSMessageDetailView.swift */; platformFilters = (macos, ); };
+		47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B592C1B3B3A003A1827 /* MacOSGroupListView.swift */; platformFilters = (macos, ); };
+		47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */; platformFilters = (macos, ); };
 		47310B5F2C208A3E003A1827 /* NostrClient in Frameworks */ = {isa = PBXBuildFile; productRef = 47310B5E2C208A3E003A1827 /* NostrClient */; };
 		47310B622C208B10003A1827 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 47310B602C208B10003A1827 /* README.md */; };
 		47310B632C208B10003A1827 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 47310B612C208B10003A1827 /* LICENSE */; };
+		473E426A2C347A2100282484 /* MacOSSidebarRelayListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */; platformFilters = (macos, ); };
+		473E426C2C35A2C900282484 /* LinkPreviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E426B2C35A2C900282484 /* LinkPreviewModel.swift */; };
+		473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E426D2C35A4DE00282484 /* LinkPreviewView.swift */; };
+		473E42712C35A80E00282484 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E42702C35A80E00282484 /* URL.swift */; };
 		47583DFB2BC45F5B001A25E2 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 47583DFA2BC45F5B001A25E2 /* KeychainAccess */; };
 		47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */; };
 		47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */; };
 		47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1E2BC47B28001A25E2 /* AppState.swift */; };
 		477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EC2C1A0C6E0016067B /* EventMessage.swift */; };
-		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; };
-		478597632BD155B900609EE2 /* SettingsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597622BD155B900609EE2 /* SettingsAccountView.swift */; };
+		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; platformFilters = (macos, ); };
+		478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */; };
 		478597652BD157C000609EE2 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597642BD157C000609EE2 /* PreviewData.swift */; };
 		478597682BD15EBF00609EE2 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */; };
 		4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976A2BD15EFC00609EE2 /* AvatarView.swift */; };
-		4785976E2BD1640900609EE2 /* SettingsAccountListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976D2BD1640900609EE2 /* SettingsAccountListRowView.swift */; };
+		4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */; };
 		478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976F2BD1917500609EE2 /* SimpleGroup.swift */; };
-		478894C22BCEB28D00A3A7FB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C12BCEB28D00A3A7FB /* SettingsView.swift */; };
+		478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */; };
 		478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C32BCEBB7D00A3A7FB /* Relay.swift */; };
-		47E3675A2BD039FB00FAE46D /* SettingsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E367592BD039FB00FAE46D /* SettingsRelayView.swift */; };
+		47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD662C4EF5A500C75C91 /* RootView.swift */; };
+		47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,26 +49,31 @@
 		47202DED2BB341ED00A06030 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47202DEF2BB341ED00A06030 /* Seer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Seer.entitlements; sourceTree = "<group>"; };
 		47202DF12BB341ED00A06030 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		47202DFB2BB4A9EA00A06030 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		47202DFB2BB4A9EA00A06030 /* MacOSWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSWelcomeView.swift; sourceTree = "<group>"; };
 		47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSGroupListRowView.swift; sourceTree = "<group>"; };
 		47310B562C1B37F5003A1827 /* MacOSMessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageDetailView.swift; sourceTree = "<group>"; };
 		47310B592C1B3B3A003A1827 /* MacOSGroupListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSGroupListView.swift; sourceTree = "<group>"; };
 		47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSidebarView.swift; sourceTree = "<group>"; };
 		47310B602C208B10003A1827 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		47310B612C208B10003A1827 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSidebarRelayListRowView.swift; sourceTree = "<group>"; };
+		473E426B2C35A2C900282484 /* LinkPreviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewModel.swift; sourceTree = "<group>"; };
+		473E426D2C35A4DE00282484 /* LinkPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewView.swift; sourceTree = "<group>"; };
+		473E42702C35A80E00282484 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerAccount.swift; sourceTree = "<group>"; };
 		47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
 		47583E1E2BC47B28001A25E2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		477FA2EC2C1A0C6E0016067B /* EventMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMessage.swift; sourceTree = "<group>"; };
 		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
-		478597622BD155B900609EE2 /* SettingsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountView.swift; sourceTree = "<group>"; };
+		478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountView.swift; sourceTree = "<group>"; };
 		478597642BD157C000609EE2 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		4785976A2BD15EFC00609EE2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
-		4785976D2BD1640900609EE2 /* SettingsAccountListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountListRowView.swift; sourceTree = "<group>"; };
+		4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountListRowView.swift; sourceTree = "<group>"; };
 		4785976F2BD1917500609EE2 /* SimpleGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleGroup.swift; sourceTree = "<group>"; };
-		478894C12BCEB28D00A3A7FB /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsView.swift; sourceTree = "<group>"; };
 		478894C32BCEBB7D00A3A7FB /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
-		47E367592BD039FB00FAE46D /* SettingsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRelayView.swift; sourceTree = "<group>"; };
+		47E1FD662C4EF5A500C75C91 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsRelayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,13 +143,23 @@
 			children = (
 				477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */,
 				47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */,
+				473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		473E426F2C35A7FC00282484 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				473E42702C35A80E00282484 /* URL.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		47583DFC2BC45FA8001A25E2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				473E426B2C35A2C900282484 /* LinkPreviewModel.swift */,
 				47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */,
 				47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */,
 				478894C32BCEBB7D00A3A7FB /* Relay.swift */,
@@ -153,10 +173,12 @@
 		47583E202BC481A3001A25E2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				473E426F2C35A7FC00282484 /* Extensions */,
 				478597692BD15EC700609EE2 /* Components */,
 				47583DFC2BC45FA8001A25E2 /* Models */,
 				47202DE92BB341EC00A06030 /* SeerApp.swift */,
 				47583E1E2BC47B28001A25E2 /* AppState.swift */,
+				47E1FD662C4EF5A500C75C91 /* RootView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -167,7 +189,7 @@
 				47310B582C1B3AE2003A1827 /* Components */,
 				47310B552C1B37C7003A1827 /* Messages */,
 				478894C02BCEB27E00A3A7FB /* Settings */,
-				47202DFB2BB4A9EA00A06030 /* WelcomeView.swift */,
+				47202DFB2BB4A9EA00A06030 /* MacOSWelcomeView.swift */,
 				47202DEB2BB341EC00A06030 /* MacOSRootView.swift */,
 				47310B5B2C1B3ED0003A1827 /* MacOSSidebarView.swift */,
 			);
@@ -178,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				4785976A2BD15EFC00609EE2 /* AvatarView.swift */,
+				473E426D2C35A4DE00282484 /* LinkPreviewView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -185,7 +208,7 @@
 		4785976C2BD163F900609EE2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4785976D2BD1640900609EE2 /* SettingsAccountListRowView.swift */,
+				4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -194,9 +217,9 @@
 			isa = PBXGroup;
 			children = (
 				4785976C2BD163F900609EE2 /* Components */,
-				478894C12BCEB28D00A3A7FB /* SettingsView.swift */,
-				47E367592BD039FB00FAE46D /* SettingsRelayView.swift */,
-				478597622BD155B900609EE2 /* SettingsAccountView.swift */,
+				478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */,
+				47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */,
+				478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -284,26 +307,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				478894C22BCEB28D00A3A7FB /* SettingsView.swift in Sources */,
-				4785976E2BD1640900609EE2 /* SettingsAccountListRowView.swift in Sources */,
+				473E426C2C35A2C900282484 /* LinkPreviewModel.swift in Sources */,
+				478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */,
+				4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */,
 				4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */,
+				473E426A2C347A2100282484 /* MacOSSidebarRelayListRowView.swift in Sources */,
 				47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */,
-				47E3675A2BD039FB00FAE46D /* SettingsRelayView.swift in Sources */,
+				47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */,
 				47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */,
 				478597652BD157C000609EE2 /* PreviewData.swift in Sources */,
 				47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */,
 				47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */,
 				478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */,
 				478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */,
-				47202DFC2BB4A9EA00A06030 /* WelcomeView.swift in Sources */,
+				47202DFC2BB4A9EA00A06030 /* MacOSWelcomeView.swift in Sources */,
 				47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */,
 				47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */,
 				47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */,
-				478597632BD155B900609EE2 /* SettingsAccountView.swift in Sources */,
+				478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */,
 				47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */,
 				47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */,
 				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
+				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,
 				477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */,
+				473E42712C35A80E00282484 /* URL.swift in Sources */,
+				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +465,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Seer;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -456,6 +485,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -475,6 +506,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Seer;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -494,6 +526,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

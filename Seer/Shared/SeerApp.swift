@@ -55,24 +55,28 @@ struct SeerApp: App {
                     appState.connectAllNip29Relays()
                     appState.tryBootstrapingOwnerAccountMetadataRelays()
                 }
-//                .presentedWindowStyle(.automatic)
-//                .presentedWindowToolbarStyle(.automatic)
+#else
+            RootView()
+                .environmentObject(appState)
+                .task {
+                    appState.modelContainer = sharedModelContainer
+                    appState.connectAllNip29Relays()
+                    appState.tryBootstrapingOwnerAccountMetadataRelays()
+                }
 #endif
         }
         .modelContainer(sharedModelContainer)
         .defaultSize(SeerApp.defaultSize)
 #if os(macOS)
-        .windowStyle(.hiddenTitleBar)
+        .windowStyle(.automatic)
         .windowToolbarStyle(.unifiedCompact)
-//        .windowToolbarStyle(.expanded)
-//        //.windowToolbarStyle(.expanded)
-//        //.windowToolbarStyle(.unifiedCompact(showsTitle: true))
 #endif
         .onChange(of: scenePhase, { oldPhase, newPhase in
             switch newPhase {
             case .background:
                 print("👁️ Seer => Entered Background Phase")
             case .active:
+                    //setupCatalyst()
                 print("👁️ Seer => Entered Active Phase")
                 // MACOS - Window start/not in dock
             case .inactive:
@@ -85,13 +89,14 @@ struct SeerApp: App {
         
 #if os(macOS)
         Settings {
-            SettingsView()
+            MacOSSettingsView()
                 .modelContainer(sharedModelContainer)
                 .environmentObject(appState)
         }
 #endif
         
     }
+    
 }
 
 #if os(macOS)

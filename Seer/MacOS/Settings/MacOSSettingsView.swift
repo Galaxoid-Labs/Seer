@@ -1,13 +1,13 @@
 //
-//  SettingsView.swift
+//  MacOSSettingsView.swift
 //  Seer
 //
 //  Created by Jacob Davis on 4/16/24.
 //
-
+#if os(macOS)
 import SwiftUI
 
-struct SettingsView: View {
+struct MacOSSettingsView: View {
 
     private enum Tabs: Hashable {
         case general
@@ -22,12 +22,12 @@ struct SettingsView: View {
 //                    Label("General", systemImage: "gearshape")
 //                }
 //                .tag(Tabs.general)
-            SettingsAccountView()
+            MacOSSettingsAccountView()
                 .tabItem {
                     Label("Accounts", systemImage: "person.2")
                 }
                 .tag(Tabs.accounts)
-            SettingsRelayView()
+            MacOSSettingsRelayView()
                 .tabItem {
                     Label("Network", systemImage: "network")
                 }
@@ -39,7 +39,8 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    MacOSSettingsView()
         .modelContainer(PreviewData.container)
         .environmentObject(AppState.shared)
 }
+#endif

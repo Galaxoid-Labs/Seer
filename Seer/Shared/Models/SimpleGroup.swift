@@ -40,13 +40,13 @@ import Nostr
 extension SimpleGroup {
     static func create(from event: Event, relayUrl: String) -> SimpleGroup? {
         let tags = event.tags.map({ $0 })
+        print("FUCK   +++ \(tags)")
         guard let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first else { return nil }
-        print(groupId)
         let isPublic = tags.first(where: { $0.id == "private"}) == nil
         let isOpen = tags.first(where: { $0.id == "closed" }) == nil
         let name = tags.first(where: { $0.id == "name" })?.otherInformation.first
         let about = tags.first(where: { $0.id == "about" })?.otherInformation.first
         let picture = tags.first(where: { $0.id == "picture" })?.otherInformation.first
-        return SimpleGroup(id: groupId, relayUrl: relayUrl, name: name, about: about, isPublic: isPublic, isOpen: isOpen)
+        return SimpleGroup(id: groupId, relayUrl: relayUrl, name: name, picture: picture, about: about, isPublic: isPublic, isOpen: isOpen)
     }
 }

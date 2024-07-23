@@ -4,7 +4,7 @@
 //
 //  Created by Jacob Davis on 3/26/24.
 //
-
+#if os(macOS)
 import SwiftUI
 import SwiftData
 
@@ -13,10 +13,11 @@ struct MacOSRootView: View {
     @EnvironmentObject var appState: AppState
     
     @Environment(\.modelContext) private var modelContext
+    
     @State private var selectedGroup: SimpleGroup?
-    
+    @State private var columnVisibility = NavigationSplitViewVisibility.all
+
     @Query private var ownerAccounts: [OwnerAccount]
-    
     @Query private var simpleGroups: [SimpleGroup]
     var groups: [SimpleGroup] {
         return simpleGroups.filter({ $0.relayUrl == appState.selectedRelay?.url ?? ""})
@@ -29,17 +30,18 @@ struct MacOSRootView: View {
                     .sorted(by: { $0.createdAt < $1.createdAt })
     }
     
-    @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     var body: some View {
         ZStack {
             
             NavigationSplitView(columnVisibility: $columnVisibility) {
                 MacOSSidebarView(columnVisibility: $columnVisibility)
-                    .frame(minWidth: 250)
+                    .frame(minWidth: 275)
             } content: {
                 MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, eventMessages: eventMessages)
                     .frame(minWidth: 300)
+                    .navigationTitle("Groups")
+                    .navigationSubtitle("")
             } detail: {
                 MacOSMessageDetailView(selectedGroup: $selectedGroup)
                     .frame(minWidth: 500)
@@ -47,7 +49,7 @@ struct MacOSRootView: View {
             
         }
         .sheet(isPresented: $appState.showWelcome) {
-            WelcomeView()
+            MacOSWelcomeView()
                 .frame(width: 300, height: 500)
         }
         .onAppear {
@@ -66,3 +68,4 @@ struct MacOSRootView: View {
         .environmentObject(AppState.shared)
         .frame(minWidth: 1000)
 }
+#endif

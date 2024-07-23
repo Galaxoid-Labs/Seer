@@ -1,15 +1,15 @@
 //
-//  SettingsRelayView.swift
+//  MacOSSettingsRelayView.swift
 //  Seer
 //
 //  Created by Jacob Davis on 4/17/24.
 //
-
+#if os(macOS)
 import SwiftUI
 import SwiftData
 //import SwiftyPing
 
-struct SettingsRelayView: View {
+struct MacOSSettingsRelayView: View {
     
     @EnvironmentObject private var appState: AppState
     
@@ -117,6 +117,7 @@ struct SettingsRelayView: View {
 }
 
 #Preview {
-    SettingsRelayView()
+    MacOSSettingsRelayView()
         .environmentObject(AppState.shared)
 }
+#endif

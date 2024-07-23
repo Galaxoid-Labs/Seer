@@ -5,6 +5,7 @@
 //  Created by Jacob Davis on 6/13/24.
 //
 
+#if os(macOS)
 import SwiftUI
 import SwiftData
 
@@ -51,3 +52,4 @@ struct MacOSGroupListView: View {
 //#Preview {
 //    MacOSGroupListView()
 //}
+#endif

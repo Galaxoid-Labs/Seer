@@ -4,7 +4,7 @@
 //
 //  Created by Jacob Davis on 6/12/24.
 //
-
+#if os(macOS)
 import SwiftUI
 import SwiftData
 
@@ -43,7 +43,6 @@ struct MacOSGroupListRowView: View {
     @State var selectedGroup = simpleGroupA
     
     return VStack {
-        
         List(selection: $selectedGroup) {
             NavigationLink(value: simpleGroupA) {
                 MacOSGroupListRowView(group: simpleGroupA, lastMessage: "Hey, that was cool!", lastMessageDate: .now)
@@ -51,6 +50,6 @@ struct MacOSGroupListRowView: View {
         }
         .listStyle(.plain)
         .frame(minWidth: 300)
-        
     }
 }
+#endif

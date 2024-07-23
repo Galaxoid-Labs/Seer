@@ -5,6 +5,7 @@
 //  Created by Jacob Davis on 6/13/24.
 //
 
+#if os(macOS)
 import SwiftUI
 import SwiftData
 import Nostr
@@ -29,6 +30,9 @@ struct MacOSMessageDetailView: View {
     @State private var messageText = ""
     @State private var textEditorHeight : CGFloat = 32
     @FocusState private var inputFocused: Bool
+    @State private var searchText = ""
+    
+    @State private var favoriteColor = 0
     
     private let maxHeight : CGFloat = 350
     
@@ -44,7 +48,8 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == "c5cfda98d01f152b3493d995eed4cdb4d9e55a973925f6f9ea24769a5a21e778", eventMessage: message)
+                    MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, eventMessage: message)
+
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -93,8 +98,10 @@ struct MacOSMessageDetailView: View {
                         .onChange(of: messageText) { newValue in
                             if let last = newValue.last {
                                 if last == "\n" && !CGKeyCode.kVK_Shift.isPressed {
-                                    send(withText: messageText.trimmingCharacters(in: .newlines))
-                                    messageText = ""
+                                    withAnimation {
+                                        send(withText: messageText.trimmingCharacters(in: .newlines))
+                                        messageText = ""
+                                    }
                                 }
                             }
                         }
@@ -112,8 +119,6 @@ struct MacOSMessageDetailView: View {
                             .padding()
                         }
                         .focused($inputFocused)
-                        
-
 
                  }
                 .onPreferenceChange(ViewHeightKey.self) { textEditorHeight = $0 }
@@ -123,37 +128,28 @@ struct MacOSMessageDetailView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
+                VStack(alignment: .leading) {
+                    Text(selectedGroup?.name ?? "---")
+                        .font(.headline)
+                        .bold()
+                    Text(selectedGroup?.relayUrl ?? "--")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .opacity(selectedGroup == nil ? 0.0 : 1.0)
+                Picker("What is your favorite color?", selection: $favoriteColor) {
+                    Text("Chat").tag(0)
+                    Text("Forum").tag(1)
+                }
+                .pickerStyle(.segmented)
+
                 Spacer()
-//                HStack {
-//                    Button(action: { print("Add tapped") }) {
-//                        Image(systemName: "plus")
-//                    }
-//                    
-//                    Button(action: { print("Edit tapped") }) {
-//                        Image(systemName: "pencil")
-//                    }
-//                    
-//                    Button(action: { print("Share tapped") }) {
-//                        Image(systemName: "square.and.arrow.up")
-//                    }
                 
                 Button(action: {}) {
                     Image(systemName: "info.circle")
                         .fontWeight(.semibold)
                         .offset(y: 1)
                 }
-
-//                    
-//                    Menu {
-//                        Button("Compact", action: { print("Delete tapped") })
-//                    } label: {
-//                        Image(systemName: "ellipsis.circle")
-//                    }
-//                }
-//                .padding(.horizontal, 6)
-//                .padding(.vertical, 2)
-//                .background(.thickMaterial)
-//                .clipShape(Capsule())
             }
         }
     }
@@ -200,3 +196,4 @@ extension CGKeyCode {
 #Preview {
     MacOSMessageDetailView(selectedGroup: .constant(nil))
 }
+#endif

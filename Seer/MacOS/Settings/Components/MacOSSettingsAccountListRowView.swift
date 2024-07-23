@@ -5,10 +5,11 @@
 //  Created by Jacob Davis on 4/18/24.
 //
 
+#if os(macOS)
 import SwiftUI
 import SwiftData
 
-struct SettingsAccountListRowView: View {
+struct MacOSSettingsAccountListRowView: View {
     
     var ownerKey: OwnerAccount
     @Binding var selectedOwnerAccount: OwnerAccount?
@@ -51,3 +52,4 @@ struct SettingsAccountListRowView: View {
 //#Preview {
 //    SettingsAccountListRowView()
 //}
+#endif

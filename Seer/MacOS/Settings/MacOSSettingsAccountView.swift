@@ -1,14 +1,15 @@
 //
-//  SettingsAccountView.swift
+//  MacOSSettingsAccountView.swift
 //  Seer
 //
 //  Created by Jacob Davis on 4/18/24.
 //
 
+#if os(macOS)
 import SwiftUI
 import SwiftData
 
-struct SettingsAccountView: View {
+struct MacOSSettingsAccountView: View {
     
     @EnvironmentObject private var appState: AppState
     
@@ -23,7 +24,7 @@ struct SettingsAccountView: View {
             
             GroupBox {
                 List(ownerAccounts, selection: $selectedOwnerAccount) { ownerAccount in
-                    SettingsAccountListRowView(ownerKey: ownerAccount, selectedOwnerAccount: $selectedOwnerAccount)
+                    MacOSSettingsAccountListRowView(ownerKey: ownerAccount, selectedOwnerAccount: $selectedOwnerAccount)
                 }
                 .listStyle(.bordered)
                 .frame(width: 250)
@@ -116,7 +117,8 @@ struct SettingsAccountView: View {
 }
 
 #Preview {
-    SettingsAccountView()
+    MacOSSettingsAccountView()
         .modelContainer(PreviewData.container)
         .environmentObject(AppState.shared)
 }
+#endif

@@ -45,10 +45,17 @@ import NostrClient
         return URL(string: httpUrlString)
     }
     
+    var urlStringWithoutProtocol: String {
+        return url.replacingOccurrences(of: "wss://", with: "")
+            .replacingOccurrences(of: "ws://", with: "")
+    }
+    
     func nip29Support() -> Bool {
         return supportedNips.contains(29)
     }
-    
+   
+    // TODO: Getting a crash in here randomly...
+    @MainActor
     func updateRelayInfo() async -> Void {
         if let relayInfo = await NostrClient.fetchRelayInfo(relayUrl: url) {
             self.name = relayInfo.info.name ?? self.name
@@ -57,9 +64,9 @@ import NostrClient
             self.contact = relayInfo.info.contact ?? self.contact
             self.supportedNips = Set(relayInfo.info.supportedNips)
             if self.supportedNips.contains(29) {
-                self.metadataOnly = true
-            } else {
                 self.metadataOnly = false
+            } else {
+                self.metadataOnly = true
             }
             self.software = relayInfo.info.software ?? self.software
             self.version = relayInfo.info.version ?? self.version

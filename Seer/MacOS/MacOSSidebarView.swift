@@ -5,13 +5,18 @@
 //  Created by Jacob Davis on 6/13/24.
 //
 
+#if os(macOS)
 import SwiftUI
 import SwiftData
+import SDWebImageSwiftUI
 
 struct MacOSSidebarView: View {
     
     @EnvironmentObject var appState: AppState
     @Query private var relays: [Relay]
+    var chatRelays: [Relay] {
+        return relays.filter({ $0.nip29Support() == true })
+    }
     @Binding var columnVisibility: NavigationSplitViewVisibility
     @State var tapped: Int = 0
     
@@ -24,8 +29,10 @@ struct MacOSSidebarView: View {
         
         List(selection: $appState.selectedRelay) {
             Section("Chat Relays") {
-                ForEach(relays, id: \.url) { relay in
-                    NavigationLink(relay.url, value: relay)
+                ForEach(chatRelays, id: \.url) { relay in
+                    NavigationLink(value: relay) {
+                        MacOSSidebarRelayListRowView(iconUrl: relay.icon, relayUrl: relay.urlStringWithoutProtocol)
+                    }
                 }
             }
         }
@@ -97,3 +104,4 @@ struct MacOSSidebarView: View {
 //#Preview {
 //    MacOSSidebarView()
 //}
+#endif

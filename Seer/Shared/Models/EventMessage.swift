@@ -41,6 +41,58 @@ import Nostr
         return attr
     }
     
+    var imageUrls: [URL] {
+        if let content = contentFormatted {
+            return content.runs.compactMap({
+                if let link = $0.link, link.isImageType() {
+                    return link.absoluteURL
+                }
+                return nil
+            })
+        }
+        return []
+    }
+    
+    var videoUrls: [URL] {
+        if let content = contentFormatted {
+            return content.runs.compactMap({
+                if let link = $0.link, link.isVideoType() {
+                    return link.absoluteURL
+                }
+                return nil
+            })
+        }
+        return []
+    }
+    
+    var urls: [String: [URL]] {
+        var retval: [String: [URL]] = [:]
+        if let content = contentFormatted {
+            let videoUrls = content.runs.compactMap({
+                if let link = $0.link, link.isVideoType() {
+                    return link.absoluteURL
+                }
+                return nil
+            })
+            let imageUrls = content.runs.compactMap({
+                if let link = $0.link, link.isImageType() {
+                    return link.absoluteURL
+                }
+                return nil
+            })
+            let other = content.runs.compactMap({
+                if let link = $0.link, !link.isImageType() && !link.isVideoType() {
+                    return link.absoluteURL
+                }
+                return nil
+            })
+            retval["videos"] = videoUrls
+            retval["images"] = imageUrls
+            retval["links"] = other
+        }
+        return retval
+    }
+    
 }
 
 extension EventMessage {

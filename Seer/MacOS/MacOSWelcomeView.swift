@@ -1,15 +1,16 @@
 //
-//  WelcomeView.swift
+//  MacOSWelcomeView.swift
 //  Seer
 //
 //  Created by Jacob Davis on 2/2/23.
 //
 
+#if os(macOS)
 import SwiftUI
 import Nostr
 import SwiftData
 
-struct WelcomeView: View {
+struct MacOSWelcomeView: View {
     
     @EnvironmentObject private var appState: AppState
     
@@ -136,7 +137,8 @@ struct WelcomeView: View {
 
 struct WelcomeView_Previews: PreviewProvider {
     static var previews: some View {
-        WelcomeView()
+        MacOSWelcomeView()
             .frame(width: 300, height: 500)
     }
 }
+#endif
