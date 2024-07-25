@@ -20,11 +20,12 @@ import NostrClient
     var software: String
     var version: String
     var updatedAt: Date
-    var metadataOnly: Bool
     var icon: String
+    var supportsNip1: Bool
+    var supportsNip29: Bool
     
     init(url: String, name: String = "", desc: String = "", publicKey: String = "", contact: String = "", supportedNips: Set<Int> = [],
-         software: String = "", version: String = "", updatedAt: Date = .now, metadataOnly: Bool = false, icon: String = "") {
+         software: String = "", version: String = "", updatedAt: Date = .now, icon: String = "", supportsNip1: Bool = false, supportsNip29: Bool = false) {
         self.url = url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         self.name = name
         self.desc = desc
@@ -34,8 +35,9 @@ import NostrClient
         self.software = software
         self.version = version
         self.updatedAt = updatedAt
-        self.metadataOnly = metadataOnly
         self.icon = icon
+        self.supportsNip1 = supportsNip1
+        self.supportsNip29 = supportsNip29
     }
     
     var httpUrl: URL? {
@@ -49,10 +51,6 @@ import NostrClient
         return url.replacingOccurrences(of: "wss://", with: "")
             .replacingOccurrences(of: "ws://", with: "")
     }
-    
-    func nip29Support() -> Bool {
-        return supportedNips.contains(29)
-    }
    
     // TODO: Getting a crash in here randomly...
     @MainActor
@@ -63,14 +61,11 @@ import NostrClient
             self.publicKey = relayInfo.info.publicKey ?? self.publicKey
             self.contact = relayInfo.info.contact ?? self.contact
             self.supportedNips = Set(relayInfo.info.supportedNips)
-            if self.supportedNips.contains(29) {
-                self.metadataOnly = false
-            } else {
-                self.metadataOnly = true
-            }
             self.software = relayInfo.info.software ?? self.software
             self.version = relayInfo.info.version ?? self.version
             self.icon = relayInfo.info.icon ?? self.icon
+            self.supportsNip1 = self.supportedNips.contains(1)
+            self.supportsNip29 = self.supportedNips.contains(29)
         }
     }
 

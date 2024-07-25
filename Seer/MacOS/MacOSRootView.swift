@@ -48,13 +48,14 @@ struct MacOSRootView: View {
             }
             
         }
-        .sheet(isPresented: $appState.showWelcome) {
-            MacOSWelcomeView()
-                .frame(width: 300, height: 500)
+        .sheet(isPresented: $appState.showOnboarding) {
+            //MacOSWelcomeView()
+            MacOSStartView()
+                .frame(width: 400, height: 500)
         }
         .onAppear {
             if ownerAccounts.isEmpty {
-                appState.showWelcome = true
+                appState.showOnboarding = true
             }
 //            self.appState.selectedRelay = self.appState.relays.first
 //            self.selectedGroup = groups.first

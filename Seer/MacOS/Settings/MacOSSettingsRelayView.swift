@@ -63,7 +63,7 @@ struct MacOSSettingsRelayView: View {
                 TableColumn("Description", value: \.desc)
                 TableColumn("Contact", value: \.contact)
                 TableColumn("Nip29") { v in
-                    if v.nip29Support() {
+                    if v.supportsNip29 {
                         Image(systemName: "checkmark")
                     }
                 }

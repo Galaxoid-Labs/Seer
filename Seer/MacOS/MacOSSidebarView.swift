@@ -15,7 +15,7 @@ struct MacOSSidebarView: View {
     @EnvironmentObject var appState: AppState
     @Query private var relays: [Relay]
     var chatRelays: [Relay] {
-        return relays.filter({ $0.nip29Support() == true })
+        return relays.filter({ $0.supportsNip29 })
     }
     @Binding var columnVisibility: NavigationSplitViewVisibility
     @State var tapped: Int = 0
@@ -80,7 +80,7 @@ struct MacOSSidebarView: View {
                             
                         } else {
                             
-                            Button(action: { appState.showWelcome = true }) {
+                            Button(action: { appState.showOnboarding = true }) {
                                 LazyVStack {
                                     Label("Add Account", systemImage: "person.crop.circle.badge.plus")
                                         .padding(8)

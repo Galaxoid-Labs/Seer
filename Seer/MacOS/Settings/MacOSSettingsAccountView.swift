@@ -98,7 +98,7 @@ struct MacOSSettingsAccountView: View {
                 LazyVStack {
                     Button(action: {
                         self.dismiss()
-                        appState.showWelcome = true
+                        appState.showOnboarding = true
                     }, label: {
                         Text("Add Account")
                     })

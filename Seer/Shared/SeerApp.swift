@@ -53,7 +53,7 @@ struct SeerApp: App {
                     //appState.modelContainer = PreviewData.container
                     appState.modelContainer = sharedModelContainer
                     appState.connectAllNip29Relays()
-                    appState.tryBootstrapingOwnerAccountMetadataRelays()
+                    appState.connectAllMetadataRelays()
                 }
 #else
             RootView()
@@ -61,7 +61,7 @@ struct SeerApp: App {
                 .task {
                     appState.modelContainer = sharedModelContainer
                     appState.connectAllNip29Relays()
-                    appState.tryBootstrapingOwnerAccountMetadataRelays()
+                    appState.connectAllMetadataRelays()
                 }
 #endif
         }

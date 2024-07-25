@@ -30,6 +30,7 @@
 		47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1E2BC47B28001A25E2 /* AppState.swift */; };
 		477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EC2C1A0C6E0016067B /* EventMessage.swift */; };
 		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; platformFilters = (macos, ); };
+		4783DF9F2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */; };
 		478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */; };
 		478597652BD157C000609EE2 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597642BD157C000609EE2 /* PreviewData.swift */; };
 		478597682BD15EBF00609EE2 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */; };
@@ -39,7 +40,10 @@
 		478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */; };
 		478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C32BCEBB7D00A3A7FB /* Relay.swift */; };
 		47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD662C4EF5A500C75C91 /* RootView.swift */; };
+		47E1FD6A2C50024E00C75C91 /* MacOSStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD692C50024E00C75C91 /* MacOSStartView.swift */; };
+		47E1FD6E2C50332200C75C91 /* MacOSStartAddChatRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */; };
 		47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */; };
+		47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EF157F2C52E0E40012FB46 /* MacOSStartAddAccountView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +69,7 @@
 		47583E1E2BC47B28001A25E2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		477FA2EC2C1A0C6E0016067B /* EventMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMessage.swift; sourceTree = "<group>"; };
 		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
+		4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddMetadataRelay.swift; sourceTree = "<group>"; };
 		478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountView.swift; sourceTree = "<group>"; };
 		478597642BD157C000609EE2 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		4785976A2BD15EFC00609EE2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -73,7 +78,10 @@
 		478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsView.swift; sourceTree = "<group>"; };
 		478894C32BCEBB7D00A3A7FB /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
 		47E1FD662C4EF5A500C75C91 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		47E1FD692C50024E00C75C91 /* MacOSStartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartView.swift; sourceTree = "<group>"; };
+		47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddChatRelay.swift; sourceTree = "<group>"; };
 		47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsRelayView.swift; sourceTree = "<group>"; };
+		47EF157F2C52E0E40012FB46 /* MacOSStartAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddAccountView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +194,7 @@
 		47583E212BC481B2001A25E2 /* MacOS */ = {
 			isa = PBXGroup;
 			children = (
+				47E1FD682C50021F00C75C91 /* Onboarding */,
 				47310B582C1B3AE2003A1827 /* Components */,
 				47310B552C1B37C7003A1827 /* Messages */,
 				478894C02BCEB27E00A3A7FB /* Settings */,
@@ -222,6 +231,17 @@
 				478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		47E1FD682C50021F00C75C91 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				47E1FD692C50024E00C75C91 /* MacOSStartView.swift */,
+				4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */,
+				47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */,
+				47EF157F2C52E0E40012FB46 /* MacOSStartAddAccountView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -317,6 +337,7 @@
 				47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */,
 				478597652BD157C000609EE2 /* PreviewData.swift in Sources */,
 				47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */,
+				4783DF9F2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift in Sources */,
 				47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */,
 				478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */,
 				478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */,
@@ -324,14 +345,17 @@
 				47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */,
 				47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */,
 				47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */,
+				47E1FD6E2C50332200C75C91 /* MacOSStartAddChatRelay.swift in Sources */,
 				478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */,
 				47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */,
+				47E1FD6A2C50024E00C75C91 /* MacOSStartView.swift in Sources */,
 				47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */,
 				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
 				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,
 				477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */,
 				473E42712C35A80E00282484 /* URL.swift in Sources */,
 				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
+				47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
