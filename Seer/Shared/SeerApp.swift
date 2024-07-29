@@ -19,7 +19,8 @@ struct SeerApp: App {
             PublicKeyMetadata.self,
             Relay.self,
             SimpleGroup.self,
-            EventMessage.self
+            EventMessage.self,
+            DBEvent.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

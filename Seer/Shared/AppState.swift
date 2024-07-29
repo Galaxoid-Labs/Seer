@@ -62,6 +62,9 @@ class AppState: ObservableObject {
             // TODO: Check that is the case... :)
             let sortedPubkeys = Array(pubkeys).sorted()
             
+            print("DIGGG")
+            print(sortedPubkeys.map({ $0 }))
+            
             for relay in relays {
                 nostrClient.add(relayWithUrl: relay.url, subscriptions: [
                     Subscription(filters: [
@@ -93,7 +96,12 @@ class AppState: ObservableObject {
                         Filter(kinds: [
                             Kind.custom(39000)
                         ])
-                    ], id: "group-list")
+                    ], id: "group-list"),
+                    Subscription(filters: [
+                        Filter(kinds: [
+                            Kind.custom(39002)
+                        ])
+                    ], id: "group-members")
                 ])
             }
             self.selectedRelay = relays.first // TODO: Need better selection here...
@@ -235,6 +243,16 @@ class AppState: ObservableObject {
             }
         }
     }
+    
+    func processDBEvent(event: Event, relayUrl: String) {
+        Task.detached {
+            if let dbEvent = DBEvent(event: event, relayUrl: relayUrl) {
+                let modelContext = self.backgroundContext()
+                modelContext?.insert(dbEvent)
+                try? modelContext?.save()
+            }
+        }
+    }
 }
 
 extension AppState: NostrClientDelegate {
@@ -253,9 +271,14 @@ extension AppState: NostrClientDelegate {
                     case Kind.custom(10009): ()
                     case Kind.custom(10002): ()
                         //processOwnerAccountListData(event: event, relayUrl: relayUrl, subscriptionId: id)
+                    case Kind.custom(39002):
+                        print(event)
                     default:
                         print(event.kind)
                 }
+                
+                processDBEvent(event: event, relayUrl: relayUrl)
+                
             } else {
                 print("\(event.id ?? "") is invalid")
             }
@@ -269,6 +292,9 @@ extension AppState: NostrClientDelegate {
                     Task {
                         await subscribeGroups(withRelayUrl: relayUrl)
                     }
+                }
+                if id == "chat-messages" {
+                    // TODO: Create publickeymetadata for the event message pubkeys..
                 }
         case .closed(let id, let message):
             print(id, message)

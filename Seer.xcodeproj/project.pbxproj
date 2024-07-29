@@ -44,6 +44,7 @@
 		47E1FD6E2C50332200C75C91 /* MacOSStartAddChatRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */; };
 		47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */; };
 		47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EF157F2C52E0E40012FB46 /* MacOSStartAddAccountView.swift */; };
+		47EF15822C57F95E0012FB46 /* DBEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47EF15812C57F95E0012FB46 /* DBEvent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +83,7 @@
 		47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddChatRelay.swift; sourceTree = "<group>"; };
 		47E367592BD039FB00FAE46D /* MacOSSettingsRelayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsRelayView.swift; sourceTree = "<group>"; };
 		47EF157F2C52E0E40012FB46 /* MacOSStartAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddAccountView.swift; sourceTree = "<group>"; };
+		47EF15812C57F95E0012FB46 /* DBEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBEvent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +176,7 @@
 				478597642BD157C000609EE2 /* PreviewData.swift */,
 				4785976F2BD1917500609EE2 /* SimpleGroup.swift */,
 				477FA2EC2C1A0C6E0016067B /* EventMessage.swift */,
+				47EF15812C57F95E0012FB46 /* DBEvent.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -353,6 +356,7 @@
 				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
 				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,
 				477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */,
+				47EF15822C57F95E0012FB46 /* DBEvent.swift in Sources */,
 				473E42712C35A80E00282484 /* URL.swift in Sources */,
 				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
 				47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */,
