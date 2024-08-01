@@ -17,6 +17,7 @@ struct MacOSGroupListView: View {
     let groups: [GroupVM]
     let chatMessages: [ChatMessageVM]
     let lastMessages: [ChatMessageVM]
+    let groupMembers: [String]
     
     func latestMessage(for groupId: String) -> ChatMessageVM? {
         return lastMessages

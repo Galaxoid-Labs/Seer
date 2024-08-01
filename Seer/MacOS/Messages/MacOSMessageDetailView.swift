@@ -16,6 +16,7 @@ struct MacOSMessageDetailView: View {
     
     @Binding var selectedGroup: GroupVM?
     let messages: [ChatMessageVM]
+    let groupMembers: [String]
    
     @Query private var ownerAccounts: [OwnerAccount]
     var currentOwnerAccount: OwnerAccount? {
@@ -70,7 +71,7 @@ struct MacOSMessageDetailView: View {
 //                .offset(y: -40)
 //        })
         .safeAreaInset(edge: .bottom) {
-            if selectedGroup != nil {
+            if selectedGroup != nil && isMember() {
                 ZStack(alignment: .leading) {
                     
                     Color(.textBackgroundColor)
@@ -134,13 +135,26 @@ struct MacOSMessageDetailView: View {
                         .foregroundStyle(.secondary)
                 }
                 .opacity(selectedGroup == nil ? 0.0 : 1.0)
-                Picker("What is your favorite color?", selection: $favoriteColor) {
-                    Text("Chat").tag(0)
-                    Text("Forum").tag(1)
-                }
-                .pickerStyle(.segmented)
+//                Picker("What is your favorite color?", selection: $favoriteColor) {
+//                    Text("Chat").tag(0)
+//                    Text("Forum").tag(1)
+//                }
+//                .pickerStyle(.segmented)
 
                 Spacer()
+                
+                if !isMember() && groupMembers.count > 0 {
+                    
+                    Button(action: {}) {
+                        Text("Join")
+                            .foregroundStyle(.white)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.blue)
+                    .cornerRadius(6)
+                }
                 
                 Button(action: {}) {
                     Image(systemName: "info.circle")
@@ -151,19 +165,41 @@ struct MacOSMessageDetailView: View {
         }
     }
     
+    func isMember() -> Bool {
+        if groupMembers.count > 0 {
+            if let currentOwnerAccount {
+                if  groupMembers.contains(currentOwnerAccount.publicKey) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
     func send(withText text: String) {
         guard let currentOwnerAccount else { return }
         guard let key = currentOwnerAccount.getKeyPair() else { return }
         guard let relayUrl = selectedGroup?.relayUrl else { return }
         guard let groupId = selectedGroup?.id else { return }
     
-        var event = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .custom(9), tags: [Tag(id: "h", otherInformation: groupId)], content: text)
+        var event = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
+                          tags: [Tag(id: "h", otherInformation: groupId)], content: text)
         do {
             try event.sign(with: key)
         } catch {
             print(error.localizedDescription)
         }
         
+//        var joinEvent = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupJoinRequest,
+//                          tags: [Tag(id: "h", otherInformation: groupId)], content: "")
+//        
+//        do {
+//            try joinEvent.sign(with: key)
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//
+//        appState.nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
         appState.nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
         
     }
@@ -190,7 +226,7 @@ extension CGKeyCode {
     }
 }
 
-#Preview {
-    MacOSMessageDetailView(selectedGroup: .constant(nil), messages: [])
-}
+//#Preview {
+//    MacOSMessageDetailView(selectedGroup: .constant(nil), messages: [])
+//}
 #endif

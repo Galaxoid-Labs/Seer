@@ -25,7 +25,7 @@ struct MacOSRootView: View {
         return groupMetadataEvents.compactMap({ GroupVM(event: $0) })
     }
     
-    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage })
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage || $0.kind == kindGroupChatMessageReply })
     private var chatMessageEvents: [DBEvent]
     var chatMessages: [ChatMessageVM] {
         if selectedGroup == nil { return [] }
@@ -41,6 +41,17 @@ struct MacOSRootView: View {
             .filter({ $0.relayUrl == appState.selectedRelay?.url })
             .compactMap({ ChatMessageVM(event: $0) })
     }
+    
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupMembers }, sort: \.createdAt)
+    private var groupMemberEvents: [DBEvent]
+    var groupMembers: [String] {
+        if selectedGroup == nil { return [] }
+        let search = "d\(DBEvent.infoDelimiter)\(selectedGroup?.id ?? "")"
+        let m = groupMemberEvents.filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.hasPrefix(search) })
+        let mpk = m.map({ $0.tags.map({ $0 }).filter({ $0.id == "p" }) }).compactMap({ $0.last?.otherInformation.first })
+        let pks = Set(mpk)
+        return Array(pks)
+    }
 
     var body: some View {
         ZStack {
@@ -49,12 +60,12 @@ struct MacOSRootView: View {
                 MacOSSidebarView(columnVisibility: $columnVisibility)
                     .frame(minWidth: 275)
             } content: {
-                MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages, lastMessages: lastMessages)
+                MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages, lastMessages: lastMessages, groupMembers: groupMembers)
                     .frame(minWidth: 300)
                     .navigationTitle("Groups")
                     .navigationSubtitle("")
             } detail: {
-                MacOSMessageDetailView(selectedGroup: $selectedGroup, messages: chatMessages)
+                MacOSMessageDetailView(selectedGroup: $selectedGroup, messages: chatMessages, groupMembers: groupMembers)
                     .frame(minWidth: 500)
             }
             

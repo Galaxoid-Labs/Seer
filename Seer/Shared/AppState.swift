@@ -213,7 +213,10 @@ extension AppState: NostrClientDelegate {
         switch message {
         case .event(_, let event):
             if event.isValid() {
-                print(event.kind)
+//                if event.kind == .groupMembers {
+//                    print(event.id)
+//                    print(event.tags.map({ $0 }).filter({ $0.id == "p" }))
+//                }
                 processDBEvent(event: event, relayUrl: relayUrl)
             } else {
                 print("\(event.id ?? "") is an invalid event on \(relayUrl)")

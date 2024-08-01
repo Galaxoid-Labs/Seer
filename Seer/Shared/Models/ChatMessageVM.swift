@@ -12,6 +12,7 @@ import Nostr
 struct ChatMessageVM: Identifiable, Hashable {
     
     let id: String
+    let kind: Int
     let publicKey: String
     let createdAt: Date
     let groupId: String
@@ -21,9 +22,14 @@ struct ChatMessageVM: Identifiable, Hashable {
     let videoUrls: [URL]
     let urls: [String: [URL]]
     
-    init(id: String, publicKey: String, createdAt: Date, groupId: String, content: String,
-         contentFormated: AttributedString, imageUrls: [URL], videoUrls: [URL], urls: [String: [URL]]) {
+    var rootEventId: String?
+    var replyToEventId: String?
+
+    init(id: String, kind: Int, publicKey: String, createdAt: Date, groupId: String, content: String,
+         contentFormated: AttributedString, imageUrls: [URL], videoUrls: [URL], urls: [String: [URL]], 
+         rootEventId: String? = nil, replyToEventId: String? = nil) {
         self.id = id
+        self.kind = kind
         self.publicKey = publicKey
         self.createdAt = createdAt
         self.groupId = groupId
@@ -32,6 +38,8 @@ struct ChatMessageVM: Identifiable, Hashable {
         self.imageUrls = imageUrls
         self.videoUrls = videoUrls
         self.urls = urls
+        self.rootEventId = rootEventId
+        self.replyToEventId = replyToEventId
     }
     
     init?(event: DBEvent) {
@@ -39,6 +47,7 @@ struct ChatMessageVM: Identifiable, Hashable {
         guard let groupId = tags.first(where: { $0.id == "h" })?.otherInformation.first else { return nil }
         
         self.id = event.id
+        self.kind = event.kind
         self.publicKey = event.pubkey
         self.createdAt = event.createdAt
         self.groupId = groupId
@@ -72,6 +81,15 @@ struct ChatMessageVM: Identifiable, Hashable {
             "images": self.imageUrls,
             "links": other
         ]
+        
+        if event.kind == Int(Kind.groupChatMessageReply.id) {
+            if let root = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("root") })?.otherInformation {
+                self.rootEventId = root.first
+            }
+            if let reply = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("reply") })?.otherInformation {
+                self.replyToEventId = reply.first
+            }
+        }
         
     }
     
