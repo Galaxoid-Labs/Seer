@@ -21,12 +21,11 @@
 		47310B622C208B10003A1827 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 47310B602C208B10003A1827 /* README.md */; };
 		47310B632C208B10003A1827 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 47310B612C208B10003A1827 /* LICENSE */; };
 		473E426A2C347A2100282484 /* MacOSSidebarRelayListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */; platformFilters = (macos, ); };
-		473E426C2C35A2C900282484 /* LinkPreviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E426B2C35A2C900282484 /* LinkPreviewModel.swift */; };
+		473E426C2C35A2C900282484 /* LinkPreviewVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E426B2C35A2C900282484 /* LinkPreviewVM.swift */; };
 		473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E426D2C35A4DE00282484 /* LinkPreviewView.swift */; };
 		473E42712C35A80E00282484 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 473E42702C35A80E00282484 /* URL.swift */; };
 		47583DFB2BC45F5B001A25E2 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 47583DFA2BC45F5B001A25E2 /* KeychainAccess */; };
 		47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */; };
-		47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */; };
 		47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1E2BC47B28001A25E2 /* AppState.swift */; };
 		475BDB522C5990AC00A12E84 /* GroupVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB512C5990AC00A12E84 /* GroupVM.swift */; };
 		475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */; };
@@ -63,11 +62,10 @@
 		47310B602C208B10003A1827 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		47310B612C208B10003A1827 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSidebarRelayListRowView.swift; sourceTree = "<group>"; };
-		473E426B2C35A2C900282484 /* LinkPreviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewModel.swift; sourceTree = "<group>"; };
+		473E426B2C35A2C900282484 /* LinkPreviewVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewVM.swift; sourceTree = "<group>"; };
 		473E426D2C35A4DE00282484 /* LinkPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewView.swift; sourceTree = "<group>"; };
 		473E42702C35A80E00282484 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerAccount.swift; sourceTree = "<group>"; };
-		47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
 		47583E1E2BC47B28001A25E2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		475BDB512C5990AC00A12E84 /* GroupVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupVM.swift; sourceTree = "<group>"; };
 		475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVM.swift; sourceTree = "<group>"; };
@@ -171,9 +169,8 @@
 		47583DFC2BC45FA8001A25E2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				473E426B2C35A2C900282484 /* LinkPreviewModel.swift */,
+				473E426B2C35A2C900282484 /* LinkPreviewVM.swift */,
 				47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */,
-				47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */,
 				478894C32BCEBB7D00A3A7FB /* Relay.swift */,
 				478597642BD157C000609EE2 /* PreviewData.swift */,
 				47EF15812C57F95E0012FB46 /* DBEvent.swift */,
@@ -333,7 +330,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				473E426C2C35A2C900282484 /* LinkPreviewModel.swift in Sources */,
+				473E426C2C35A2C900282484 /* LinkPreviewVM.swift in Sources */,
 				478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */,
 				4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */,
 				4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */,
@@ -356,7 +353,6 @@
 				47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */,
 				47E1FD6A2C50024E00C75C91 /* MacOSStartView.swift in Sources */,
 				475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */,
-				47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */,
 				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
 				475BDB522C5990AC00A12E84 /* GroupVM.swift in Sources */,
 				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,

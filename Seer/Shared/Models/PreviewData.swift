@@ -14,7 +14,6 @@ class PreviewData {
         do {
             let schema = Schema([
                 OwnerAccount.self,
-                PublicKeyMetadata.self,
                 Relay.self,
                 DBEvent.self
             ])

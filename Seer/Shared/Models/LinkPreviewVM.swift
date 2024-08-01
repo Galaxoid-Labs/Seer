@@ -1,5 +1,5 @@
 //
-//  LinkPreviewModel.swift
+//  LinkPreviewVM.swift
 //  Seer
 //
 //  Created by Jacob Davis on 7/3/24.
@@ -15,7 +15,7 @@ import AppKit
 import UIKit
 #endif
 
-final class LinkPreviewModel: ObservableObject {
+final class LinkPreviewVM: ObservableObject {
     
 #if os(macOS)
     @Published var image: NSImage?

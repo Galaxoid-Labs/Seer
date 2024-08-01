@@ -16,7 +16,6 @@ struct SeerApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             OwnerAccount.self,
-            PublicKeyMetadata.self,
             Relay.self,
             DBEvent.self
         ])

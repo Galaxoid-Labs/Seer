@@ -12,6 +12,12 @@ import KeychainAccess
 import NostrClient
 import Nostr
 
+let IdSubChatMessages = "IdSubChatMessages"
+let IdSubPublicMetadata = "IdPublicMetadata"
+let IdSubOwnerMetadata = "IdOwnerMetadata"
+let IdSubGroupList = "IdGroupList"
+let IdSubGroupMembers = "IdGroupList"
+
 class AppState: ObservableObject {
     
     var modelContainer: ModelContainer?
@@ -66,12 +72,12 @@ class AppState: ObservableObject {
                     Filter(authors: sortedPubkeys, kinds: [
                         .setMetadata,
                     ])
-                ], id: "public-metadata"),
+                ], id: IdSubPublicMetadata),
                 Subscription(filters: [
                     Filter(authors: [selectedAccount.publicKey], kinds: [
                         .groupList,
                     ])
-                ], id: "owner-metadata")
+                ], id: IdSubOwnerMetadata)
             ])
             nostrClient.connect(relayWithUrl: relay.url)
         }
@@ -80,7 +86,6 @@ class AppState: ObservableObject {
     // This function is meant to be called anytime there has been a change
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
-    // TODO: Check that is the case... :)
     @MainActor func connectAllNip29Relays() {
         let descriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.supportsNip29 })
         if let relays = try? modelContainer?.mainContext.fetch(descriptor) {
@@ -90,12 +95,12 @@ class AppState: ObservableObject {
                         Filter(kinds: [
                             Kind.groupMetadata
                         ])
-                    ], id: "group-list"),
+                    ], id: IdSubGroupList),
                     Subscription(filters: [
                         Filter(kinds: [
                             Kind.groupMembers
                         ])
-                    ], id: "group-members")
+                    ], id: IdSubGroupMembers)
                 ])
             }
             self.selectedRelay = relays.first // TODO: Need better selection here...
@@ -106,20 +111,27 @@ class AppState: ObservableObject {
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
     @MainActor func subscribeGroups(withRelayUrl relayUrl: String) {
-        let descriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindGroupMetadata && $0.relayUrl == relayUrl })
-        if let groups = try? modelContainer?.mainContext.fetch(descriptor) {
+        
+        let kindsPredicate = #Predicate<DBEvent> { $0.kind == kindGroupMetadata
+            || $0.kind == kindGroupChatMessage || $0.kind == kindGroupChatMessageReply
+            || $0.kind == kindGroupForumMessage || $0.kind == kindGroupForumMessageReply }
+        let relayPredicate = #Predicate<DBEvent> { $0.relayUrl == relayUrl }
+        
+        let descriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { kindsPredicate.evaluate($0) && relayPredicate.evaluate($0) })
+        if let events = try? modelContainer?.mainContext.fetch(descriptor) {
             
-            // TODO: Get oldest message and use until filter so we don't keep getting the same shit
-            
-            let groupIds = groups.compactMap({ GroupVM(event: $0)?.id }).sorted()
+            // Get latest message and use since filter so we don't keep getting the same shit
+            let since = events.min(by: { $0.createdAt > $1.createdAt })
+            let groupIds = events.filter({ $0.kind == kindGroupMetadata }).compactMap({ GroupVM(event: $0)?.id }).sorted()
             let sub = Subscription(filters: [
                 Filter(kinds: [
                     Kind.groupChatMessage,
                     Kind.groupChatMessageReply,
                     Kind.groupForumMessage,
                     Kind.groupForumMessageReply
-                ], tags: [Tag(id: "h", otherInformation: groupIds)]),
-            ], id: "chat-messages")
+                ], since: since?.createdAt.timestamp, tags: [Tag(id: "h", otherInformation: groupIds)]),
+            ], id: IdSubChatMessages)
+            
             nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
         }
     }
@@ -134,8 +146,7 @@ class AppState: ObservableObject {
     func removeDataFor(relayUrl: String) async -> Void {
         Task.detached {
             guard let modelContext = self.backgroundContext() else { return }
-            try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.kind == kindGroupMetadata && $0.relayUrl == relayUrl })
-            try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage && $0.relayUrl == relayUrl })
+            try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.relayUrl == relayUrl })
             try? modelContext.save()
         }
     }
@@ -202,6 +213,7 @@ extension AppState: NostrClientDelegate {
         switch message {
         case .event(_, let event):
             if event.isValid() {
+                print(event.kind)
                 processDBEvent(event: event, relayUrl: relayUrl)
             } else {
                 print("\(event.id ?? "") is an invalid event on \(relayUrl)")
@@ -212,12 +224,12 @@ extension AppState: NostrClientDelegate {
             print(id, acceptance, m)
         case .eose(let id):
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
-            if id == "group-list" {
+            if id == IdSubGroupList {
                 Task {
                     await subscribeGroups(withRelayUrl: relayUrl)
                 }
             }
-            if id == "chat-messages" {
+            if id == IdSubChatMessages {
                 // TODO: Create publickeymetadata for the event message pubkeys..
             }
         case .closed(let id, let message):

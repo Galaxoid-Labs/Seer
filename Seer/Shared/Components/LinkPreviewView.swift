@@ -11,7 +11,7 @@ import SwiftUI
 struct LinkPreviewView: View {
     
     let owner: Bool
-    @ObservedObject var viewModel: LinkPreviewModel
+    @ObservedObject var viewModel: LinkPreviewVM
 
     var body: some View {
         

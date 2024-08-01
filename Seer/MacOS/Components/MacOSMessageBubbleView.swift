@@ -14,7 +14,7 @@ struct MacOSMessageBubbleView: View {
     
     let owner: Bool
     let chatMessage: ChatMessageVM
-    @State private var publicKeyMetadata: PublicKeyMetadata?
+    @State private var publicKeyMetadata: PublicKeyMetadataVM?
     @State private var showTranslation: Bool = false
     
     var body: some View {

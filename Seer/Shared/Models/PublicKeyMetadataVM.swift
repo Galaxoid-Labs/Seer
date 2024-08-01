@@ -86,3 +86,14 @@ struct PublicKeyMetadataVM: Identifiable, Hashable {
         return bech32PublicKey
     }
 }
+
+struct MetadataContentData: Codable {
+    var name: String?
+    var about: String?
+    var picture: String?
+    var nip05: String?
+    var lud06: String?
+    var lud16: String?
+    var display_name: String?
+    var website: String?
+}
