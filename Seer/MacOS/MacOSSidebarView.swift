@@ -54,7 +54,7 @@ struct MacOSSidebarView: View {
                         
                         if let currentOwnerAccount {
 
-                            AvatarView(avatarUrl: currentOwnerAccount.publicKeyMetadata?.picture ?? "", size: 30)
+                            AvatarView(avatarUrl: "", size: 30)
                             //                            .overlay(alignment: .bottomTrailing) {
                             //                                Image(systemName: "checkmark.circle.fill")
                             //                                    .symbolRenderingMode(.multicolor)
@@ -65,7 +65,7 @@ struct MacOSSidebarView: View {
                                     .lineLimit(1)
                                     .font(.subheadline)
                                     .bold()
-                                Text(currentOwnerAccount.publicKeyMetadata?.bech32PublicKey ?? currentOwnerAccount.publicKey)
+                                Text(currentOwnerAccount.publicKey)
                                     .lineLimit(1)
                                     .font(.caption)
                                     .foregroundStyle(.tertiary)

@@ -13,10 +13,8 @@ import Translation
 struct MacOSMessageBubbleView: View {
     
     let owner: Bool
-    @Bindable var eventMessage: EventMessage
+    let chatMessage: ChatMessageVM
     @State private var publicKeyMetadata: PublicKeyMetadata?
-//    @Query var counters: [PublicKeyMetadata] 
-//    var counter: PublicKeyMetadata? { counters.first(where: { $0.publicKey == eventMessage.publicKey })}
     @State private var showTranslation: Bool = false
     
     var body: some View {
@@ -32,7 +30,7 @@ struct MacOSMessageBubbleView: View {
                 if !owner {
                     HStack {
                                             
-                        Text(publicKeyMetadata?.name ?? eventMessage.publicKey.prefix(12).lowercased())
+                        Text(publicKeyMetadata?.name ?? chatMessage.publicKey.prefix(12).lowercased())
                             .bold()
                             .padding(.leading, 8)
                         
@@ -51,7 +49,7 @@ struct MacOSMessageBubbleView: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(eventMessage.contentFormatted ?? "")
+                    Text(chatMessage.contentFormated)
                         .foregroundStyle(.white)
                 }
                 .padding(8)
@@ -59,24 +57,24 @@ struct MacOSMessageBubbleView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(owner ? .leading : .trailing, 150)
                 .translationPresentation(isPresented: $showTranslation,
-                                         text: eventMessage.content ?? "")
+                                         text: chatMessage.content)
                 .onLongPressGesture {
                     showTranslation = true
                 }
                 //.frame(maxWidth: 400)
                 
-                if let links = eventMessage.urls["links"] {
-                    ForEach(links, id: \.self) { link in
-                        
-                        Link(destination: link) {
-                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
-                        }
-                        .buttonStyle(.plain)
-
-                    }
-                }
+//                if let links = eventMessage.urls["links"] {
+//                    ForEach(links, id: \.self) { link in
+//                        
+//                        Link(destination: link) {
+//                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
+//                        }
+//                        .buttonStyle(.plain)
+//
+//                    }
+//                }
                 
-                Text(eventMessage.createdAt.formatted(date: .abbreviated, time: .shortened))
+                Text(chatMessage.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -88,34 +86,34 @@ struct MacOSMessageBubbleView: View {
     }
 }
 
-#Preview {
-    
-    let container = PreviewData.container
-    let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on? https://www.autosport.com https://galaxoidlabs.com https://opensats.org/blog/bitcoin-grants-july-2024")
-    
-    return ZStack {
-        Image("tile_pattern_2")
-            .resizable(resizingMode: .tile)
-            //.colorMultiply(Color("Secondary"))
-            .opacity(0.1)
-            .edgesIgnoringSafeArea(.all)
-            .overlay(
-                LinearGradient(gradient: Gradient(colors: [.clear, Color("Secondary").opacity(0.1)]), startPoint: .top, endPoint: .bottom)
-            )
-        
-        List {
-            MacOSMessageBubbleView(owner: false, eventMessage: messageA)
-                .modelContainer(container)
-                .environmentObject(AppState.shared)
-            
-            MacOSMessageBubbleView(owner: true, eventMessage: messageA)
-                .modelContainer(container)
-                .environmentObject(AppState.shared)
-        }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        
-    }
-
-}
+//#Preview {
+//    
+////    let container = PreviewData.container
+////    let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on? https://www.autosport.com https://galaxoidlabs.com https://opensats.org/blog/bitcoin-grants-july-2024")
+////    
+////    return ZStack {
+////        Image("tile_pattern_2")
+////            .resizable(resizingMode: .tile)
+////            //.colorMultiply(Color("Secondary"))
+////            .opacity(0.1)
+////            .edgesIgnoringSafeArea(.all)
+////            .overlay(
+////                LinearGradient(gradient: Gradient(colors: [.clear, Color("Secondary").opacity(0.1)]), startPoint: .top, endPoint: .bottom)
+////            )
+////        
+////        List {
+////            MacOSMessageBubbleView(owner: false, eventMessage: messageA)
+////                .modelContainer(container)
+////                .environmentObject(AppState.shared)
+////            
+////            MacOSMessageBubbleView(owner: true, eventMessage: messageA)
+////                .modelContainer(container)
+////                .environmentObject(AppState.shared)
+////        }
+////        .listStyle(.plain)
+////        .scrollContentBackground(.hidden)
+////        
+////    }
+//
+//}
 #endif

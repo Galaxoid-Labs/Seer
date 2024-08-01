@@ -13,12 +13,13 @@ struct MacOSGroupListView: View {
     
     @EnvironmentObject var appState: AppState
   
-    @Binding var selectedGroup: SimpleGroup?
-    let groups: [SimpleGroup]
-    let eventMessages: [EventMessage]
+    @Binding var selectedGroup: GroupVM?
+    let groups: [GroupVM]
+    let chatMessages: [ChatMessageVM]
+    let lastMessages: [ChatMessageVM]
     
-    func latestMessage(for groupId: String) -> EventMessage? {
-        return eventMessages
+    func latestMessage(for groupId: String) -> ChatMessageVM? {
+        return lastMessages
                     .filter({ $0.groupId == groupId }).sorted(by: { $0.createdAt > $1.createdAt }).first
     }
     
@@ -27,7 +28,7 @@ struct MacOSGroupListView: View {
         List(selection: $selectedGroup) {
             ForEach(groups, id: \.id) { group in
                 NavigationLink(value: group) {
-                    MacOSGroupListRowView(group: group, lastMessage: latestMessage(for: group.id)?.content, lastMessageDate: latestMessage(for: group.id)?.createdAt)
+                    MacOSGroupListRowView(group: group, lastMessage: latestMessage(for: group.id))
                 }
             }
         }
@@ -49,7 +50,4 @@ struct MacOSGroupListView: View {
     }
 }
 
-//#Preview {
-//    MacOSGroupListView()
-//}
 #endif

@@ -16,8 +16,7 @@ class PreviewData {
                 OwnerAccount.self,
                 PublicKeyMetadata.self,
                 Relay.self,
-                SimpleGroup.self,
-                EventMessage.self
+                DBEvent.self
             ])
             let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
             let container = try ModelContainer(for: schema, configurations: modelConfiguration)
@@ -26,17 +25,17 @@ class PreviewData {
             // Key      => nsec17e46mrxmnj5sdyrh5h98sw3urmplwv7lycj9jn5y7zjmc8yyh07qpf9wlj
             // PubHex   => 8c92b6ca939ba1faa8a2b1186cc12513aaf2d6b353b41bdec1ed6c69b2cd4fa8
             let ownerAccountA = OwnerAccount.restore(withPrivateKeyHexOrNsec: "nsec17e46mrxmnj5sdyrh5h98sw3urmplwv7lycj9jn5y7zjmc8yyh07qpf9wlj")!
-            let publicKeyMetadataA = PublicKeyMetadata(publicKey: "8c92b6ca939ba1faa8a2b1186cc12513aaf2d6b353b41bdec1ed6c69b2cd4fa8", 
-                                                       bech32PublicKey: ownerAccountA.getKeyPair()?.bech32PublicKey ?? "", 
-                                                       name: "Satoshi", nip05: "satoshi@bitcoin.com", createdAt: .now, nip05Verified: true)
-            ownerAccountA.publicKeyMetadata = publicKeyMetadataA
+            //let publicKeyMetadataA = PublicKeyMetadata(publicKey: "8c92b6ca939ba1faa8a2b1186cc12513aaf2d6b353b41bdec1ed6c69b2cd4fa8", 
+//                                                       bech32PublicKey: ownerAccountA.getKeyPair()?.bech32PublicKey ?? "", 
+//                                                       name: "Satoshi", nip05: "satoshi@bitcoin.com", createdAt: .now, nip05Verified: true)
+//            ownerAccountA.publicKeyMetadata = publicKeyMetadataA
             
             // Key      => nsec1j4ueeha05d6pgxtudfs59s3xf408e49c5w6uqd7lxv46wh39pdlqjp8e27
             // PubHex   => e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a
             let ownerAccountB = OwnerAccount.restore(withPrivateKeyHexOrNsec: "nsec1j4ueeha05d6pgxtudfs59s3xf408e49c5w6uqd7lxv46wh39pdlqjp8e27")!
-            let publicKeyMetadataB = PublicKeyMetadata(publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a",
-                                                       bech32PublicKey: ownerAccountB.getKeyPair()?.bech32PublicKey ?? "", name: "Cool Dude", createdAt: .now, nip05Verified: false)
-            ownerAccountB.publicKeyMetadata = publicKeyMetadataB
+//            let publicKeyMetadataB = PublicKeyMetadata(publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a",
+//                                                       bech32PublicKey: ownerAccountB.getKeyPair()?.bech32PublicKey ?? "", name: "Cool Dude", createdAt: .now, nip05Verified: false)
+//            ownerAccountB.publicKeyMetadata = publicKeyMetadataB
 
             container.mainContext.insert(ownerAccountA)
             container.mainContext.insert(ownerAccountB)
@@ -47,17 +46,17 @@ class PreviewData {
             container.mainContext.insert(relayA)
             //container.mainContext.insert(relayB)
             
-            let simpleGroupA = SimpleGroup(id: "016fb665", relayUrl: "wss://groups.fiatjaf.com", name: "General", isPublic: true, isOpen: true)
-            container.mainContext.insert(simpleGroupA)
-            
-            let simpleGroupB = SimpleGroup(id: "216fb665", relayUrl: "wss://groups.fiatjaf.com", name: "Pizza", isPublic: true, isOpen: true)
-            container.mainContext.insert(simpleGroupB)
-            
-            let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on?")
-            container.mainContext.insert(messageA)
-            
-            let messageB = EventMessage(id: "abcef", relayUrl: "wss://groups.fiatjaf.com", publicKey: "8c92b6ca939ba1faa8a2b1186cc12513aaf2d6b353b41bdec1ed6c69b2cd4fa8", createdAt: .now, groupId: "016fb665", content: "I dont know?")
-            container.mainContext.insert(messageB)
+//            let simpleGroupA = SimpleGroup(id: "016fb665", relayUrl: "wss://groups.fiatjaf.com", name: "General", isPublic: true, isOpen: true)
+//            container.mainContext.insert(simpleGroupA)
+//            
+//            let simpleGroupB = SimpleGroup(id: "216fb665", relayUrl: "wss://groups.fiatjaf.com", name: "Pizza", isPublic: true, isOpen: true)
+//            container.mainContext.insert(simpleGroupB)
+//            
+//            let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on?")
+//            container.mainContext.insert(messageA)
+//            
+//            let messageB = EventMessage(id: "abcef", relayUrl: "wss://groups.fiatjaf.com", publicKey: "8c92b6ca939ba1faa8a2b1186cc12513aaf2d6b353b41bdec1ed6c69b2cd4fa8", createdAt: .now, groupId: "016fb665", content: "I dont know?")
+//            container.mainContext.insert(messageB)
 
             return container
         } catch {

@@ -33,7 +33,6 @@ class AppState: ObservableObject {
     // This function is meant to be called anytime there has been a change
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
-    // TODO: Check that is the case... :)
     @MainActor func connectAllMetadataRelays() {
         
         // Metadata relays
@@ -48,38 +47,33 @@ class AppState: ObservableObject {
         var pubkeys = Set([selectedAccount.publicKey])
         
         // Get other pubkeys
-        let otherAccountsDescriptor = FetchDescriptor<PublicKeyMetadata>()
+        let otherAccountsDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindSetMetdata || $0.kind == kindGroupChatMessage })
         if let otherAccounts = try? modelContainer?.mainContext.fetch(otherAccountsDescriptor) {
-            
             for otherAccount in otherAccounts {
-                pubkeys.insert(otherAccount.publicKey)
+                pubkeys.insert(otherAccount.pubkey)
             }
-            
-            // sort pubkeys
-            // This should keep subscription additions from always
-            // happening since its a no op if the Subscription is equal to current
-            // subscription
-            // TODO: Check that is the case... :)
-            let sortedPubkeys = Array(pubkeys).sorted()
-            
-            print("DIGGG")
-            print(sortedPubkeys.map({ $0 }))
-            
-            for relay in relays {
-                nostrClient.add(relayWithUrl: relay.url, subscriptions: [
-                    Subscription(filters: [
-                        Filter(authors: sortedPubkeys, kinds: [
-                            .setMetadata,
-                        ])
-                    ], id: "public-metadata"),
-                    Subscription(filters: [
-                        Filter(authors: [selectedAccount.publicKey], kinds: [
-                            .custom(10002),
-                        ])
-                    ], id: "owner-metadata")
-                ])
-                nostrClient.connect(relayWithUrl: relay.url)
-            }
+        }
+        
+        // sort pubkeys
+        // This should keep subscription additions from always
+        // happening since its a no op if the Subscription is equal to current
+        // subscription
+        let sortedPubkeys = Array(pubkeys).sorted()
+        
+        for relay in relays {
+            nostrClient.add(relayWithUrl: relay.url, subscriptions: [
+                Subscription(filters: [
+                    Filter(authors: sortedPubkeys, kinds: [
+                        .setMetadata,
+                    ])
+                ], id: "public-metadata"),
+                Subscription(filters: [
+                    Filter(authors: [selectedAccount.publicKey], kinds: [
+                        .groupList,
+                    ])
+                ], id: "owner-metadata")
+            ])
+            nostrClient.connect(relayWithUrl: relay.url)
         }
     }
     
@@ -94,12 +88,12 @@ class AppState: ObservableObject {
                 nostrClient.add(relayWithUrl: relay.url, subscriptions: [
                     Subscription(filters: [
                         Filter(kinds: [
-                            Kind.custom(39000)
+                            Kind.groupMetadata
                         ])
                     ], id: "group-list"),
                     Subscription(filters: [
                         Filter(kinds: [
-                            Kind.custom(39002)
+                            Kind.groupMembers
                         ])
                     ], id: "group-members")
                 ])
@@ -111,15 +105,19 @@ class AppState: ObservableObject {
     // This function is meant to be called anytime there has been a change
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
-    // TODO: Check that is the case... :)
-    // TODO: Also we should add since filter based on last message already stored
     @MainActor func subscribeGroups(withRelayUrl relayUrl: String) {
-        let descriptor = FetchDescriptor<SimpleGroup>()
+        let descriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindGroupMetadata && $0.relayUrl == relayUrl })
         if let groups = try? modelContainer?.mainContext.fetch(descriptor) {
-            let groupIds = groups.map({ $0.id }).sorted()
+            
+            // TODO: Get oldest message and use until filter so we don't keep getting the same shit
+            
+            let groupIds = groups.compactMap({ GroupVM(event: $0)?.id }).sorted()
             let sub = Subscription(filters: [
                 Filter(kinds: [
-                    Kind.custom(9)
+                    Kind.groupChatMessage,
+                    Kind.groupChatMessageReply,
+                    Kind.groupForumMessage,
+                    Kind.groupForumMessageReply
                 ], tags: [Tag(id: "h", otherInformation: groupIds)]),
             ], id: "chat-messages")
             nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
@@ -135,167 +133,93 @@ class AppState: ObservableObject {
     @MainActor
     func removeDataFor(relayUrl: String) async -> Void {
         Task.detached {
-            let modelContext = self.backgroundContext()
-            try? modelContext?.delete(model: SimpleGroup.self, where: #Predicate { $0.relayUrl == relayUrl })
-            try? modelContext?.delete(model: EventMessage.self, where: #Predicate { $0.relayUrl == relayUrl })
-            try? modelContext?.save()
+            guard let modelContext = self.backgroundContext() else { return }
+            try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.kind == kindGroupMetadata && $0.relayUrl == relayUrl })
+            try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage && $0.relayUrl == relayUrl })
+            try? modelContext.save()
         }
     }
     
     @MainActor
     func updateRelayInformationForAll() async -> Void {
         Task.detached {
-            let relaysDescriptor = FetchDescriptor<Relay>()
-            let modelContext = self.backgroundContext()
-            if let relays = try? modelContext?.fetch(relaysDescriptor) {
-                await withTaskGroup(of: Void.self) { group in
-                    for relay in relays {
-                        group.addTask {
-                            await relay.updateRelayInfo()
-                        }
+            guard let modelContext = self.backgroundContext() else { return }
+            guard let relays = try? modelContext.fetch(FetchDescriptor<Relay>()) else { return }
+            await withTaskGroup(of: Void.self) { group in
+                for relay in relays {
+                    group.addTask {
+                        await relay.updateRelayInfo()
                     }
-                    try? modelContext?.save()
                 }
+                try? modelContext.save()
             }
         }
     }
     
     func backgroundContext() -> ModelContext? {
-        if let modelContainer {
-            return ModelContext(modelContainer)
-        }
-        return nil
+        guard let modelContainer else { return nil }
+        return ModelContext(modelContainer)
     }
     
-    func backgroundGetPublicKeyMetadata(forPublicKey publicKey: String, modelContext: ModelContext?) async -> PublicKeyMetadata? {
-        let desc = FetchDescriptor<PublicKeyMetadata>(predicate: #Predicate<PublicKeyMetadata>{ pkm in
-            pkm.publicKey == publicKey
-        })
-        return try? modelContext?.fetch(desc).first
-    }
-    
-    func backgroundGetOwnerAccount(forPublicKey publicKey: String, modelContext: ModelContext?) async -> OwnerAccount? {
+    func getOwnerAccount(forPublicKey publicKey: String, modelContext: ModelContext?) async -> OwnerAccount? {
         let desc = FetchDescriptor<OwnerAccount>(predicate: #Predicate<OwnerAccount>{ pkm in
             pkm.publicKey == publicKey
         })
         return try? modelContext?.fetch(desc).first
     }
     
-    func processMetadata(event: Event, relayUrl: String, subscriptionId: String) {
-        Task.detached {
-            let modelContext = self.backgroundContext()
-            if let ownerAccount = await self.backgroundGetOwnerAccount(forPublicKey: event.pubkey, modelContext: modelContext) {
-                if ownerAccount.publicKeyMetadata == nil {
-                    ownerAccount.publicKeyMetadata = PublicKeyMetadata.create(from: event)
-                    try? modelContext?.save()
-                }
-            } else if let publickeyMetadata = PublicKeyMetadata.create(from: event) {
-                modelContext?.insert(publickeyMetadata)
-                try? modelContext?.save()
-            }
-        }
-    }
-    
-//    func processOwnerAccountListData(event: Event, relayUrl: String, subscriptionId: String) {
-//        Task.detached {
-//            let modelContext = self.backgroundContext()
-//            if let ownerAccount = await self.backgroundGetOwnerAccount(forPublicKey: event.pubkey, modelContext: modelContext) {
-//                let tags = event.tags.map({ $0 })
-//                let rtags = tags.filter({ $0.id == "r" })
-//                if rtags.count > 0 {
-//                    if let currentMetadataRelays = await self.backgroundGetMetadataRelays(modelContext: modelContext) {
-//                        let relays = tags.compactMap({ $0.otherInformation.first?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) }) // TODO: Validate url
-//                        for relay in relays {
-//                            ownerAccount.metadataRelayIds.insert(relay)
-//                            if !currentMetadataRelays.contains(where: { $0.url == relay }) {
-//                                if let nr = Relay.createNew(withUrl: relay) {
-//                                    nr.metadataOnly = true
-//                                    modelContext?.insert(nr)
-//                                }
-//                            }
-//                        }
-//                        try? modelContext?.save()
-////                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-////                            self.tryBootstrapingOwnerAccountMetadataRelays()
-////                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
-    func processChatGroupData(event: Event, relayUrl: String, subscriptionId: String) {
-        Task.detached {
-            if let simpleGroup = SimpleGroup.create(from: event, relayUrl: relayUrl) {
-                let modelContext = self.backgroundContext()
-                modelContext?.insert(simpleGroup)
-                try? modelContext?.save()
-            }
-        }
-    }
-    
-    func processChatMessageData(event: Event, relayUrl: String, subscriptionId: String) {
-        Task.detached {
-            if let eventMessage = EventMessage.create(from: event, relayUrl: relayUrl) {
-                let modelContext = self.backgroundContext()
-                modelContext?.insert(eventMessage)
-                try? modelContext?.save()
-            }
-        }
-    }
-    
     func processDBEvent(event: Event, relayUrl: String) {
         Task.detached {
-            if let dbEvent = DBEvent(event: event, relayUrl: relayUrl) {
-                let modelContext = self.backgroundContext()
-                modelContext?.insert(dbEvent)
-                try? modelContext?.save()
-            }
+            guard let dbEvent = DBEvent(event: event, relayUrl: relayUrl) else { return }
+            guard let modelContext = self.backgroundContext() else { return }
+            
+//            let kind = Int(event.kind.id)
+//            let kindPredicate = #Predicate<DBEvent> { $0.kind == kind }
+//            let pubkeyPredicate = #Predicate<DBEvent> { $0.pubkey == event.pubkey }
+           
+            // Since replacable events have diffrent Id's
+            // We need to delete current version if it's there
+            // before inserting. Anything else with same Id
+            // will simply be overwritten
+//            switch event.kind {
+//                case Kind.setMetadata:
+//                    let combinedPredicate = #Predicate<DBEvent> { kindPredicate.evaluate($0) && pubkeyPredicate.evaluate($0) }
+//                    try? modelContext.delete(model: DBEvent.self, where: combinedPredicate)
+//                    try? modelContext.save()
+//                default: ()
+//
+//            }
+            modelContext.insert(dbEvent)
+            try? modelContext.save()
         }
     }
+    
 }
 
 extension AppState: NostrClientDelegate {
     
     func didReceive(message: Nostr.RelayMessage, relayUrl: String) {
         switch message {
-        case .event(let id, let event):
+        case .event(_, let event):
             if event.isValid() {
-                switch event.kind {
-                    case Kind.setMetadata:
-                        processMetadata(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case Kind.custom(39000):
-                        processChatGroupData(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case Kind.custom(9):
-                        processChatMessageData(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case Kind.custom(10009): ()
-                    case Kind.custom(10002): ()
-                        //processOwnerAccountListData(event: event, relayUrl: relayUrl, subscriptionId: id)
-                    case Kind.custom(39002):
-                        print(event)
-                    default:
-                        print(event.kind)
-                }
-                
                 processDBEvent(event: event, relayUrl: relayUrl)
-                
             } else {
-                print("\(event.id ?? "") is invalid")
+                print("\(event.id ?? "") is an invalid event on \(relayUrl)")
             }
         case .notice(let notice):
             print(notice)
         case .ok(let id, let acceptance, let m):
-            print(id, acceptance, message)
+            print(id, acceptance, m)
         case .eose(let id):
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
-                if id == "group-list" {
-                    Task {
-                        await subscribeGroups(withRelayUrl: relayUrl)
-                    }
+            if id == "group-list" {
+                Task {
+                    await subscribeGroups(withRelayUrl: relayUrl)
                 }
-                if id == "chat-messages" {
-                    // TODO: Create publickeymetadata for the event message pubkeys..
-                }
+            }
+            if id == "chat-messages" {
+                // TODO: Create publickeymetadata for the event message pubkeys..
+            }
         case .closed(let id, let message):
             print(id, message)
         case .other(let other):

@@ -28,7 +28,9 @@
 		47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */; };
 		47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */; };
 		47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1E2BC47B28001A25E2 /* AppState.swift */; };
-		477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EC2C1A0C6E0016067B /* EventMessage.swift */; };
+		475BDB522C5990AC00A12E84 /* GroupVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB512C5990AC00A12E84 /* GroupVM.swift */; };
+		475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */; };
+		475BDB562C5AE30300A12E84 /* PublicKeyMetadataVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */; };
 		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; platformFilters = (macos, ); };
 		4783DF9F2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */; };
 		478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */; };
@@ -36,7 +38,6 @@
 		478597682BD15EBF00609EE2 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */; };
 		4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976A2BD15EFC00609EE2 /* AvatarView.swift */; };
 		4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */; };
-		478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976F2BD1917500609EE2 /* SimpleGroup.swift */; };
 		478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */; };
 		478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C32BCEBB7D00A3A7FB /* Relay.swift */; };
 		47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD662C4EF5A500C75C91 /* RootView.swift */; };
@@ -68,14 +69,15 @@
 		47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerAccount.swift; sourceTree = "<group>"; };
 		47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
 		47583E1E2BC47B28001A25E2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		477FA2EC2C1A0C6E0016067B /* EventMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMessage.swift; sourceTree = "<group>"; };
+		475BDB512C5990AC00A12E84 /* GroupVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupVM.swift; sourceTree = "<group>"; };
+		475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVM.swift; sourceTree = "<group>"; };
+		475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadataVM.swift; sourceTree = "<group>"; };
 		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
 		4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddMetadataRelay.swift; sourceTree = "<group>"; };
 		478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountView.swift; sourceTree = "<group>"; };
 		478597642BD157C000609EE2 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		4785976A2BD15EFC00609EE2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountListRowView.swift; sourceTree = "<group>"; };
-		4785976F2BD1917500609EE2 /* SimpleGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleGroup.swift; sourceTree = "<group>"; };
 		478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsView.swift; sourceTree = "<group>"; };
 		478894C32BCEBB7D00A3A7FB /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
 		47E1FD662C4EF5A500C75C91 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -174,9 +176,10 @@
 				47583E1C2BC46539001A25E2 /* PublicKeyMetadata.swift */,
 				478894C32BCEBB7D00A3A7FB /* Relay.swift */,
 				478597642BD157C000609EE2 /* PreviewData.swift */,
-				4785976F2BD1917500609EE2 /* SimpleGroup.swift */,
-				477FA2EC2C1A0C6E0016067B /* EventMessage.swift */,
 				47EF15812C57F95E0012FB46 /* DBEvent.swift */,
+				475BDB512C5990AC00A12E84 /* GroupVM.swift */,
+				475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */,
+				475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -281,7 +284,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					47202DE52BB341EB00A06030 = {
 						CreatedOnToolsVersion = 15.3;
@@ -337,12 +340,12 @@
 				473E426A2C347A2100282484 /* MacOSSidebarRelayListRowView.swift in Sources */,
 				47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */,
 				47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */,
+				475BDB562C5AE30300A12E84 /* PublicKeyMetadataVM.swift in Sources */,
 				47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */,
 				478597652BD157C000609EE2 /* PreviewData.swift in Sources */,
 				47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */,
 				4783DF9F2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift in Sources */,
 				47310B572C1B37F5003A1827 /* MacOSMessageDetailView.swift in Sources */,
-				478597702BD1917500609EE2 /* SimpleGroup.swift in Sources */,
 				478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */,
 				47202DFC2BB4A9EA00A06030 /* MacOSWelcomeView.swift in Sources */,
 				47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */,
@@ -352,10 +355,11 @@
 				478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */,
 				47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */,
 				47E1FD6A2C50024E00C75C91 /* MacOSStartView.swift in Sources */,
+				475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */,
 				47583E1D2BC46539001A25E2 /* PublicKeyMetadata.swift in Sources */,
 				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
+				475BDB522C5990AC00A12E84 /* GroupVM.swift in Sources */,
 				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,
-				477FA2ED2C1A0C6E0016067B /* EventMessage.swift in Sources */,
 				47EF15822C57F95E0012FB46 /* DBEvent.swift in Sources */,
 				473E42712C35A80E00282484 /* URL.swift in Sources */,
 				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
@@ -400,6 +404,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -461,6 +466,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -488,6 +494,7 @@
 				CODE_SIGN_ENTITLEMENTS = Seer/Seer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Seer/Preview Content\"";
 				DEVELOPMENT_TEAM = MHMRS5FLW6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -529,6 +536,7 @@
 				CODE_SIGN_ENTITLEMENTS = Seer/Seer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Seer/Preview Content\"";
 				DEVELOPMENT_TEAM = MHMRS5FLW6;
 				ENABLE_HARDENED_RUNTIME = YES;

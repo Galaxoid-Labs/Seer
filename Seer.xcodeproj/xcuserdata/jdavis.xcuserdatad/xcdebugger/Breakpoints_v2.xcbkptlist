@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7AF9160A-5A3B-41EE-8600-CD3716DEFD63"
-            shouldBeEnabled = "Yes"
+            uuid = "3D9DD43B-6780-4BA8-9C5A-E0CB8D2AC10B"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Seer/Shared/AppState.swift"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Seer-ewmmrkstpwijwcfkqjfemyodgudy/SourcePackages/checkouts/Nostr/Sources/Nostr/Event.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "processMetadata(event:relayUrl:subscriptionId:)"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "hasValidId()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

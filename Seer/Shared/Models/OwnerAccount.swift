@@ -16,7 +16,6 @@ import Nostr
     var selected: Bool
     var metadataRelayIds: Set<String>
     var messageRelayIds: Set<String>
-    var publicKeyMetadata: PublicKeyMetadata?
     
     init(publicKey: String, selected: Bool, metadataRelayIds: Set<String>, messageRelayIds: Set<String>) {
         self.publicKey = publicKey
@@ -26,11 +25,7 @@ import Nostr
     }
     
     var bestPublicName: String {
-        if let publicKeyMetadata {
-            return publicKeyMetadata.bestPublicName
-        } else {
-            return publicKey
-        }
+        return publicKey
     }
     
     func getKeyPair() -> KeyPair? {

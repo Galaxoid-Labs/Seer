@@ -7,29 +7,40 @@
 #if os(macOS)
 import SwiftUI
 import SwiftData
+import Nostr
 
 struct MacOSRootView: View {
     
     @EnvironmentObject var appState: AppState
-    
     @Environment(\.modelContext) private var modelContext
     
-    @State private var selectedGroup: SimpleGroup?
     @State private var columnVisibility = NavigationSplitViewVisibility.all
 
+    @State private var selectedGroup: GroupVM?
     @Query private var ownerAccounts: [OwnerAccount]
-    @Query private var simpleGroups: [SimpleGroup]
-    var groups: [SimpleGroup] {
-        return simpleGroups.filter({ $0.relayUrl == appState.selectedRelay?.url ?? ""})
+    
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupMetadata }, sort: \.createdAt)
+    private var groupMetadataEvents: [DBEvent]
+    var groups: [GroupVM] {
+        return groupMetadataEvents.compactMap({ GroupVM(event: $0) })
     }
     
-    @Query private var eventMessages: [EventMessage]
-    var messages: [EventMessage] {
-        return eventMessages
-                    .filter({ $0.groupId == selectedGroup?.id ?? ""})
-                    .sorted(by: { $0.createdAt < $1.createdAt })
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage })
+    private var chatMessageEvents: [DBEvent]
+    var chatMessages: [ChatMessageVM] {
+        if selectedGroup == nil { return [] }
+        let search = "h\(DBEvent.infoDelimiter)\(selectedGroup?.id ?? "")"
+        return chatMessageEvents
+            .filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.hasPrefix(search) })
+            .compactMap({ ChatMessageVM(event: $0) })
+            .sorted(by: { $0.createdAt < $1.createdAt })
     }
     
+    var lastMessages: [ChatMessageVM] {
+        return chatMessageEvents
+            .filter({ $0.relayUrl == appState.selectedRelay?.url })
+            .compactMap({ ChatMessageVM(event: $0) })
+    }
 
     var body: some View {
         ZStack {
@@ -38,12 +49,12 @@ struct MacOSRootView: View {
                 MacOSSidebarView(columnVisibility: $columnVisibility)
                     .frame(minWidth: 275)
             } content: {
-                MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, eventMessages: eventMessages)
+                MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages, lastMessages: lastMessages)
                     .frame(minWidth: 300)
                     .navigationTitle("Groups")
                     .navigationSubtitle("")
             } detail: {
-                MacOSMessageDetailView(selectedGroup: $selectedGroup)
+                MacOSMessageDetailView(selectedGroup: $selectedGroup, messages: chatMessages)
                     .frame(minWidth: 500)
             }
             

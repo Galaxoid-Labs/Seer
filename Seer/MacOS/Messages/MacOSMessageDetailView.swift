@@ -14,16 +14,12 @@ struct MacOSMessageDetailView: View {
     
     @EnvironmentObject var appState: AppState
     
-    @Binding var selectedGroup: SimpleGroup?
+    @Binding var selectedGroup: GroupVM?
+    let messages: [ChatMessageVM]
    
     @Query private var ownerAccounts: [OwnerAccount]
     var currentOwnerAccount: OwnerAccount? {
         return ownerAccounts.first(where: { $0.selected })
-    }
-    
-    @Query private var eventMessages: [EventMessage]
-    var messages: [EventMessage] {
-        return eventMessages.filter({ $0.groupId == selectedGroup?.id ?? ""}).sorted(by: { $0.createdAt < $1.createdAt })
     }
     
     @State private var scroll: ScrollViewProxy?
@@ -48,8 +44,8 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, eventMessage: message)
-
+                    //Text(message.id)
+                    MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, chatMessage: message)
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -63,6 +59,7 @@ struct MacOSMessageDetailView: View {
                     if let last = messages.last {
                         scroll?.scrollTo(last.id, anchor: .top)
                     }
+                    print(messages.count)
                 }
             }
         }
@@ -194,6 +191,6 @@ extension CGKeyCode {
 }
 
 #Preview {
-    MacOSMessageDetailView(selectedGroup: .constant(nil))
+    MacOSMessageDetailView(selectedGroup: .constant(nil), messages: [])
 }
 #endif

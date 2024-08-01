@@ -37,36 +37,36 @@ struct MacOSSettingsAccountView: View {
                     Form {
                         
                         Section("") {
-                            if let picture = selectedOwnerAccount.publicKeyMetadata?.picture, !picture.isEmpty {
-                                LazyVStack(alignment: .center) {
-                                    AvatarView(avatarUrl: picture, size: 75)
-                                }
-                            } else {
+//                            if let picture = selectedOwnerAccount.publicKeyMetadata?.picture, !picture.isEmpty {
+//                                LazyVStack(alignment: .center) {
+//                                    AvatarView(avatarUrl: picture, size: 75)
+//                                }
+//                            } else {
                                 LazyVStack(alignment: .center) {
                                     AvatarView(avatarUrl: "", size: 75)
                                 }
-                            }
+                            //
 
-                            TextField("Picture", text: .constant(selectedOwnerAccount.publicKeyMetadata?.picture ?? ""), prompt: Text("Enter image url"))
-                        }
-
-                        Section("") {
-                            TextField("Name", text: .constant(selectedOwnerAccount.publicKeyMetadata?.name ?? ""), prompt: Text("Enter name here"))
-                            TextField("About", text: .constant(selectedOwnerAccount.publicKeyMetadata?.about ?? ""), prompt: Text("Enter about text here"))
+                            //TextField("Picture", text: .constant(""), prompt: Text("Enter image url"))
                         }
 
-                        Section("Bech32 Public Key") {
-                            Text(selectedOwnerAccount.publicKeyMetadata?.bech32PublicKey ?? "")
-                        }
-                        Section("Hex Public Key") {
-                            Text(selectedOwnerAccount.publicKey ?? "")
-                        }
-                        
-                        HStack {
-                            Text("Last updated on")
-                            Spacer()
-                            Text(selectedOwnerAccount.publicKeyMetadata?.createdAt ?? Date.now, style: .date)
-                        }
+//                        Section("") {
+//                            TextField("Name", text: .constant(selectedOwnerAccount.publicKeyMetadata?.name ?? ""), prompt: Text("Enter name here"))
+//                            TextField("About", text: .constant(selectedOwnerAccount.publicKeyMetadata?.about ?? ""), prompt: Text("Enter about text here"))
+//                        }
+//
+//                        Section("Bech32 Public Key") {
+//                            Text(selectedOwnerAccount.publicKeyMetadata?.bech32PublicKey ?? "")
+//                        }
+//                        Section("Hex Public Key") {
+//                            Text(selectedOwnerAccount.publicKey ?? "")
+//                        }
+//                        
+//                        HStack {
+//                            Text("Last updated on")
+//                            Spacer()
+//                            Text(selectedOwnerAccount.publicKeyMetadata?.createdAt ?? Date.now, style: .date)
+//                        }
                         
                         Section("Danger Zone") {
                             Button(action: {
@@ -110,7 +110,7 @@ struct MacOSSettingsAccountView: View {
         }
         .onAppear {
             self.selectedOwnerAccount = ownerAccounts.first
-            print(self.selectedOwnerAccount)
+            //print(self.selectedOwnerAccount)
         }
 
     }

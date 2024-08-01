@@ -16,7 +16,7 @@
       "location" : "https://github.com/Galaxoid-Labs/Nostr.git",
       "state" : {
         "branch" : "main",
-        "revision" : "2ba7a680a39f42927b98db38598b9e313274641b"
+        "revision" : "05607e7b8d69842c9963d664f8620d1a90fcbcdf"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/Galaxoid-Labs/NostrClient",
       "state" : {
         "branch" : "main",
-        "revision" : "d0c7dc920f194dc72ecfaac6f9444348f862d630"
+        "revision" : "8f5ad5062692fa317f755f5d00521e36babe250c"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage.git",
       "state" : {
-        "revision" : "b8523c1642f3c142b06dd98443ea7c48343a4dfd",
-        "version" : "5.19.3"
+        "revision" : "86e9185ef41c4238a93ad8efe61ddeb701e80bbf",
+        "version" : "5.19.5"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImageSwiftUI.git",
       "state" : {
-        "revision" : "02b2579a93aaa8ac0146a46f18d9056253c03096",
-        "version" : "3.1.0"
+        "revision" : "5d462f7530677ae0c2b9510c26383aa25ba48751",
+        "version" : "3.1.1"
       }
     },
     {
