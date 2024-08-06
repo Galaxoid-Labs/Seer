@@ -16,7 +16,7 @@ struct MacOSMessageDetailView: View {
     
     @Binding var selectedGroup: GroupVM?
     let messages: [ChatMessageVM]
-    let groupMembers: [String]
+    let groupMembers: [GroupMemberVM]
    
     @Query private var ownerAccounts: [OwnerAccount]
     var currentOwnerAccount: OwnerAccount? {
@@ -45,7 +45,6 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    //Text(message.id)
                     MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, chatMessage: message)
                 }
                 .listStyle(.plain)
@@ -60,7 +59,7 @@ struct MacOSMessageDetailView: View {
                     if let last = messages.last {
                         scroll?.scrollTo(last.id, anchor: .top)
                     }
-                    print(messages.count)
+                    //print(messages.count)
                 }
             }
         }
@@ -135,17 +134,14 @@ struct MacOSMessageDetailView: View {
                         .foregroundStyle(.secondary)
                 }
                 .opacity(selectedGroup == nil ? 0.0 : 1.0)
-//                Picker("What is your favorite color?", selection: $favoriteColor) {
-//                    Text("Chat").tag(0)
-//                    Text("Forum").tag(1)
-//                }
-//                .pickerStyle(.segmented)
 
                 Spacer()
                 
                 if !isMember() && groupMembers.count > 0 {
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        join()
+                    }) {
                         Text("Join")
                             .foregroundStyle(.white)
                     }
@@ -165,10 +161,44 @@ struct MacOSMessageDetailView: View {
         }
     }
     
+    func join() {
+        guard let currentOwnerAccount else { return }
+        guard let key = currentOwnerAccount.getKeyPair() else { return }
+        guard let relayUrl = selectedGroup?.relayUrl else { return }
+        guard let groupId = selectedGroup?.id else { return }
+        var joinEvent = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupJoinRequest,
+                          tags: [Tag(id: "h", otherInformation: groupId)], content: "")
+
+        do {
+            try joinEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+        appState.nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
+    }
+    
+    func leave() {
+        guard let currentOwnerAccount else { return }
+        guard let key = currentOwnerAccount.getKeyPair() else { return }
+        guard let relayUrl = selectedGroup?.relayUrl else { return }
+        guard let groupId = selectedGroup?.id else { return }
+        var joinEvent = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupRemoveUser,
+                              tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: currentOwnerAccount.publicKey)], content: "")
+
+        do {
+            try joinEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+        appState.nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
+    }
+    
     func isMember() -> Bool {
         if groupMembers.count > 0 {
             if let currentOwnerAccount {
-                if  groupMembers.contains(currentOwnerAccount.publicKey) {
+                if  groupMembers.contains(where: { $0.publicKey == currentOwnerAccount.publicKey }) {
                     return true
                 }
             }

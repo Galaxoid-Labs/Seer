@@ -31,7 +31,7 @@ struct MacOSRootView: View {
         if selectedGroup == nil { return [] }
         let search = "h\(DBEvent.infoDelimiter)\(selectedGroup?.id ?? "")"
         return chatMessageEvents
-            .filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.hasPrefix(search) })
+            .filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.contains(search) })
             .compactMap({ ChatMessageVM(event: $0) })
             .sorted(by: { $0.createdAt < $1.createdAt })
     }
@@ -44,13 +44,18 @@ struct MacOSRootView: View {
     
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupMembers }, sort: \.createdAt)
     private var groupMemberEvents: [DBEvent]
-    var groupMembers: [String] {
+    var groupMembers: [GroupMemberVM] {
         if selectedGroup == nil { return [] }
         let search = "d\(DBEvent.infoDelimiter)\(selectedGroup?.id ?? "")"
-        let m = groupMemberEvents.filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.hasPrefix(search) })
-        let mpk = m.map({ $0.tags.map({ $0 }).filter({ $0.id == "p" }) }).compactMap({ $0.last?.otherInformation.first })
-        let pks = Set(mpk)
-        return Array(pks)
+        let memberEvents = groupMemberEvents
+            .filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.contains(search) })
+        
+        let members = memberEvents.map({ $0.tags.filter({ $0.id == "p" })
+            .compactMap({ $0.otherInformation.last }) })
+            .reduce([], +)
+            .map({ GroupMemberVM(publicKey: $0, groupId: selectedGroup?.id ?? "") })
+        
+        return Array(Set(members))
     }
 
     var body: some View {

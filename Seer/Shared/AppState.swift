@@ -53,6 +53,7 @@ class AppState: ObservableObject {
         var pubkeys = Set([selectedAccount.publicKey])
         
         // Get other pubkeys
+        // TODO: Maybe just get pubkeys from groupMember, groupAdmins events?
         let otherAccountsDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindSetMetdata || $0.kind == kindGroupChatMessage })
         if let otherAccounts = try? modelContainer?.mainContext.fetch(otherAccountsDescriptor) {
             for otherAccount in otherAccounts {
@@ -98,7 +99,8 @@ class AppState: ObservableObject {
                     ], id: IdSubGroupList),
                     Subscription(filters: [
                         Filter(kinds: [
-                            Kind.groupMembers
+                            Kind.groupMembers,
+                            Kind.groupAdmins
                         ])
                     ], id: IdSubGroupMembers)
                 ])
@@ -129,7 +131,7 @@ class AppState: ObservableObject {
                     Kind.groupChatMessageReply,
                     Kind.groupForumMessage,
                     Kind.groupForumMessageReply
-                ], since: since?.createdAt.timestamp, tags: [Tag(id: "h", otherInformation: groupIds)]),
+                ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds)]),
             ], id: IdSubChatMessages)
             
             nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
@@ -184,22 +186,32 @@ class AppState: ObservableObject {
             guard let dbEvent = DBEvent(event: event, relayUrl: relayUrl) else { return }
             guard let modelContext = self.backgroundContext() else { return }
             
-//            let kind = Int(event.kind.id)
-//            let kindPredicate = #Predicate<DBEvent> { $0.kind == kind }
-//            let pubkeyPredicate = #Predicate<DBEvent> { $0.pubkey == event.pubkey }
-           
+            let kind = Int(event.kind.id)
+            let kindPredicate = #Predicate<DBEvent> { $0.kind == kind }
+            let pubkeyPredicate = #Predicate<DBEvent> { $0.pubkey == event.pubkey }
+            let relayPredicate = #Predicate<DBEvent> { $0.relayUrl == relayUrl }
+
             // Since replacable events have diffrent Id's
             // We need to delete current version if it's there
             // before inserting. Anything else with same Id
             // will simply be overwritten
-//            switch event.kind {
-//                case Kind.setMetadata:
-//                    let combinedPredicate = #Predicate<DBEvent> { kindPredicate.evaluate($0) && pubkeyPredicate.evaluate($0) }
-//                    try? modelContext.delete(model: DBEvent.self, where: combinedPredicate)
-//                    try? modelContext.save()
-//                default: ()
-//
-//            }
+            switch event.kind {
+                case Kind.setMetadata:
+                    let combinedPredicate = #Predicate<DBEvent> { kindPredicate.evaluate($0) && pubkeyPredicate.evaluate($0) }
+                    try? modelContext.delete(model: DBEvent.self, where: combinedPredicate)
+                    try? modelContext.save()
+                case Kind.groupMetadata, Kind.groupMembers, Kind.groupAdmins:
+                    let tags = event.tags.map({ $0 })
+                    guard let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first else { return }
+                    let searchGroupId = "d\(DBEvent.infoDelimiter)\(groupId)"
+                    let groupPredicate = #Predicate<DBEvent> { $0.serializedTags.contains(searchGroupId) }
+                    let combinedPredicate = #Predicate<DBEvent> { kindPredicate.evaluate($0) && pubkeyPredicate.evaluate($0) && relayPredicate.evaluate($0) && groupPredicate.evaluate($0) }
+                    try? modelContext.delete(model: DBEvent.self, where: combinedPredicate)
+                    try? modelContext.save()
+                default: ()
+
+            }
+            
             modelContext.insert(dbEvent)
             try? modelContext.save()
         }
@@ -213,10 +225,6 @@ extension AppState: NostrClientDelegate {
         switch message {
         case .event(_, let event):
             if event.isValid() {
-//                if event.kind == .groupMembers {
-//                    print(event.id)
-//                    print(event.tags.map({ $0 }).filter({ $0.id == "p" }))
-//                }
                 processDBEvent(event: event, relayUrl: relayUrl)
             } else {
                 print("\(event.id ?? "") is an invalid event on \(relayUrl)")

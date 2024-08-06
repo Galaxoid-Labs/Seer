@@ -8,6 +8,7 @@
 #if os(macOS)
 import SwiftUI
 import SwiftData
+import SDWebImageSwiftUI
 import Translation
 
 struct MacOSMessageBubbleView: View {
@@ -51,6 +52,18 @@ struct MacOSMessageBubbleView: View {
                 VStack(alignment: .leading) {
                     Text(chatMessage.contentFormated)
                         .foregroundStyle(.white)
+                    
+                    ForEach(chatMessage.imageUrls, id: \.self) { image in
+                        AnimatedImage(url: image, placeholder: {
+                            Image(systemName: "person.crop.circle.fill")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 40))
+                        })
+                        .resizable()
+                        //.frame(width: 100, height: 100)
+                        .aspectRatio(contentMode: .fill)
+                        .background(.gray)
+                    }
                 }
                 .padding(8)
                 .background(owner ? Color.accentColor : .gray)
@@ -63,16 +76,16 @@ struct MacOSMessageBubbleView: View {
                 }
                 //.frame(maxWidth: 400)
                 
-//                if let links = eventMessage.urls["links"] {
-//                    ForEach(links, id: \.self) { link in
-//                        
-//                        Link(destination: link) {
-//                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
-//                        }
-//                        .buttonStyle(.plain)
-//
-//                    }
-//                }
+                if let links = chatMessage.urls["links"] {
+                    ForEach(links, id: \.self) { link in
+                        
+                        Link(destination: link) {
+                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
+                        }
+                        .buttonStyle(.plain)
+
+                    }
+                }
                 
                 Text(chatMessage.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)
