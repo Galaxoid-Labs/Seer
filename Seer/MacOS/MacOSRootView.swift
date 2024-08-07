@@ -45,17 +45,36 @@ struct MacOSRootView: View {
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupMembers }, sort: \.createdAt)
     private var groupMemberEvents: [DBEvent]
     var groupMembers: [GroupMemberVM] {
-        if selectedGroup == nil { return [] }
-        let search = "d\(DBEvent.infoDelimiter)\(selectedGroup?.id ?? "")"
+        guard let selectedGroup else { return [] }
+        guard let selectedRelay = appState.selectedRelay else { return [] }
+        let search = "d\(DBEvent.infoDelimiter)\(selectedGroup.id)"
         let memberEvents = groupMemberEvents
-            .filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.contains(search) })
+            .filter({ $0.relayUrl == selectedRelay.url && $0.serializedTags.contains(search) })
         
         let members = memberEvents.map({ $0.tags.filter({ $0.id == "p" })
             .compactMap({ $0.otherInformation.last }) })
             .reduce([], +)
-            .map({ GroupMemberVM(publicKey: $0, groupId: selectedGroup?.id ?? "") })
+            .map({ GroupMemberVM(publicKey: $0, groupId: selectedGroup.id) })
         
         return Array(Set(members))
+    }
+    
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupAdmins }, sort: \.createdAt)
+    private var groupAdminEvents: [DBEvent]
+    var groupAdmins: [GroupAdminVM] {
+        guard let selectedGroup else { return [] }
+        guard let selectedRelay = appState.selectedRelay else { return [] }
+        let search = "d\(DBEvent.infoDelimiter)\(selectedGroup.id)"
+        let memberAdmins = groupAdminEvents
+            .filter({ $0.relayUrl == selectedRelay.url && $0.serializedTags.contains(search) })
+        
+        guard let admins = memberAdmins.map({ $0.tags.filter({ $0.id == "p" })
+            .compactMap({ $0.otherInformation }) })
+            .first?.compactMap({
+                GroupAdminVM(publicKey: $0.first, groupId: selectedGroup.id, capabilities: Array($0[2...]))
+            }) else { return [] }
+        
+        return admins
     }
 
     var body: some View {
@@ -65,7 +84,8 @@ struct MacOSRootView: View {
                 MacOSSidebarView(columnVisibility: $columnVisibility)
                     .frame(minWidth: 275)
             } content: {
-                MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages, lastMessages: lastMessages, groupMembers: groupMembers)
+                MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages,
+                                   lastMessages: lastMessages, groupMembers: groupMembers, groupAdmins: groupAdmins)
                     .frame(minWidth: 300)
                     .navigationTitle("Groups")
                     .navigationSubtitle("")

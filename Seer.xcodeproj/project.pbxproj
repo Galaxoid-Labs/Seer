@@ -31,7 +31,7 @@
 		475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */; };
 		475BDB562C5AE30300A12E84 /* PublicKeyMetadataVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */; };
 		475BDB582C5C29A000A12E84 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB572C5C29A000A12E84 /* Box.swift */; };
-		475BDB5A2C62BF6800A12E84 /* GroupMemberAdminVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB592C62BF6800A12E84 /* GroupMemberAdminVM.swift */; };
+		475BDB5A2C62BF6800A12E84 /* GroupAdminVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */; };
 		475BDB5C2C62C2DA00A12E84 /* GroupMemberVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */; };
 		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; platformFilters = (macos, ); };
 		4783DF9F2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */; };
@@ -74,7 +74,7 @@
 		475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVM.swift; sourceTree = "<group>"; };
 		475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadataVM.swift; sourceTree = "<group>"; };
 		475BDB572C5C29A000A12E84 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
-		475BDB592C62BF6800A12E84 /* GroupMemberAdminVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberAdminVM.swift; sourceTree = "<group>"; };
+		475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAdminVM.swift; sourceTree = "<group>"; };
 		475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberVM.swift; sourceTree = "<group>"; };
 		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
 		4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddMetadataRelay.swift; sourceTree = "<group>"; };
@@ -183,7 +183,7 @@
 				475BDB512C5990AC00A12E84 /* GroupVM.swift */,
 				475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */,
 				475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */,
-				475BDB592C62BF6800A12E84 /* GroupMemberAdminVM.swift */,
+				475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */,
 				475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */,
 			);
 			path = Models;
@@ -343,7 +343,7 @@
 				478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */,
 				4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */,
 				4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */,
-				475BDB5A2C62BF6800A12E84 /* GroupMemberAdminVM.swift in Sources */,
+				475BDB5A2C62BF6800A12E84 /* GroupAdminVM.swift in Sources */,
 				473E426A2C347A2100282484 /* MacOSSidebarRelayListRowView.swift in Sources */,
 				47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */,
 				47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */,

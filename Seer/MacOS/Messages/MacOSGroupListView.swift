@@ -18,6 +18,7 @@ struct MacOSGroupListView: View {
     let chatMessages: [ChatMessageVM]
     let lastMessages: [ChatMessageVM]
     let groupMembers: [GroupMemberVM]
+    let groupAdmins: [GroupAdminVM]
     
     func latestMessage(for groupId: String) -> ChatMessageVM? {
         return lastMessages.filter({ $0.groupId == groupId }).sorted(by: { $0.createdAt > $1.createdAt }).first

@@ -15,6 +15,7 @@ let kindGroupForumMessage = Int(Kind.groupForumMessage.id)
 let kindGroupForumMessageReply = Int(Kind.groupForumMessageReply.id)
 let kindGroupMetadata = Int(Kind.groupMetadata.id)
 let kindGroupMembers = Int(Kind.groupMembers.id)
+let kindGroupAdmins = Int(Kind.groupAdmins.id)
 let kindGroupList = Int(Kind.groupList.id)
 let kindSetMetdata = Int(Kind.setMetadata.id)
 

@@ -1,5 +1,5 @@
 //
-//  GroupMemberAdminVM.swift
+//  GroupAdminVM.swift
 //  Seer
 //
 //  Created by Jacob Davis on 8/6/24.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 import Nostr
 
-struct GroupMemberAdminVM: Hashable, Identifiable {
+struct GroupAdminVM: Hashable, Identifiable {
     
     enum Capability: String {
         case AddUser = "add-user"
@@ -22,7 +22,7 @@ struct GroupMemberAdminVM: Hashable, Identifiable {
     }
     
     var id: String {
-        return publicKey + ":" + groupId
+        return publicKey + ":a:" + groupId
     }
     
     let publicKey: String
@@ -35,14 +35,11 @@ struct GroupMemberAdminVM: Hashable, Identifiable {
         self.capabilities = capabilities
     }
     
-    init?(event: DBEvent) {
-        let tags = event.tags.map({ $0 })
-        guard let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first else { return nil }
-        self.publicKey = event.pubkey
+    init?(publicKey: String?, groupId: String, capabilities: [String]) {
+        guard let publicKey else { return nil }
+        self.publicKey = publicKey
         self.groupId = groupId
-        
-        // get capabilities from tags
-        
-        self.capabilities = []
+        self.capabilities = Set(capabilities.compactMap({ Capability(rawValue: $0) }))
     }
+    
 }
