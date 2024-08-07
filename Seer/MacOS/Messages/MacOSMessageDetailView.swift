@@ -32,11 +32,17 @@ struct MacOSMessageDetailView: View {
     
     @State private var favoriteColor = 0
     
+    @State private var infoPopoverPresented = false
+    
     private let maxHeight : CGFloat = 350
     
     func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadataVM? {
         return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
     }
+    
+//    var groupMemberPublicKeyMetadata: [GroupMemberVM] {
+//        return groupMembers.map({ $0.metadata = getPublicKeyMetadata(forPublicKey: $0.publicKey) })
+//    }
     
     var body: some View {
         
@@ -157,13 +163,20 @@ struct MacOSMessageDetailView: View {
                     .cornerRadius(6)
                 }
                 
-                Button(action: {}) {
+                Button(action: { infoPopoverPresented = true }) {
                     Image(systemName: "info.circle")
                         .fontWeight(.semibold)
                         .offset(y: 1)
                 }
+                .popover(isPresented: $infoPopoverPresented, arrowEdge: .bottom, content: {
+                    if let selectedGroup {
+                        MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers)
+                            .frame(width: 300, height: 400)
+                    }
+                })
             }
         }
+
     }
     
     func join() {

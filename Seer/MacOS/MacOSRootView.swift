@@ -67,9 +67,13 @@ struct MacOSRootView: View {
         let members = memberEvents.map({ $0.tags.filter({ $0.id == "p" })
             .compactMap({ $0.otherInformation.last }) })
             .reduce([], +)
-            .map({ GroupMemberVM(publicKey: $0, groupId: selectedGroup.id) })
+            .map({ GroupMemberVM(publicKey: $0, groupId: selectedGroup.id, metadata: getPublicKeyMetadata(forPublicKey: $0)) })
         
-        return Array(Set(members))
+        return members
+    }
+   
+    func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadataVM? {
+        return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
     }
     
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupAdmins }, sort: \.createdAt)
