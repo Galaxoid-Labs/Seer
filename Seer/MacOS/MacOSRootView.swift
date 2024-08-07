@@ -23,7 +23,8 @@ struct MacOSRootView: View {
     }
     
     var selectedOwnerAccountPublicKeyMetadata: PublicKeyMetadataVM? {
-        return publicKeyMetadata.first(where: { $0.publicKey == selectedOwnerAccount?.publicKey })
+        guard let selectedOwnerAccount else { return nil }
+        return publicKeyMetadata.first(where: { $0.publicKey == selectedOwnerAccount.publicKey })
     }
     
     @Query private var relays: [Relay]
@@ -41,10 +42,11 @@ struct MacOSRootView: View {
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage || $0.kind == kindGroupChatMessageReply })
     private var chatMessageEvents: [DBEvent]
     var chatMessages: [ChatMessageVM] {
-        if selectedGroup == nil { return [] }
-        let search = "h\(DBEvent.infoDelimiter)\(selectedGroup?.id ?? "")"
+        guard let selectedGroup else { return [] }
+        guard let selectedRelay = appState.selectedRelay else { return [] }
+        let search = "h\(DBEvent.infoDelimiter)\(selectedGroup.id)"
         return chatMessageEvents
-            .filter({ $0.relayUrl == appState.selectedRelay?.url && $0.serializedTags.contains(search) })
+            .filter({ $0.relayUrl == selectedRelay.url && $0.serializedTags.contains(search) })
             .compactMap({ ChatMessageVM(event: $0) })
             .sorted(by: { $0.createdAt < $1.createdAt })
     }
