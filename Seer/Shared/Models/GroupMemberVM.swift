@@ -17,10 +17,12 @@ struct GroupMemberVM: Hashable, Identifiable {
     
     let publicKey: String
     let groupId: String
+    let metadata: PublicKeyMetadataVM?
     
-    init(publicKey: String, groupId: String) {
+    init(publicKey: String, groupId: String, metadata: PublicKeyMetadataVM? = nil) {
         self.publicKey = publicKey
         self.groupId = groupId
+        self.metadata = metadata
     }
     
 }

@@ -76,12 +76,18 @@ struct MacOSRootView: View {
         
         return admins
     }
+    
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindSetMetdata }, sort: \.createdAt)
+    private var publicKeyMetadataEvents: [DBEvent]
+    var publicKeyMetadata: [PublicKeyMetadataVM] {
+        return publicKeyMetadataEvents.compactMap({ PublicKeyMetadataVM(event: $0) })
+    }
 
     var body: some View {
         ZStack {
             
             NavigationSplitView(columnVisibility: $columnVisibility) {
-                MacOSSidebarView(columnVisibility: $columnVisibility)
+                MacOSSidebarView(publicKeyMetadata: publicKeyMetadata, columnVisibility: $columnVisibility)
                     .frame(minWidth: 275)
             } content: {
                 MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages,
@@ -90,7 +96,8 @@ struct MacOSRootView: View {
                     .navigationTitle("Groups")
                     .navigationSubtitle("")
             } detail: {
-                MacOSMessageDetailView(selectedGroup: $selectedGroup, messages: chatMessages, groupMembers: groupMembers)
+                MacOSMessageDetailView(selectedGroup: $selectedGroup, messages: chatMessages, groupMembers: groupMembers,
+                                       publicKeyMetadata: publicKeyMetadata)
                     .frame(minWidth: 500)
             }
             

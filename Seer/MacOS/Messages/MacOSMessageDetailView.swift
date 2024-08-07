@@ -17,6 +17,7 @@ struct MacOSMessageDetailView: View {
     @Binding var selectedGroup: GroupVM?
     let messages: [ChatMessageVM]
     let groupMembers: [GroupMemberVM]
+    let publicKeyMetadata: [PublicKeyMetadataVM]
    
     @Query private var ownerAccounts: [OwnerAccount]
     var currentOwnerAccount: OwnerAccount? {
@@ -33,6 +34,10 @@ struct MacOSMessageDetailView: View {
     
     private let maxHeight : CGFloat = 350
     
+    func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadataVM? {
+        return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
+    }
+    
     var body: some View {
         
         ZStack {
@@ -45,7 +50,7 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, chatMessage: message)
+                    MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey))
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)

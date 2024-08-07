@@ -13,6 +13,9 @@ import SDWebImageSwiftUI
 struct MacOSSidebarView: View {
     
     @EnvironmentObject var appState: AppState
+    
+    let publicKeyMetadata: [PublicKeyMetadataVM]
+    
     @Query private var relays: [Relay]
     var chatRelays: [Relay] {
         return relays.filter({ $0.supportsNip29 })
@@ -23,6 +26,10 @@ struct MacOSSidebarView: View {
     @Query private var ownerAccounts: [OwnerAccount]
     var currentOwnerAccount: OwnerAccount? {
         return ownerAccounts.first(where: { $0.selected })
+    }
+    
+    var currentOwnerPublicKeyMetadata: PublicKeyMetadataVM? {
+        return publicKeyMetadata.first(where: { $0.publicKey == currentOwnerAccount?.publicKey })
     }
 
     var body: some View {
@@ -54,18 +61,18 @@ struct MacOSSidebarView: View {
                         
                         if let currentOwnerAccount {
 
-                            AvatarView(avatarUrl: "", size: 30)
-                            //                            .overlay(alignment: .bottomTrailing) {
-                            //                                Image(systemName: "checkmark.circle.fill")
-                            //                                    .symbolRenderingMode(.multicolor)
-                            //                                    .offset(x: 5, y: 1)
-                            //                            }
+                            AvatarView(avatarUrl: currentOwnerPublicKeyMetadata?.picture ?? "", size: 30)
+                                .overlay(alignment: .bottomTrailing) {
+//                                    Image(systemName: "checkmark.circle.fill")
+//                                        .symbolRenderingMode(.multicolor)
+//                                        .offset(x: 5, y: 1)
+                                }
                             VStack(alignment: .leading) {
-                                Text(verbatim: currentOwnerAccount.bestPublicName)
+                                Text(verbatim: currentOwnerPublicKeyMetadata?.bestPublicName ?? currentOwnerAccount.bestPublicName)
                                     .lineLimit(1)
                                     .font(.subheadline)
                                     .bold()
-                                Text(currentOwnerAccount.publicKey)
+                                Text(currentOwnerPublicKeyMetadata?.bech32PublicKey ?? currentOwnerAccount.publicKey)
                                     .lineLimit(1)
                                     .font(.caption)
                                     .foregroundStyle(.tertiary)

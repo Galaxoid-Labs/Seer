@@ -15,7 +15,7 @@ struct MacOSMessageBubbleView: View {
     
     let owner: Bool
     let chatMessage: ChatMessageVM
-    @State private var publicKeyMetadata: PublicKeyMetadataVM?
+    let publicKeyMetadata: PublicKeyMetadataVM?
     @State private var showTranslation: Bool = false
     
     var body: some View {
@@ -37,10 +37,13 @@ struct MacOSMessageBubbleView: View {
                         
                         if let nip05 = publicKeyMetadata?.nip05 { // TODO: Check nip verified
                             HStack(spacing: 2) {
-                                Image(systemName: "checkmark.seal.fill")
-                                    .imageScale(.small)
-                                    .foregroundStyle(.accent)
-                                
+//                                if publicKeyMetadata?.nip05Verified {
+//                                    Image(systemName: "checkmark.seal.fill")
+//                                        .imageScale(.small)
+//                                        .foregroundStyle(.accent)
+//                                }
+
+                    
                                 Text(verbatim: nip05)
                                     .foregroundStyle(.secondary)
                             }
