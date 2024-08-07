@@ -20,7 +20,7 @@ struct MacOSMessageDetailView: View {
     let publicKeyMetadata: [PublicKeyMetadataVM]
    
     @Query private var ownerAccounts: [OwnerAccount]
-    var currentOwnerAccount: OwnerAccount? {
+    var selectedOwnerAccount: OwnerAccount? {
         return ownerAccounts.first(where: { $0.selected })
     }
     
@@ -50,7 +50,7 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == currentOwnerAccount?.publicKey, chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey))
+                    MacOSMessageBubbleView(owner: message.publicKey == selectedOwnerAccount?.publicKey, chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey))
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -167,11 +167,11 @@ struct MacOSMessageDetailView: View {
     }
     
     func join() {
-        guard let currentOwnerAccount else { return }
-        guard let key = currentOwnerAccount.getKeyPair() else { return }
+        guard let selectedOwnerAccount else { return }
+        guard let key = selectedOwnerAccount.getKeyPair() else { return }
         guard let relayUrl = selectedGroup?.relayUrl else { return }
         guard let groupId = selectedGroup?.id else { return }
-        var joinEvent = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupJoinRequest,
+        var joinEvent = Event(pubkey: selectedOwnerAccount.publicKey, createdAt: .init(), kind: .groupJoinRequest,
                           tags: [Tag(id: "h", otherInformation: groupId)], content: "")
 
         do {
@@ -184,12 +184,12 @@ struct MacOSMessageDetailView: View {
     }
     
     func leave() {
-        guard let currentOwnerAccount else { return }
-        guard let key = currentOwnerAccount.getKeyPair() else { return }
+        guard let selectedOwnerAccount else { return }
+        guard let key = selectedOwnerAccount.getKeyPair() else { return }
         guard let relayUrl = selectedGroup?.relayUrl else { return }
         guard let groupId = selectedGroup?.id else { return }
-        var joinEvent = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupRemoveUser,
-                              tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: currentOwnerAccount.publicKey)], content: "")
+        var joinEvent = Event(pubkey: selectedOwnerAccount.publicKey, createdAt: .init(), kind: .groupRemoveUser,
+                              tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: selectedOwnerAccount.publicKey)], content: "")
 
         do {
             try joinEvent.sign(with: key)
@@ -202,8 +202,8 @@ struct MacOSMessageDetailView: View {
     
     func isMember() -> Bool {
         if groupMembers.count > 0 {
-            if let currentOwnerAccount {
-                if  groupMembers.contains(where: { $0.publicKey == currentOwnerAccount.publicKey }) {
+            if let selectedOwnerAccount {
+                if  groupMembers.contains(where: { $0.publicKey == selectedOwnerAccount.publicKey }) {
                     return true
                 }
             }
@@ -212,12 +212,12 @@ struct MacOSMessageDetailView: View {
     }
     
     func send(withText text: String) {
-        guard let currentOwnerAccount else { return }
-        guard let key = currentOwnerAccount.getKeyPair() else { return }
+        guard let selectedOwnerAccount else { return }
+        guard let key = selectedOwnerAccount.getKeyPair() else { return }
         guard let relayUrl = selectedGroup?.relayUrl else { return }
         guard let groupId = selectedGroup?.id else { return }
     
-        var event = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
+        var event = Event(pubkey: selectedOwnerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
                           tags: [Tag(id: "h", otherInformation: groupId)], content: text)
         do {
             try event.sign(with: key)

@@ -18,11 +18,24 @@ struct MacOSRootView: View {
 
     @State private var selectedGroup: GroupVM?
     @Query private var ownerAccounts: [OwnerAccount]
+    var selectedOwnerAccount: OwnerAccount? {
+        return ownerAccounts.first(where: { $0.selected })
+    }
+    
+    var selectedOwnerAccountPublicKeyMetadata: PublicKeyMetadataVM? {
+        return publicKeyMetadata.first(where: { $0.publicKey == selectedOwnerAccount?.publicKey })
+    }
+    
+    @Query private var relays: [Relay]
+    var chatRelays: [Relay] {
+        return relays.filter({ $0.supportsNip29 })
+    }
     
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupMetadata }, sort: \.createdAt)
     private var groupMetadataEvents: [DBEvent]
     var groups: [GroupVM] {
-        return groupMetadataEvents.compactMap({ GroupVM(event: $0) })
+        guard let selectedRelay = appState.selectedRelay else { return [] }
+        return groupMetadataEvents.filter({ $0.relayUrl == selectedRelay.url }).compactMap({ GroupVM(event: $0) })
     }
     
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage || $0.kind == kindGroupChatMessageReply })
@@ -87,7 +100,9 @@ struct MacOSRootView: View {
         ZStack {
             
             NavigationSplitView(columnVisibility: $columnVisibility) {
-                MacOSSidebarView(publicKeyMetadata: publicKeyMetadata, columnVisibility: $columnVisibility)
+                MacOSSidebarView(chatRelays: chatRelays, selectedOwnerAccount: selectedOwnerAccount,
+                                 selectedOwnerAccountPublicKeyMetadata: selectedOwnerAccountPublicKeyMetadata,
+                                 columnVisibility: $columnVisibility)
                     .frame(minWidth: 275)
             } content: {
                 MacOSGroupListView(selectedGroup: $selectedGroup, groups: groups, chatMessages: chatMessages,

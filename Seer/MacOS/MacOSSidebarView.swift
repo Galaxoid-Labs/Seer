@@ -13,25 +13,14 @@ import SDWebImageSwiftUI
 struct MacOSSidebarView: View {
     
     @EnvironmentObject var appState: AppState
+   
+    let chatRelays: [Relay]
+    let selectedOwnerAccount: OwnerAccount?
+    let selectedOwnerAccountPublicKeyMetadata: PublicKeyMetadataVM?
     
-    let publicKeyMetadata: [PublicKeyMetadataVM]
-    
-    @Query private var relays: [Relay]
-    var chatRelays: [Relay] {
-        return relays.filter({ $0.supportsNip29 })
-    }
     @Binding var columnVisibility: NavigationSplitViewVisibility
     @State var tapped: Int = 0
     
-    @Query private var ownerAccounts: [OwnerAccount]
-    var currentOwnerAccount: OwnerAccount? {
-        return ownerAccounts.first(where: { $0.selected })
-    }
-    
-    var currentOwnerPublicKeyMetadata: PublicKeyMetadataVM? {
-        return publicKeyMetadata.first(where: { $0.publicKey == currentOwnerAccount?.publicKey })
-    }
-
     var body: some View {
         
         List(selection: $appState.selectedRelay) {
@@ -59,20 +48,20 @@ struct MacOSSidebarView: View {
                 LazyVStack(alignment: .leading) {
                     HStack {
                         
-                        if let currentOwnerAccount {
+                        if let selectedOwnerAccount {
 
-                            AvatarView(avatarUrl: currentOwnerPublicKeyMetadata?.picture ?? "", size: 30)
+                            AvatarView(avatarUrl: selectedOwnerAccountPublicKeyMetadata?.picture ?? "", size: 30)
                                 .overlay(alignment: .bottomTrailing) {
 //                                    Image(systemName: "checkmark.circle.fill")
 //                                        .symbolRenderingMode(.multicolor)
 //                                        .offset(x: 5, y: 1)
                                 }
                             VStack(alignment: .leading) {
-                                Text(verbatim: currentOwnerPublicKeyMetadata?.bestPublicName ?? currentOwnerAccount.bestPublicName)
+                                Text(verbatim: selectedOwnerAccountPublicKeyMetadata?.bestPublicName ?? selectedOwnerAccount.bestPublicName)
                                     .lineLimit(1)
                                     .font(.subheadline)
                                     .bold()
-                                Text(currentOwnerPublicKeyMetadata?.bech32PublicKey ?? currentOwnerAccount.publicKey)
+                                Text(selectedOwnerAccountPublicKeyMetadata?.bech32PublicKey ?? selectedOwnerAccount.publicKey)
                                     .lineLimit(1)
                                     .font(.caption)
                                     .foregroundStyle(.tertiary)
