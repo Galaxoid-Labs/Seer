@@ -128,9 +128,9 @@ class AppState: ObservableObject {
             let sub = Subscription(filters: [
                 Filter(kinds: [
                     Kind.groupChatMessage,
-                    Kind.groupChatMessageReply,
+                    //Kind.groupChatMessageReply,
                     Kind.groupForumMessage,
-                    Kind.groupForumMessageReply
+                    //Kind.groupForumMessageReply
                 ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds)]),
             ], id: IdSubChatMessages)
             
@@ -216,6 +216,106 @@ class AppState: ObservableObject {
             try? modelContext.save()
         }
     }
+    
+    func joinGroup(ownerAccount: OwnerAccount, group: GroupVM) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        let relayUrl = group.relayUrl
+        let groupId = group.id
+        var joinEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
+                              kind: .groupJoinRequest, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
+
+        do {
+            try joinEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+        nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
+    }
+    
+    func addMember(ownerAccount: OwnerAccount, group: GroupVM, publicKey: String) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        let relayUrl = group.relayUrl
+        let groupId = group.id
+        var joinEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupAddUser,
+                              tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: publicKey)], content: "")
+
+        do {
+            try joinEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+        nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
+    }
+    
+    func removeMember(ownerAccount: OwnerAccount, group: GroupVM, publicKey: String) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        let relayUrl = group.relayUrl
+        let groupId = group.id
+        var joinEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupRemoveUser,
+                              tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: publicKey)], content: "")
+
+        do {
+            try joinEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+        nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
+    }
+    
+    func sendChatMessage(ownerAccount: OwnerAccount, group: GroupVM, withText text: String) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        let relayUrl = group.relayUrl
+        let groupId = group.id
+    
+        var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
+                          tags: [Tag(id: "h", otherInformation: groupId)], content: text)
+        do {
+            try event.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+    }
+    
+    func sendChatMessageReply(ownerAccount: OwnerAccount, group: GroupVM, withText text: String, replyChatMessage: ChatMessageVM) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        let relayUrl = group.relayUrl
+        let groupId = group.id
+        var tags: [Tag] = [Tag(id: "h", otherInformation: groupId)]
+        if let rootEventId = replyChatMessage.rootEventId {
+            tags.append(Tag(id: "e", otherInformation: [rootEventId, "", "root", replyChatMessage.publicKey]))
+            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, "", "reply", replyChatMessage.publicKey]))
+        } else {
+            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, "", "root", replyChatMessage.publicKey]))
+            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, "", "reply", replyChatMessage.publicKey]))
+        }
+        
+        var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
+                          tags: tags, content: text)
+        do {
+            try event.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+    }
+    
+    #if os(macOS)
+    func copyToClipboard(_ string: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(string, forType: .string)
+    }
+    #else
+    func copyToClipboard(_ string: String) {
+        UIPasteboard.general.string = string
+    }
+    #endif
     
 }
 

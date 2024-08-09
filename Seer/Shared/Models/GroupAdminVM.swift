@@ -11,9 +11,9 @@ import Nostr
 
 struct GroupAdminVM: Hashable, Identifiable {
     
-    enum Capability: String {
+    enum Capability: String, CaseIterable {
         case AddUser = "add-user"
-        case EditMetada = "edit-metadata"
+        case EditMetadata = "edit-metadata"
         case DeleteEvent = "delete-event"
         case RemoveUser = "remove-user"
         case AddPermission = "add-permission"
@@ -28,18 +28,21 @@ struct GroupAdminVM: Hashable, Identifiable {
     let publicKey: String
     let groupId: String
     let capabilities: Set<Capability>
+    var metadata: PublicKeyMetadataVM?
     
-    init(publicKey: String, groupId: String, capabilities: Set<Capability>) {
+    init(publicKey: String, groupId: String, capabilities: Set<Capability>, metadata: PublicKeyMetadataVM? = nil) {
         self.publicKey = publicKey
         self.groupId = groupId
         self.capabilities = capabilities
+        self.metadata = metadata
     }
     
-    init?(publicKey: String?, groupId: String, capabilities: [String]) {
+    init?(publicKey: String?, groupId: String, capabilities: [String], metadata: PublicKeyMetadataVM? = nil) {
         guard let publicKey else { return nil }
         self.publicKey = publicKey
         self.groupId = groupId
         self.capabilities = Set(capabilities.compactMap({ Capability(rawValue: $0) }))
+        self.metadata = metadata
     }
     
 }

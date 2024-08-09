@@ -8,6 +8,7 @@
 #if os(macOS)
 import SwiftUI
 import SwiftData
+import SDWebImageSwiftUI
 import Nostr
 
 struct MacOSMessageDetailView: View {
@@ -17,6 +18,7 @@ struct MacOSMessageDetailView: View {
     @Binding var selectedGroup: GroupVM?
     let messages: [ChatMessageVM]
     let groupMembers: [GroupMemberVM]
+    let groupAdmins: [GroupAdminVM]
     let publicKeyMetadata: [PublicKeyMetadataVM]
    
     @Query private var ownerAccounts: [OwnerAccount]
@@ -33,6 +35,9 @@ struct MacOSMessageDetailView: View {
     @State private var favoriteColor = 0
     
     @State private var infoPopoverPresented = false
+    @State private var showTranslation: Bool = false
+    
+    @State private var replyMessage: ChatMessageVM?
     
     private let maxHeight : CGFloat = 350
     
@@ -40,9 +45,15 @@ struct MacOSMessageDetailView: View {
         return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
     }
     
-//    var groupMemberPublicKeyMetadata: [GroupMemberVM] {
-//        return groupMembers.map({ $0.metadata = getPublicKeyMetadata(forPublicKey: $0.publicKey) })
-//    }
+    func getPubicKeyMetadata(forChatMessage chatMessage: ChatMessageVM?) -> PublicKeyMetadataVM? {
+        guard let chatMessage else { return nil }
+        return publicKeyMetadata.first(where: { $0.publicKey == chatMessage.publicKey })
+    }
+    
+    func getReplyTo(forId id: String?) -> (chatMessage: ChatMessageVM, publicKeyMetadata: PublicKeyMetadataVM?)? {
+        guard let chatMessage = messages.first(where: { $0.id == id }) else { return nil }
+        return (chatMessage: chatMessage, publicKeyMetadata: getPubicKeyMetadata(forChatMessage: chatMessage))
+    }
     
     var body: some View {
         
@@ -56,7 +67,29 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == selectedOwnerAccount?.publicKey, chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey))
+                    MacOSMessageBubbleView(owner: message.publicKey == selectedOwnerAccount?.publicKey, 
+                                           chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey), 
+                                           replyTo: getReplyTo(forId: message.replyToEventId),
+                                           showTranslation: $showTranslation)
+                    .contextMenu(ContextMenu(menuItems: {
+                        Button("Reply") {
+                            withAnimation {
+                                self.replyMessage = message
+                                self.inputFocused = true
+                            }
+                        }
+                        .disabled(selectedGroup == nil || !isMember())
+                        
+                        Button("Copy Text") {
+                            appState.copyToClipboard(message.content)
+                        }
+                        
+                        Button("Copy Event Id") {
+                            appState.copyToClipboard(message.id)
+                        }
+
+                    }))
+                    
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -70,16 +103,53 @@ struct MacOSMessageDetailView: View {
                     if let last = messages.last {
                         scroll?.scrollTo(last.id, anchor: .top)
                     }
-                    //print(messages.count)
                 }
+                
+                if let replyMessage = replyMessage {
+                    
+                    LazyVStack {
+                        HStack(spacing: 0) {
+                            Image(systemName: "arrowshape.turn.up.left")
+                                .imageScale(.large)
+                                .foregroundStyle(.accent)
+                                .frame(width: 50, height: 50)
+                            
+                            Color
+                                .accentColor
+                                .frame(width: 2)
+                                .padding(.vertical, 4)
+                            
+                            VStack(alignment: .leading) {
+                                Text(getPublicKeyMetadata(forPublicKey: replyMessage.publicKey)?.bestPublicName ?? replyMessage.publicKey)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.accent)
+                                    .bold()
+                                Text(replyMessage.content)
+                                    .lineLimit(1)
+                            }
+                            .padding(.horizontal)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                        self.replyMessage = nil
+                            }, label: {
+                                Image(systemName: "xmark.circle")
+                                    .imageScale(.large)
+                            })
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.trailing)
+                    }
+                    .background(.background)
+                    .frame(height: 50)
+                    .padding(.vertical, -8)
+                    .transition(.move(edge: .bottom))
+
+                }
+                
             }
         }
-//        .overlay(alignment: .top, content: {
-//            Rectangle()
-//                .fill(.white)
-//                .frame(height: 40)
-//                .offset(y: -40)
-//        })
         .safeAreaInset(edge: .bottom) {
             if selectedGroup != nil && isMember() {
                 ZStack(alignment: .leading) {
@@ -95,7 +165,7 @@ struct MacOSMessageDetailView: View {
                              Color.clear.preference(key: ViewHeightKey.self,
                                                     value: $0.frame(in: .local).size.height)
                          })
-                     
+                    
                      TextEditor(text: $messageText)
                         .font(.system(.body))
                         .padding(.vertical)
@@ -103,11 +173,24 @@ struct MacOSMessageDetailView: View {
                         .padding(.leading)
                         .scrollDisabled(true)
                         .frame(height: max(0,textEditorHeight))
-                        .onChange(of: messageText) { newValue in
+                        .onChange(of: messageText) { oldValue, newValue in
                             if let last = newValue.last {
                                 if last == "\n" && !CGKeyCode.kVK_Shift.isPressed {
+                                    guard let selectedOwnerAccount else { return }
+                                    guard let selectedGroup else { return }
                                     withAnimation {
-                                        send(withText: messageText.trimmingCharacters(in: .newlines))
+                                        if let replyMessage {
+                                            appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
+                                                                          withText: messageText.trimmingCharacters(in: .newlines), 
+                                                                          replyChatMessage: replyMessage)
+                                            
+                                            self.replyMessage = nil
+                                            
+                                        } else {
+                                            appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
+                                                                     group: selectedGroup, withText: messageText.trimmingCharacters(in: .newlines))
+                                        }
+                                        
                                         messageText = ""
                                     }
                                 }
@@ -136,13 +219,32 @@ struct MacOSMessageDetailView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
-                VStack(alignment: .leading) {
-                    Text(selectedGroup?.name ?? "---")
-                        .font(.headline)
-                        .bold()
-                    Text(selectedGroup?.relayUrl ?? "--")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                HStack {
+                    
+                    AnimatedImage(url: URL(string: selectedGroup?.picture ?? ""))
+                        .transition(.fade)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .aspectRatio(contentMode: .fill)
+                        .background(.gray)
+                        .overlay {
+                            if selectedGroup?.picture == nil {
+                                Image(systemName: "rectangle.3.group.bubble")
+                                    .foregroundColor(.secondary)
+                                    .font(.system(size: 18))
+                            }
+
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                    
+                    VStack(alignment: .leading) {
+                        Text(selectedGroup?.name ?? "---")
+                            .font(.headline)
+                            .bold()
+                        Text(selectedGroup?.relayUrl ?? "--")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .opacity(selectedGroup == nil ? 0.0 : 1.0)
 
@@ -151,7 +253,9 @@ struct MacOSMessageDetailView: View {
                 if !isMember() && groupMembers.count > 0 {
                     
                     Button(action: {
-                        join()
+                        guard let selectedOwnerAccount else { return }
+                        guard let selectedGroup else { return }
+                        appState.joinGroup(ownerAccount: selectedOwnerAccount, group: selectedGroup)
                     }) {
                         Text("Join")
                             .foregroundStyle(.white)
@@ -162,55 +266,22 @@ struct MacOSMessageDetailView: View {
                     .background(.blue)
                     .cornerRadius(6)
                 }
-                
-                Button(action: { infoPopoverPresented = true }) {
-                    Image(systemName: "info.circle")
-                        .fontWeight(.semibold)
-                        .offset(y: 1)
-                }
-                .popover(isPresented: $infoPopoverPresented, arrowEdge: .bottom, content: {
-                    if let selectedGroup {
-                        MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers)
-                            .frame(width: 300, height: 400)
+               
+                if let selectedGroup, let selectedOwnerAccount {
+                    Button(action: { infoPopoverPresented = true }) {
+                        Image(systemName: "info.circle")
+                            .fontWeight(.semibold)
+                            .offset(y: 1)
                     }
-                })
+                    .popover(isPresented: $infoPopoverPresented, arrowEdge: .bottom, content: {
+                        MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers, admins: groupAdmins,
+                                                  selectedOwnerAccount: selectedOwnerAccount)
+                            .frame(width: 300, height: 400)
+                    })
+                }
+                
             }
         }
-
-    }
-    
-    func join() {
-        guard let selectedOwnerAccount else { return }
-        guard let key = selectedOwnerAccount.getKeyPair() else { return }
-        guard let relayUrl = selectedGroup?.relayUrl else { return }
-        guard let groupId = selectedGroup?.id else { return }
-        var joinEvent = Event(pubkey: selectedOwnerAccount.publicKey, createdAt: .init(), kind: .groupJoinRequest,
-                          tags: [Tag(id: "h", otherInformation: groupId)], content: "")
-
-        do {
-            try joinEvent.sign(with: key)
-        } catch {
-            print(error.localizedDescription)
-        }
-
-        appState.nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
-    }
-    
-    func leave() {
-        guard let selectedOwnerAccount else { return }
-        guard let key = selectedOwnerAccount.getKeyPair() else { return }
-        guard let relayUrl = selectedGroup?.relayUrl else { return }
-        guard let groupId = selectedGroup?.id else { return }
-        var joinEvent = Event(pubkey: selectedOwnerAccount.publicKey, createdAt: .init(), kind: .groupRemoveUser,
-                              tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: selectedOwnerAccount.publicKey)], content: "")
-
-        do {
-            try joinEvent.sign(with: key)
-        } catch {
-            print(error.localizedDescription)
-        }
-
-        appState.nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
     }
     
     func isMember() -> Bool {
@@ -222,34 +293,6 @@ struct MacOSMessageDetailView: View {
             }
         }
         return false
-    }
-    
-    func send(withText text: String) {
-        guard let selectedOwnerAccount else { return }
-        guard let key = selectedOwnerAccount.getKeyPair() else { return }
-        guard let relayUrl = selectedGroup?.relayUrl else { return }
-        guard let groupId = selectedGroup?.id else { return }
-    
-        var event = Event(pubkey: selectedOwnerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
-                          tags: [Tag(id: "h", otherInformation: groupId)], content: text)
-        do {
-            try event.sign(with: key)
-        } catch {
-            print(error.localizedDescription)
-        }
-        
-//        var joinEvent = Event(pubkey: currentOwnerAccount.publicKey, createdAt: .init(), kind: .groupJoinRequest,
-//                          tags: [Tag(id: "h", otherInformation: groupId)], content: "")
-//        
-//        do {
-//            try joinEvent.sign(with: key)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//
-//        appState.nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
-        appState.nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
-        
     }
 }
 

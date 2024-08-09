@@ -16,7 +16,14 @@ struct MacOSMessageBubbleView: View {
     let owner: Bool
     let chatMessage: ChatMessageVM
     let publicKeyMetadata: PublicKeyMetadataVM?
-    @State private var showTranslation: Bool = false
+    let replyTo: (chatMessage: ChatMessageVM, publicKeyMetadata: PublicKeyMetadataVM?)?
+    @Binding var showTranslation: Bool
+    
+//    func getReplyBackgroundColor() -> Color {
+//        if owner {
+//            return .accentColor.brightness(/*@START_MENU_TOKEN@*/0.60/*@END_MENU_TOKEN@*/)
+//        }
+//    }
     
     var body: some View {
         HStack(alignment: .top) {
@@ -53,8 +60,35 @@ struct MacOSMessageBubbleView: View {
                 }
                 
                 VStack(alignment: .leading) {
+                    
+                    if let replyTo {
+                        
+                        HStack(spacing: 0) {
+                            Color
+                                .white
+                                .frame(width: 3)
+
+                            VStack(alignment: .leading) {
+                                Text(replyTo.publicKeyMetadata?.bestPublicName ?? replyTo.chatMessage.publicKey)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.white)
+                                    .bold()
+                                Text(replyTo.chatMessage.content)
+                                    .foregroundStyle(.white)
+                                    .lineLimit(1)
+                            }
+                            .padding(4)
+                            //.padding(.horizontal)
+                            
+                        }
+                        .background((owner ? Color.accentColor : .gray).brightness(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        
+                    }
+                    
                     Text(chatMessage.contentFormated)
                         .foregroundStyle(.white)
+                        .textSelection(.enabled)
                     
                     ForEach(chatMessage.imageUrls, id: \.self) { image in
                         AnimatedImage(url: image, placeholder: {
@@ -66,6 +100,7 @@ struct MacOSMessageBubbleView: View {
                         //.frame(width: 100, height: 100)
                         .aspectRatio(contentMode: .fill)
                         .background(.gray)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
                 .padding(8)
@@ -93,7 +128,7 @@ struct MacOSMessageBubbleView: View {
                 Text(chatMessage.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-
+                
             }
             
         }

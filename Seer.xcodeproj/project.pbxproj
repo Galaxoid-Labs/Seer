@@ -34,6 +34,7 @@
 		475BDB5A2C62BF6800A12E84 /* GroupAdminVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */; };
 		475BDB5C2C62C2DA00A12E84 /* GroupMemberVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */; };
 		475BDB5E2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB5D2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift */; };
+		475BDB622C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB612C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift */; };
 		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; platformFilters = (macos, ); };
 		4783DF9F2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */; };
 		478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */; };
@@ -78,6 +79,7 @@
 		475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAdminVM.swift; sourceTree = "<group>"; };
 		475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberVM.swift; sourceTree = "<group>"; };
 		475BDB5D2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSGroupInfoPopoverView.swift; sourceTree = "<group>"; };
+		475BDB612C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSAddGroupMemberPopoverView.swift; sourceTree = "<group>"; };
 		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
 		4783DF9E2C5155B500A900D2 /* MacOSStartAddMetadataRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddMetadataRelay.swift; sourceTree = "<group>"; };
 		478597622BD155B900609EE2 /* MacOSSettingsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountView.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */,
 				473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */,
 				475BDB5D2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift */,
+				475BDB612C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 				47202DFC2BB4A9EA00A06030 /* MacOSWelcomeView.swift in Sources */,
 				47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */,
 				475BDB5C2C62C2DA00A12E84 /* GroupMemberVM.swift in Sources */,
+				475BDB622C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift in Sources */,
 				47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */,
 				47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */,
 				47E1FD6E2C50332200C75C91 /* MacOSStartAddChatRelay.swift in Sources */,

@@ -82,12 +82,19 @@ struct ChatMessageVM: Identifiable, Hashable {
             "links": other
         ]
         
-        if event.kind == Int(Kind.groupChatMessageReply.id) {
-            if let root = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("root") })?.otherInformation {
-                self.rootEventId = root.first
+        if let reply = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("reply") })?.otherInformation {
+            if let eventId = reply.first, eventId != "" {
+                self.replyToEventId = eventId
             }
-            if let reply = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("reply") })?.otherInformation {
-                self.replyToEventId = reply.first
+        }
+        
+        if let root = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("root") })?.otherInformation {
+            if let eventId = root.first, eventId != "" {
+                self.rootEventId = eventId
+                // We set replyToEventId to root if there isnt a reply.
+                if self.replyToEventId == nil {
+                    self.replyToEventId = eventId
+                }
             }
         }
         

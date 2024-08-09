@@ -39,7 +39,7 @@ struct MacOSRootView: View {
         return groupMetadataEvents.filter({ $0.relayUrl == selectedRelay.url }).compactMap({ GroupVM(event: $0) })
     }
     
-    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage || $0.kind == kindGroupChatMessageReply })
+    @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupChatMessage /**|| $0.kind == kindGroupChatMessageReply **/ })
     private var chatMessageEvents: [DBEvent]
     var chatMessages: [ChatMessageVM] {
         guard let selectedGroup else { return [] }
@@ -71,7 +71,8 @@ struct MacOSRootView: View {
             .reduce([], +)
             .map({ GroupMemberVM(publicKey: $0, groupId: selectedGroup.id, metadata: getPublicKeyMetadata(forPublicKey: $0)) })
         
-        return members
+        return members.filter({ $0.publicKey.isValidPublicKey })
+
     }
    
     func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadataVM? {
@@ -90,10 +91,11 @@ struct MacOSRootView: View {
         guard let admins = memberAdmins.map({ $0.tags.filter({ $0.id == "p" })
             .compactMap({ $0.otherInformation }) })
             .first?.compactMap({
-                GroupAdminVM(publicKey: $0.first, groupId: selectedGroup.id, capabilities: Array($0[2...]))
+                GroupAdminVM(publicKey: $0.first, groupId: selectedGroup.id, capabilities: Array($0[2...]),
+                             metadata: getPublicKeyMetadata(forPublicKey: $0.first ?? ""))
             }) else { return [] }
         
-        return admins
+        return admins.filter({ $0.publicKey.isValidPublicKey })
     }
     
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindSetMetdata }, sort: \.createdAt)
@@ -118,7 +120,7 @@ struct MacOSRootView: View {
                     .navigationSubtitle("")
             } detail: {
                 MacOSMessageDetailView(selectedGroup: $selectedGroup, messages: chatMessages, groupMembers: groupMembers,
-                                       publicKeyMetadata: publicKeyMetadata)
+                                       groupAdmins: groupAdmins, publicKeyMetadata: publicKeyMetadata)
                     .frame(minWidth: 500)
             }
             
