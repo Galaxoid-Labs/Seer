@@ -33,6 +33,7 @@ struct MacOSGroupListRowView: View {
                 .lineLimit(2)
                 .foregroundStyle(.tertiary)
         }
+        .frame(height: 60)
     }
 }
 

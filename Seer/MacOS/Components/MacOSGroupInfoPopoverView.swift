@@ -25,6 +25,12 @@ struct MacOSGroupInfoPopoverView: View {
         return admins.first(where: { $0.publicKey == selectedOwnerAccount.publicKey })
     }
     
+    var canRemoveUsers: Bool {
+        guard let selectedOwnerAccountAdmin else { return false}
+        return Set([GroupAdminVM.Capability.RemoveUser])
+        .isSubset(of: selectedOwnerAccountAdmin.capabilities)
+    }
+    
     @State private var addMemberPopoverShowing = false
     
     var body: some View {
@@ -108,27 +114,26 @@ struct MacOSGroupInfoPopoverView: View {
                             
                         }
                         
-                        ForEach(admins) { member in
-                            HStack {
-                                AvatarView(avatarUrl: member.metadata?.picture ?? "", size: 30)
-                                    .overlay(alignment: .bottomTrailing) {
-            //                                    Image(systemName: "checkmark.circle.fill")
-            //                                        .symbolRenderingMode(.multicolor)
-            //                                        .offset(x: 5, y: 1)
-                                    }
-                                VStack(alignment: .leading) {
-                                    Text(verbatim: member.metadata?.bestPublicName ?? member.publicKey)
-                                        .lineLimit(1)
-                                        .font(.subheadline)
-                                        .bold()
-                                    Text(member.metadata?.bech32PublicKey ?? member.publicKey)
-                                        .lineLimit(1)
-                                        .font(.caption)
-                                        .foregroundStyle(.tertiary)
-                                }
+                        if canRemoveUsers {
+                            
+                            ForEach(admins) { member in
+                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
+                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
+                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
+                                                       canRemove: true, action: {})
                             }
+                            
+                        } else {
+                            
+                            ForEach(admins) { member in
+                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
+                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
+                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
+                                                       canRemove: false, action: {})
+                            }
+                            
                         }
-                        
+
                     } header: {
                         Text("Admins")
                             .font(.caption)
@@ -159,22 +164,24 @@ struct MacOSGroupInfoPopoverView: View {
                             
                         }
                         
-                        ForEach(filteredMembers) { member in
-                            HStack {
-                                AvatarView(avatarUrl: member.metadata?.picture ?? "", size: 30)
-                                
-                                VStack(alignment: .leading) {
-                                    Text(verbatim: member.metadata?.bestPublicName ?? member.publicKey)
-                                        .lineLimit(1)
-                                        .font(.subheadline)
-                                        .bold()
-                                    Text(member.metadata?.bech32PublicKey ?? member.publicKey)
-                                        .lineLimit(1)
-                                        .font(.caption)
-                                        .foregroundStyle(.tertiary)
-                                        .textSelection(.enabled)
-                                }
+                        if canRemoveUsers {
+                            
+                            ForEach(filteredMembers) { member in
+                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
+                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
+                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
+                                                       canRemove: true, action: {})
                             }
+                            
+                        } else {
+                            
+                            ForEach(filteredMembers) { member in
+                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
+                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
+                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
+                                                       canRemove: false, action: {})
+                            }
+                            
                         }
                         
                     } header: {
@@ -190,6 +197,46 @@ struct MacOSGroupInfoPopoverView: View {
             
         }
         
+    }
+}
+
+struct MacOSGroupInfoMemberListRowView: View {
+    
+    let iconUrl: String
+    let name: String
+    let publicKey: String
+    let canRemove: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        HStack {
+            AvatarView(avatarUrl: iconUrl, size: 30)
+            VStack(alignment: .leading) {
+                Text(verbatim: name)
+                    .lineLimit(1)
+                    .font(.subheadline)
+                    .bold()
+                Text(publicKey)
+                    .lineLimit(1)
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+            
+            if canRemove {
+                Spacer()
+                
+                Button(action: {
+                    Task {
+                        action()
+                    }
+                }) {
+                    Image(systemName: "minus.circle.fill")
+                        .imageScale(.large)
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 }
 

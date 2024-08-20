@@ -76,7 +76,8 @@ struct MacOSRootView: View {
     }
    
     func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadataVM? {
-        return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
+        //return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
+        return nil
     }
     
     @Query(filter: #Predicate<DBEvent> { $0.kind == kindGroupAdmins }, sort: \.createdAt)

@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3D9DD43B-6780-4BA8-9C5A-E0CB8D2AC10B"
-            shouldBeEnabled = "No"
+            uuid = "A3591093-6094-4F82-89BA-8231159A8977"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/Seer-ewmmrkstpwijwcfkqjfemyodgudy/SourcePackages/checkouts/Nostr/Sources/Nostr/Event.swift"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/Seer-ewmmrkstpwijwcfkqjfemyodgudy/SourcePackages/checkouts/NostrClient/Sources/NostrClient/RelayConnection.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "100"
-            endingLineNumber = "100"
-            landmarkName = "hasValidId()"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "send(text:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

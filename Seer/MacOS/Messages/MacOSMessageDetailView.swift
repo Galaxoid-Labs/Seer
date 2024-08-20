@@ -20,7 +20,7 @@ struct MacOSMessageDetailView: View {
     let groupMembers: [GroupMemberVM]
     let groupAdmins: [GroupAdminVM]
     let publicKeyMetadata: [PublicKeyMetadataVM]
-   
+    
     @Query private var ownerAccounts: [OwnerAccount]
     var selectedOwnerAccount: OwnerAccount? {
         return ownerAccounts.first(where: { $0.selected })
@@ -67,8 +67,8 @@ struct MacOSMessageDetailView: View {
                 )
             ScrollViewReader { reader in
                 List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == selectedOwnerAccount?.publicKey, 
-                                           chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey), 
+                    MacOSMessageBubbleView(owner: message.publicKey == selectedOwnerAccount?.publicKey,
+                                           chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey),
                                            replyTo: getReplyTo(forId: message.replyToEventId),
                                            showTranslation: $showTranslation)
                     .contextMenu(ContextMenu(menuItems: {
@@ -87,7 +87,14 @@ struct MacOSMessageDetailView: View {
                         Button("Copy Event Id") {
                             appState.copyToClipboard(message.id)
                         }
-
+                        
+                        Divider()
+                        
+                        Button("Report") {
+                            
+                        }
+                        .tint(.red)
+                        
                     }))
                     
                 }
@@ -132,7 +139,7 @@ struct MacOSMessageDetailView: View {
                             Spacer()
                             
                             Button(action: {
-                                        self.replyMessage = nil
+                                self.replyMessage = nil
                             }, label: {
                                 Image(systemName: "xmark.circle")
                                     .imageScale(.large)
@@ -145,7 +152,7 @@ struct MacOSMessageDetailView: View {
                     .frame(height: 50)
                     .padding(.vertical, -8)
                     .transition(.move(edge: .bottom))
-
+                    
                 }
                 
             }
@@ -157,16 +164,16 @@ struct MacOSMessageDetailView: View {
                     Color(.textBackgroundColor)
                         .frame(height: max(0,textEditorHeight))
                     
-                     Text(messageText)
-                         .font(.system(.body))
-                         .foregroundColor(.clear)
-                         .padding()
-                         .background(GeometryReader {
-                             Color.clear.preference(key: ViewHeightKey.self,
-                                                    value: $0.frame(in: .local).size.height)
-                         })
+                    Text(messageText)
+                        .font(.system(.body))
+                        .foregroundColor(.clear)
+                        .padding()
+                        .background(GeometryReader {
+                            Color.clear.preference(key: ViewHeightKey.self,
+                                                   value: $0.frame(in: .local).size.height)
+                        })
                     
-                     TextEditor(text: $messageText)
+                    TextEditor(text: $messageText)
                         .font(.system(.body))
                         .padding(.vertical)
                         .padding(.trailing, 50)
@@ -181,10 +188,12 @@ struct MacOSMessageDetailView: View {
                                     withAnimation {
                                         if let replyMessage {
                                             appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
-                                                                          withText: messageText.trimmingCharacters(in: .newlines), 
+                                                                          withText: messageText.trimmingCharacters(in: .newlines),
                                                                           replyChatMessage: replyMessage)
-                                            
-                                            self.replyMessage = nil
+                                           
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                                self.replyMessage = nil
+                                            }
                                             
                                         } else {
                                             appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
@@ -210,12 +219,12 @@ struct MacOSMessageDetailView: View {
                             .padding()
                         }
                         .focused($inputFocused)
-
-                 }
+                    
+                }
                 .onPreferenceChange(ViewHeightKey.self) { textEditorHeight = $0 }
                 .keyboardShortcut(.return)
             }
-
+            
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
@@ -233,7 +242,7 @@ struct MacOSMessageDetailView: View {
                                     .foregroundColor(.secondary)
                                     .font(.system(size: 18))
                             }
-
+                            
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                     
@@ -247,7 +256,7 @@ struct MacOSMessageDetailView: View {
                     }
                 }
                 .opacity(selectedGroup == nil ? 0.0 : 1.0)
-
+                
                 Spacer()
                 
                 if !isMember() && groupMembers.count > 0 {
@@ -266,8 +275,12 @@ struct MacOSMessageDetailView: View {
                     .background(.blue)
                     .cornerRadius(6)
                 }
-               
+                
                 if let selectedGroup, let selectedOwnerAccount {
+                    
+                    ShareLink(item: selectedGroup.relayUrl + "'" + selectedGroup.id)
+                        .fontWeight(.semibold)
+                    
                     Button(action: { infoPopoverPresented = true }) {
                         Image(systemName: "info.circle")
                             .fontWeight(.semibold)
@@ -276,10 +289,15 @@ struct MacOSMessageDetailView: View {
                     .popover(isPresented: $infoPopoverPresented, arrowEdge: .bottom, content: {
                         MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers, admins: groupAdmins,
                                                   selectedOwnerAccount: selectedOwnerAccount)
-                            .frame(width: 300, height: 400)
+                        .frame(width: 300, height: 400)
                     })
                 }
                 
+            }
+        }
+        .onChange(of: selectedGroup) { oldValue, newValue in
+            if oldValue != newValue {
+                self.replyMessage = nil
             }
         }
     }

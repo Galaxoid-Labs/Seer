@@ -184,6 +184,7 @@
 				473E426B2C35A2C900282484 /* LinkPreviewVM.swift */,
 				47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */,
 				478894C32BCEBB7D00A3A7FB /* Relay.swift */,
+				475BDB572C5C29A000A12E84 /* Box.swift */,
 				478597642BD157C000609EE2 /* PreviewData.swift */,
 				47EF15812C57F95E0012FB46 /* DBEvent.swift */,
 				475BDB512C5990AC00A12E84 /* GroupVM.swift */,
@@ -198,13 +199,12 @@
 		47583E202BC481A3001A25E2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				473E426F2C35A7FC00282484 /* Extensions */,
 				478597692BD15EC700609EE2 /* Components */,
+				473E426F2C35A7FC00282484 /* Extensions */,
 				47583DFC2BC45FA8001A25E2 /* Models */,
 				47202DE92BB341EC00A06030 /* SeerApp.swift */,
 				47583E1E2BC47B28001A25E2 /* AppState.swift */,
 				47E1FD662C4EF5A500C75C91 /* RootView.swift */,
-				475BDB572C5C29A000A12E84 /* Box.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";

@@ -12,7 +12,7 @@ import SwiftData
 struct MacOSGroupListView: View {
     
     @EnvironmentObject var appState: AppState
-  
+    
     @Binding var selectedGroup: GroupVM?
     let groups: [GroupVM]
     let chatMessages: [ChatMessageVM]
@@ -25,7 +25,7 @@ struct MacOSGroupListView: View {
     }
     
     var body: some View {
-       
+        
         List(selection: $selectedGroup) {
             ForEach(groups, id: \.id) { group in
                 NavigationLink(value: group) {
@@ -39,10 +39,6 @@ struct MacOSGroupListView: View {
                 Spacer()
                 Button(action: { print("Add tapped") }) {
                     Image(systemName: "plus.circle")
-                }
-                
-                if let selectedGroup {
-                    ShareLink(item: selectedGroup.relayUrl + "'" + selectedGroup.id)
                 }
                 
             }

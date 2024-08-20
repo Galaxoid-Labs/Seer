@@ -19,12 +19,6 @@ struct MacOSMessageBubbleView: View {
     let replyTo: (chatMessage: ChatMessageVM, publicKeyMetadata: PublicKeyMetadataVM?)?
     @Binding var showTranslation: Bool
     
-//    func getReplyBackgroundColor() -> Color {
-//        if owner {
-//            return .accentColor.brightness(/*@START_MENU_TOKEN@*/0.60/*@END_MENU_TOKEN@*/)
-//        }
-//    }
-    
     var body: some View {
         HStack(alignment: .top) {
             
@@ -37,25 +31,18 @@ struct MacOSMessageBubbleView: View {
                 
                 if !owner {
                     HStack {
-                                            
+                        
                         Text(publicKeyMetadata?.name ?? chatMessage.publicKey.prefix(12).lowercased())
                             .bold()
                             .padding(.leading, 8)
                         
                         if let nip05 = publicKeyMetadata?.nip05 { // TODO: Check nip verified
                             HStack(spacing: 2) {
-//                                if publicKeyMetadata?.nip05Verified {
-//                                    Image(systemName: "checkmark.seal.fill")
-//                                        .imageScale(.small)
-//                                        .foregroundStyle(.accent)
-//                                }
-
-                    
                                 Text(verbatim: nip05)
                                     .foregroundStyle(.secondary)
                             }
                         }
-
+                        
                     }
                 }
                 
@@ -67,7 +54,7 @@ struct MacOSMessageBubbleView: View {
                             Color
                                 .white
                                 .frame(width: 3)
-
+                            
                             VStack(alignment: .leading) {
                                 Text(replyTo.publicKeyMetadata?.bestPublicName ?? replyTo.chatMessage.publicKey)
                                     .font(.subheadline)
@@ -78,7 +65,6 @@ struct MacOSMessageBubbleView: View {
                                     .lineLimit(1)
                             }
                             .padding(4)
-                            //.padding(.horizontal)
                             
                         }
                         .background((owner ? Color.accentColor : .gray).brightness(0.1))
@@ -97,7 +83,6 @@ struct MacOSMessageBubbleView: View {
                                 .font(.system(size: 40))
                         })
                         .resizable()
-                        //.frame(width: 100, height: 100)
                         .aspectRatio(contentMode: .fill)
                         .background(.gray)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -107,12 +92,6 @@ struct MacOSMessageBubbleView: View {
                 .background(owner ? Color.accentColor : .gray)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(owner ? .leading : .trailing, 150)
-                .translationPresentation(isPresented: $showTranslation,
-                                         text: chatMessage.content)
-                .onLongPressGesture {
-                    showTranslation = true
-                }
-                //.frame(maxWidth: 400)
                 
                 if let links = chatMessage.urls["links"] {
                     ForEach(links, id: \.self) { link in
@@ -121,7 +100,7 @@ struct MacOSMessageBubbleView: View {
                             LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
                         }
                         .buttonStyle(.plain)
-
+                        
                     }
                 }
                 

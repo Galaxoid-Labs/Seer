@@ -11,7 +11,8 @@ import Nostr
 
 struct MacOSAddGroupMemberPopoverView: View {
     
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var appState: AppState 
+    @Environment(\.dismiss) private var dismiss
     
     let members: [GroupMemberVM]
     let selectedGroup: GroupVM
@@ -61,6 +62,7 @@ struct MacOSAddGroupMemberPopoverView: View {
                             appState.addMember(ownerAccount: selectedOwnerAccount,
                                                group: selectedGroup, publicKey: pmd.publicKey)
                         }
+                        dismiss()
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)

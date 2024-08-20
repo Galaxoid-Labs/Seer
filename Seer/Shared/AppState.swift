@@ -16,7 +16,7 @@ let IdSubChatMessages = "IdSubChatMessages"
 let IdSubPublicMetadata = "IdPublicMetadata"
 let IdSubOwnerMetadata = "IdOwnerMetadata"
 let IdSubGroupList = "IdGroupList"
-let IdSubGroupMembers = "IdGroupList"
+let IdSubGroupMembers = "IdSubGroupMembers"
 
 class AppState: ObservableObject {
     
@@ -31,6 +31,15 @@ class AppState: ObservableObject {
     
     @Published var showOnboarding = false
     @Published var selectedRelay: Relay?
+    @State private var statuses: [String: Bool] = [:]
+    var relayConnectionStatus: [String: Binding<Bool>] {
+        Dictionary(uniqueKeysWithValues: statuses.map { key, value in
+            (key, Binding(
+                get: { self.statuses[key, default: false] },
+                set: { self.statuses[key] = $0 }
+            ))
+        })
+    }
     
     private init() {
         nostrClient.delegate = self
@@ -61,6 +70,16 @@ class AppState: ObservableObject {
             }
         }
         
+        let membersDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindGroupMembers || $0.kind == kindGroupAdmins })
+        if let otherAccounts = try? modelContainer?.mainContext.fetch(membersDescriptor) {
+            let members = otherAccounts.map({ $0.tags.filter({ $0.id == "p" })
+                .compactMap({ $0.otherInformation.last }) })
+                .reduce([], +).filter({ $0.isValidPublicKey })
+            for member in members {
+                pubkeys.insert(member)
+            }
+        }
+        
         // sort pubkeys
         // This should keep subscription additions from always
         // happening since its a no op if the Subscription is equal to current
@@ -76,7 +95,7 @@ class AppState: ObservableObject {
                 ], id: IdSubPublicMetadata),
                 Subscription(filters: [
                     Filter(authors: [selectedAccount.publicKey], kinds: [
-                        .groupList,
+                        .setMetadata,
                     ])
                 ], id: IdSubOwnerMetadata)
             ])
@@ -278,6 +297,10 @@ class AppState: ObservableObject {
             print(error.localizedDescription)
         }
         
+//        if let clientMessage = try? ClientMessage.event(event).string() {
+//           print(clientMessage)
+//        }
+        
         nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
     }
     
@@ -287,11 +310,11 @@ class AppState: ObservableObject {
         let groupId = group.id
         var tags: [Tag] = [Tag(id: "h", otherInformation: groupId)]
         if let rootEventId = replyChatMessage.rootEventId {
-            tags.append(Tag(id: "e", otherInformation: [rootEventId, "", "root", replyChatMessage.publicKey]))
-            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, "", "reply", replyChatMessage.publicKey]))
+            tags.append(Tag(id: "e", otherInformation: [rootEventId, relayUrl, "root", replyChatMessage.publicKey]))
+            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, relayUrl, "reply", replyChatMessage.publicKey]))
         } else {
-            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, "", "root", replyChatMessage.publicKey]))
-            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, "", "reply", replyChatMessage.publicKey]))
+            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, relayUrl, "root", replyChatMessage.publicKey]))
+            tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, relayUrl, "reply", replyChatMessage.publicKey]))
         }
         
         var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
@@ -320,6 +343,15 @@ class AppState: ObservableObject {
 }
 
 extension AppState: NostrClientDelegate {
+    func didConnect(relayUrl: String) {
+        statuses[relayUrl] = true
+        relayConnectionStatus[relayUrl]?.wrappedValue = true
+    }
+    
+    func didDisconnect(relayUrl: String) {
+        statuses[relayUrl] = false
+        relayConnectionStatus[relayUrl]?.wrappedValue = false
+    }
     
     func didReceive(message: Nostr.RelayMessage, relayUrl: String) {
         switch message {
@@ -335,13 +367,17 @@ extension AppState: NostrClientDelegate {
             print(id, acceptance, m)
         case .eose(let id):
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
-            if id == IdSubGroupList {
-                Task {
-                    await subscribeGroups(withRelayUrl: relayUrl)
-                }
-            }
-            if id == IdSubChatMessages {
-                // TODO: Create publickeymetadata for the event message pubkeys..
+            switch id {
+                case IdSubGroupList:
+                    Task {
+                        await subscribeGroups(withRelayUrl: relayUrl)
+                    }
+                case IdSubChatMessages,IdSubGroupList:
+                    Task {
+                        await connectAllMetadataRelays()
+                    }
+                default:
+                    ()
             }
         case .closed(let id, let message):
             print(id, message)
