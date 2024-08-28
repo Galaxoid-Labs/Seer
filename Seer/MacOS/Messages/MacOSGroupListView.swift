@@ -26,7 +26,7 @@ struct MacOSGroupListView: View {
     
     init(relayUrl: String) {
         self.relayUrl = relayUrl
-        _groups = Query(filter: #Predicate<Group> { $0.relayUrl == relayUrl })
+        _groups = Query(filter: #Predicate<Group> { $0.relayUrl == relayUrl && $0.name != nil }, sort: [SortDescriptor(\.name, order: .forward)]) // TODO: order by last message?
         _chatMessages = Query(filter: #Predicate<ChatMessage> { $0.relayUrl == relayUrl })
     }
     

@@ -17,7 +17,6 @@ struct SeerApp: App {
         let schema = Schema([
             OwnerAccount.self,
             Relay.self,
-            DBEvent.self,
             PublicKeyMetadata.self,
             ChatMessage.self,
             Group.self,

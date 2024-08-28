@@ -181,7 +181,8 @@ class AppState: ObservableObject {
     func removeDataFor(relayUrl: String) async -> Void {
         Task.detached {
             guard let modelContext = self.backgroundContext() else { return }
-            try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.relayUrl == relayUrl })
+            // TODO: Fix this
+            //try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.relayUrl == relayUrl })
             try? modelContext.save()
         }
     }

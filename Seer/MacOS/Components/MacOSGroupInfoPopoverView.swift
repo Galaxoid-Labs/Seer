@@ -39,12 +39,16 @@ struct MacOSGroupInfoPopoverView: View {
             
             VStack(spacing: 16) {
                 
-                HStack {
-                    Link("\(group.relayUrl)'\(group.id)", destination: URL(string: "\(group.relayUrl)'\(group.id)")!)
-                        .underline()
+                if let url =  URL(string: "\(group.relayUrl)'\(group.id)") {
+                    HStack {
+                        Link("\(group.relayUrl)'\(group.id)", destination: url)
+                            .underline()
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                
+
                 
                 AnimatedImage(url: URL(string: group.picture ?? ""), placeholder: {
                     Image(systemName: "rectangle.3.group.bubble")

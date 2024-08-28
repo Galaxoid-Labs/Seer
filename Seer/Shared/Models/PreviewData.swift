@@ -15,7 +15,6 @@ class PreviewData {
             let schema = Schema([
                 OwnerAccount.self,
                 Relay.self,
-                DBEvent.self
             ])
             let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
             let container = try ModelContainer(for: schema, configurations: modelConfiguration)

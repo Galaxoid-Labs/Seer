@@ -22,8 +22,7 @@ struct MacOSMessageDetailView: View {
     @Query var groupMembers: [GroupMember]
     @Query var groupAdmins: [GroupAdmin]
     @Query var publicKeyMetadata: [PublicKeyMetadata]
-//    let groupMembers: [GroupMember] = []
-//    let groupAdmins: [GroupAdmin] = []
+    
     var chatMessages: [ChatMessage] {
         return Array(allMessages.suffix(appState.chatMessageNumResults))
     }
@@ -43,7 +42,7 @@ struct MacOSMessageDetailView: View {
     init(relayUrl: String, groupId: String, chatMessageNumResults: Binding<Int>) {
         self.relayUrl = relayUrl
         self.groupId = groupId
-        _allMessages = Query(filter: #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }, animation: .interactiveSpring)
+        _allMessages = Query(filter: #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }, sort: [SortDescriptor(\.createdAt, order: .forward)], animation: .interactiveSpring)
         _groupMembers = Query(filter: #Predicate<GroupMember>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
         _groupAdmins = Query(filter: #Predicate<GroupAdmin>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
     }
