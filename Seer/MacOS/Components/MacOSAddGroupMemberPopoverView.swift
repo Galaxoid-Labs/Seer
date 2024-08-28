@@ -14,15 +14,13 @@ struct MacOSAddGroupMemberPopoverView: View {
     @EnvironmentObject var appState: AppState 
     @Environment(\.dismiss) private var dismiss
     
-    let members: [GroupMemberVM]
-    let selectedGroup: GroupVM
+    let members: [GroupMember]
+    let selectedGroup: Group
     let selectedOwnerAccount: OwnerAccount
-    
-    @Query(filter: #Predicate<DBEvent> { $0.kind == kindSetMetdata }, sort: \.createdAt)
-    private var publicKeyMetadataEvents: [DBEvent]
-    var publicKeyMetadata: [PublicKeyMetadataVM] {
-        let pmd = publicKeyMetadataEvents.compactMap({ PublicKeyMetadataVM(event: $0) })
-        return pmd.filter { pmd in
+   
+    @Query var publicKeyMetadata: [PublicKeyMetadata]
+    var filteredPublicKeyMetadata: [PublicKeyMetadata] {
+        return publicKeyMetadata.filter { pmd in
             !members.contains { gm in
                 gm.publicKey == pmd.publicKey
             }
@@ -78,11 +76,11 @@ struct MacOSAddGroupMemberPopoverView: View {
     }
 }
 
-#Preview {
-    MacOSAddGroupMemberPopoverView(members: [
-        GroupMemberVM(publicKey: "abc", groupId: "abc123"),
-        GroupMemberVM(publicKey: "def", groupId: "abc123")],
-                                   selectedGroup: GroupVM(id: "abc", relayUrl: "", isPublic: true, isOpen: true),
-                                   selectedOwnerAccount: OwnerAccount(publicKey: "abc", selected: true, metadataRelayIds: [], messageRelayIds: []))
-        .frame(width: 200, height: 400)
-}
+//#Preview {
+//    MacOSAddGroupMemberPopoverView(members: [
+//        GroupMemberVM(publicKey: "abc", groupId: "abc123"),
+//        GroupMemberVM(publicKey: "def", groupId: "abc123")],
+//                                   selectedGroup: GroupVM(id: "abc", relayUrl: "", isPublic: true, isOpen: true),
+//                                   selectedOwnerAccount: OwnerAccount(publicKey: "abc", selected: true, metadataRelayIds: [], messageRelayIds: []))
+//        .frame(width: 200, height: 400)
+//}

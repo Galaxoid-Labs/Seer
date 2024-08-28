@@ -15,43 +15,50 @@ struct MacOSMessageDetailView: View {
     
     @EnvironmentObject var appState: AppState
     
-    @Binding var selectedGroup: GroupVM?
-    let messages: [ChatMessageVM]
-    let groupMembers: [GroupMemberVM]
-    let groupAdmins: [GroupAdminVM]
-    let publicKeyMetadata: [PublicKeyMetadataVM]
+    let relayUrl: String
+    let groupId: String
     
-    @Query private var ownerAccounts: [OwnerAccount]
-    var selectedOwnerAccount: OwnerAccount? {
-        return ownerAccounts.first(where: { $0.selected })
+    @Query private var allMessages: [ChatMessage]
+    @Query var groupMembers: [GroupMember]
+    @Query var groupAdmins: [GroupAdmin]
+    @Query var publicKeyMetadata: [PublicKeyMetadata]
+//    let groupMembers: [GroupMember] = []
+//    let groupAdmins: [GroupAdmin] = []
+    var chatMessages: [ChatMessage] {
+        return Array(allMessages.suffix(appState.chatMessageNumResults))
     }
     
     @State private var scroll: ScrollViewProxy?
     @State private var messageText = ""
     @State private var textEditorHeight : CGFloat = 32
-    @FocusState private var inputFocused: Bool
     @State private var searchText = ""
-    
-    @State private var favoriteColor = 0
-    
     @State private var infoPopoverPresented = false
     @State private var showTranslation: Bool = false
+    @State private var replyMessage: ChatMessage?
     
-    @State private var replyMessage: ChatMessageVM?
-    
+    @FocusState private var inputFocused: Bool
+
     private let maxHeight : CGFloat = 350
     
-    func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadataVM? {
+    init(relayUrl: String, groupId: String, chatMessageNumResults: Binding<Int>) {
+        self.relayUrl = relayUrl
+        self.groupId = groupId
+        _allMessages = Query(filter: #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }, animation: .interactiveSpring)
+        _groupMembers = Query(filter: #Predicate<GroupMember>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
+        _groupAdmins = Query(filter: #Predicate<GroupAdmin>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
+    }
+    
+    func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadata? {
         return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
     }
     
-    func getPubicKeyMetadata(forChatMessage chatMessage: ChatMessageVM?) -> PublicKeyMetadataVM? {
+    func getPubicKeyMetadata(forChatMessage chatMessage: ChatMessage?) -> PublicKeyMetadata? {
         guard let chatMessage else { return nil }
         return publicKeyMetadata.first(where: { $0.publicKey == chatMessage.publicKey })
     }
     
-    func getReplyTo(forId id: String?) -> (chatMessage: ChatMessageVM, publicKeyMetadata: PublicKeyMetadataVM?)? {
-        guard let chatMessage = messages.first(where: { $0.id == id }) else { return nil }
+    func getReplyTo(forId id: String?) -> (chatMessage: ChatMessage, publicKeyMetadata: PublicKeyMetadata?)? {
+        guard let chatMessage = chatMessages.first(where: { $0.id == id }) else { return nil }
         return (chatMessage: chatMessage, publicKeyMetadata: getPubicKeyMetadata(forChatMessage: chatMessage))
     }
     
@@ -66,8 +73,8 @@ struct MacOSMessageDetailView: View {
                     LinearGradient(gradient: Gradient(colors: [.clear, Color.secondary.opacity(0.2)]), startPoint: .bottom, endPoint: .top)
                 )
             ScrollViewReader { reader in
-                List(messages) { message in
-                    MacOSMessageBubbleView(owner: message.publicKey == selectedOwnerAccount?.publicKey,
+                List(chatMessages) { message in
+                    MacOSMessageBubbleView(owner: message.publicKey == appState.selectedOwnerAccount?.publicKey,
                                            chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey),
                                            replyTo: getReplyTo(forId: message.replyToEventId),
                                            showTranslation: $showTranslation)
@@ -78,7 +85,7 @@ struct MacOSMessageDetailView: View {
                                 self.inputFocused = true
                             }
                         }
-                        .disabled(selectedGroup == nil || !isMember())
+                        .disabled(appState.selectedGroup == nil || !isMember())
                         
                         Button("Copy Text") {
                             appState.copyToClipboard(message.content)
@@ -100,15 +107,17 @@ struct MacOSMessageDetailView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .onChange(of: messages, initial: true, { oldValue, newValue in
-                    if let last = messages.last {
+                .onChange(of: chatMessages, initial: true, { oldValue, newValue in
+                    if let last = chatMessages.last {
                         scroll?.scrollTo(last.id, anchor: .top)
                     }
                 })
                 .onAppear {
                     scroll = reader
-                    if let last = messages.last {
-                        scroll?.scrollTo(last.id, anchor: .top)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        if let last = chatMessages.last {
+                            scroll?.scrollTo(last.id, anchor: .top)
+                        }
                     }
                 }
                 
@@ -158,7 +167,7 @@ struct MacOSMessageDetailView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if selectedGroup != nil && isMember() {
+            if appState.selectedGroup != nil && isMember() {
                 ZStack(alignment: .leading) {
                     
                     Color(.textBackgroundColor)
@@ -183,8 +192,8 @@ struct MacOSMessageDetailView: View {
                         .onChange(of: messageText) { oldValue, newValue in
                             if let last = newValue.last {
                                 if last == "\n" && !CGKeyCode.kVK_Shift.isPressed {
-                                    guard let selectedOwnerAccount else { return }
-                                    guard let selectedGroup else { return }
+                                    guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
+                                    guard let selectedGroup = appState.selectedGroup else { return }
                                     withAnimation {
                                         if let replyMessage {
                                             appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
@@ -230,14 +239,14 @@ struct MacOSMessageDetailView: View {
             ToolbarItemGroup(placement: .automatic) {
                 HStack {
                     
-                    AnimatedImage(url: URL(string: selectedGroup?.picture ?? ""))
+                    AnimatedImage(url: URL(string: appState.selectedGroup?.picture ?? ""))
                         .transition(.fade)
                         .resizable()
                         .frame(width: 30, height: 30)
                         .aspectRatio(contentMode: .fill)
                         .background(.gray)
                         .overlay {
-                            if selectedGroup?.picture == nil {
+                            if appState.selectedGroup?.picture == nil {
                                 Image(systemName: "rectangle.3.group.bubble")
                                     .foregroundColor(.secondary)
                                     .font(.system(size: 18))
@@ -247,23 +256,23 @@ struct MacOSMessageDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                     
                     VStack(alignment: .leading) {
-                        Text(selectedGroup?.name ?? "---")
+                        Text(appState.selectedGroup?.name ?? "---")
                             .font(.headline)
                             .bold()
-                        Text(selectedGroup?.relayUrl ?? "--")
+                        Text(appState.selectedGroup?.relayUrl ?? "--")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                 }
-                .opacity(selectedGroup == nil ? 0.0 : 1.0)
+                .opacity(appState.selectedGroup == nil ? 0.0 : 1.0)
                 
                 Spacer()
                 
                 if !isMember() && groupMembers.count > 0 {
                     
                     Button(action: {
-                        guard let selectedOwnerAccount else { return }
-                        guard let selectedGroup else { return }
+                        guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
+                        guard let selectedGroup = appState.selectedGroup else { return }
                         appState.joinGroup(ownerAccount: selectedOwnerAccount, group: selectedGroup)
                     }) {
                         Text("Join")
@@ -276,7 +285,16 @@ struct MacOSMessageDetailView: View {
                     .cornerRadius(6)
                 }
                 
-                if let selectedGroup, let selectedOwnerAccount {
+                if let selectedGroup = appState.selectedGroup, let selectedOwnerAccount = appState.selectedOwnerAccount {
+                   
+                    if appState.chatMessageNumResults < allMessages.count {
+                        Button(action: {
+                            appState.chatMessageNumResults *= 2
+                        }) {
+                            Text("Load More")
+                                //.foregroundStyle(.white)
+                        }
+                    }
                     
                     ShareLink(item: selectedGroup.relayUrl + "'" + selectedGroup.id)
                         .fontWeight(.semibold)
@@ -295,7 +313,7 @@ struct MacOSMessageDetailView: View {
                 
             }
         }
-        .onChange(of: selectedGroup) { oldValue, newValue in
+        .onChange(of: appState.selectedGroup) { oldValue, newValue in
             if oldValue != newValue {
                 self.replyMessage = nil
             }
@@ -304,7 +322,7 @@ struct MacOSMessageDetailView: View {
     
     func isMember() -> Bool {
         if groupMembers.count > 0 {
-            if let selectedOwnerAccount {
+            if let selectedOwnerAccount = appState.selectedOwnerAccount {
                 if  groupMembers.contains(where: { $0.publicKey == selectedOwnerAccount.publicKey }) {
                     return true
                 }

@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A3591093-6094-4F82-89BA-8231159A8977"
+            uuid = "0942D11E-04D2-427A-A803-18E3E8BFD625"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../../../Library/Developer/Xcode/DerivedData/Seer-ewmmrkstpwijwcfkqjfemyodgudy/SourcePackages/checkouts/NostrClient/Sources/NostrClient/RelayConnection.swift"
+            filePath = "Seer/Shared/Models/ChatMessage.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
-            landmarkName = "send(text:)"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "init(id:kind:publicKey:createdAt:groupId:content:imageUrls:videoUrls:urls:relayUrl:rootEventId:replyToEventId:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

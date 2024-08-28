@@ -14,9 +14,16 @@ struct MacOSSidebarView: View {
     
     @EnvironmentObject var appState: AppState
    
-    let chatRelays: [Relay]
-    let selectedOwnerAccount: OwnerAccount?
-    let selectedOwnerAccountPublicKeyMetadata: PublicKeyMetadataVM?
+    @Query private var relays: [Relay]
+    var chatRelays: [Relay] {
+        return relays.filter({ $0.supportsNip29 })
+    }
+    
+    @Query private var publicKeyMetadata: [PublicKeyMetadata]
+    var selectedOwnerAccountPublicKeyMetadata: PublicKeyMetadata? {
+        guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return nil }
+        return publicKeyMetadata.first(where: { $0.publicKey == selectedOwnerAccount.publicKey })
+    }
     
     @Binding var columnVisibility: NavigationSplitViewVisibility
     @State var tapped: Int = 0
@@ -48,14 +55,10 @@ struct MacOSSidebarView: View {
                 LazyVStack(alignment: .leading) {
                     HStack {
                         
-                        if let selectedOwnerAccount {
+                        if let selectedOwnerAccount = appState.selectedOwnerAccount {
 
                             AvatarView(avatarUrl: selectedOwnerAccountPublicKeyMetadata?.picture ?? "", size: 30)
-                                .overlay(alignment: .bottomTrailing) {
-//                                    Image(systemName: "checkmark.circle.fill")
-//                                        .symbolRenderingMode(.multicolor)
-//                                        .offset(x: 5, y: 1)
-                                }
+                            
                             VStack(alignment: .leading) {
                                 Text(verbatim: selectedOwnerAccountPublicKeyMetadata?.bestPublicName ?? selectedOwnerAccount.bestPublicName)
                                     .lineLimit(1)
@@ -97,7 +100,4 @@ struct MacOSSidebarView: View {
     }
 }
 
-//#Preview {
-//    MacOSSidebarView()
-//}
 #endif

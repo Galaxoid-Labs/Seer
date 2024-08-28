@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4714FE772C76AE7D00656031 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */; };
+		4714FE792C76AF5C00656031 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE782C76AF5C00656031 /* ChatMessage.swift */; };
+		4714FE7B2C76B0B700656031 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE7A2C76B0B700656031 /* Group.swift */; };
+		4714FE7D2C76B13600656031 /* GroupMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE7C2C76B13600656031 /* GroupMember.swift */; };
+		4714FE7F2C76B1DA00656031 /* GroupAdmin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE7E2C76B1DA00656031 /* GroupAdmin.swift */; };
 		47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DE92BB341EC00A06030 /* SeerApp.swift */; };
 		47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47202DEB2BB341EC00A06030 /* MacOSRootView.swift */; platformFilters = (macos, ); };
 		47202DEE2BB341ED00A06030 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47202DED2BB341ED00A06030 /* Assets.xcassets */; };
@@ -27,12 +32,7 @@
 		47583DFB2BC45F5B001A25E2 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 47583DFA2BC45F5B001A25E2 /* KeychainAccess */; };
 		47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */; };
 		47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47583E1E2BC47B28001A25E2 /* AppState.swift */; };
-		475BDB522C5990AC00A12E84 /* GroupVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB512C5990AC00A12E84 /* GroupVM.swift */; };
-		475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */; };
-		475BDB562C5AE30300A12E84 /* PublicKeyMetadataVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */; };
 		475BDB582C5C29A000A12E84 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB572C5C29A000A12E84 /* Box.swift */; };
-		475BDB5A2C62BF6800A12E84 /* GroupAdminVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */; };
-		475BDB5C2C62C2DA00A12E84 /* GroupMemberVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */; };
 		475BDB5E2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB5D2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift */; };
 		475BDB622C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475BDB612C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift */; };
 		477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */; platformFilters = (macos, ); };
@@ -53,6 +53,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
+		4714FE782C76AF5C00656031 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		4714FE7A2C76B0B700656031 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		4714FE7C2C76B13600656031 /* GroupMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMember.swift; sourceTree = "<group>"; };
+		4714FE7E2C76B1DA00656031 /* GroupAdmin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAdmin.swift; sourceTree = "<group>"; };
 		47202DE62BB341EC00A06030 /* Seer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47202DE92BB341EC00A06030 /* SeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerApp.swift; sourceTree = "<group>"; };
 		47202DEB2BB341EC00A06030 /* MacOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRootView.swift; sourceTree = "<group>"; };
@@ -72,12 +77,7 @@
 		473E42702C35A80E00282484 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		47583DFD2BC45FFD001A25E2 /* OwnerAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerAccount.swift; sourceTree = "<group>"; };
 		47583E1E2BC47B28001A25E2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		475BDB512C5990AC00A12E84 /* GroupVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupVM.swift; sourceTree = "<group>"; };
-		475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVM.swift; sourceTree = "<group>"; };
-		475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadataVM.swift; sourceTree = "<group>"; };
 		475BDB572C5C29A000A12E84 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
-		475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAdminVM.swift; sourceTree = "<group>"; };
-		475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberVM.swift; sourceTree = "<group>"; };
 		475BDB5D2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSGroupInfoPopoverView.swift; sourceTree = "<group>"; };
 		475BDB612C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSAddGroupMemberPopoverView.swift; sourceTree = "<group>"; };
 		477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSMessageBubbleView.swift; sourceTree = "<group>"; };
@@ -187,11 +187,11 @@
 				475BDB572C5C29A000A12E84 /* Box.swift */,
 				478597642BD157C000609EE2 /* PreviewData.swift */,
 				47EF15812C57F95E0012FB46 /* DBEvent.swift */,
-				475BDB512C5990AC00A12E84 /* GroupVM.swift */,
-				475BDB532C5A9E1700A12E84 /* ChatMessageVM.swift */,
-				475BDB552C5AE30300A12E84 /* PublicKeyMetadataVM.swift */,
-				475BDB592C62BF6800A12E84 /* GroupAdminVM.swift */,
-				475BDB5B2C62C2DA00A12E84 /* GroupMemberVM.swift */,
+				4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */,
+				4714FE782C76AF5C00656031 /* ChatMessage.swift */,
+				4714FE7A2C76B0B700656031 /* Group.swift */,
+				4714FE7C2C76B13600656031 /* GroupMember.swift */,
+				4714FE7E2C76B1DA00656031 /* GroupAdmin.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -349,12 +349,11 @@
 				478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */,
 				4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */,
 				4785976B2BD15EFC00609EE2 /* AvatarView.swift in Sources */,
-				475BDB5A2C62BF6800A12E84 /* GroupAdminVM.swift in Sources */,
+				4714FE7D2C76B13600656031 /* GroupMember.swift in Sources */,
 				473E426A2C347A2100282484 /* MacOSSidebarRelayListRowView.swift in Sources */,
 				47202DEC2BB341EC00A06030 /* MacOSRootView.swift in Sources */,
 				47E3675A2BD039FB00FAE46D /* MacOSSettingsRelayView.swift in Sources */,
 				475BDB5E2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift in Sources */,
-				475BDB562C5AE30300A12E84 /* PublicKeyMetadataVM.swift in Sources */,
 				47310B5C2C1B3ED0003A1827 /* MacOSSidebarView.swift in Sources */,
 				478597652BD157C000609EE2 /* PreviewData.swift in Sources */,
 				47583DFE2BC45FFD001A25E2 /* OwnerAccount.swift in Sources */,
@@ -364,22 +363,23 @@
 				478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */,
 				47202DFC2BB4A9EA00A06030 /* MacOSWelcomeView.swift in Sources */,
 				47583E1F2BC47B28001A25E2 /* AppState.swift in Sources */,
-				475BDB5C2C62C2DA00A12E84 /* GroupMemberVM.swift in Sources */,
 				475BDB622C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift in Sources */,
 				47310B542C1A4CE8003A1827 /* MacOSGroupListRowView.swift in Sources */,
 				47310B5A2C1B3B3A003A1827 /* MacOSGroupListView.swift in Sources */,
 				47E1FD6E2C50332200C75C91 /* MacOSStartAddChatRelay.swift in Sources */,
 				478597632BD155B900609EE2 /* MacOSSettingsAccountView.swift in Sources */,
+				4714FE7B2C76B0B700656031 /* Group.swift in Sources */,
 				47202DEA2BB341EC00A06030 /* SeerApp.swift in Sources */,
 				47E1FD6A2C50024E00C75C91 /* MacOSStartView.swift in Sources */,
-				475BDB542C5A9E1700A12E84 /* ChatMessageVM.swift in Sources */,
 				477FA2EF2C1A11F00016067B /* MacOSMessageBubbleView.swift in Sources */,
-				475BDB522C5990AC00A12E84 /* GroupVM.swift in Sources */,
 				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,
+				4714FE7F2C76B1DA00656031 /* GroupAdmin.swift in Sources */,
 				47EF15822C57F95E0012FB46 /* DBEvent.swift in Sources */,
 				473E42712C35A80E00282484 /* URL.swift in Sources */,
 				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
 				47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */,
+				4714FE772C76AE7D00656031 /* PublicKeyMetadata.swift in Sources */,
+				4714FE792C76AF5C00656031 /* ChatMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

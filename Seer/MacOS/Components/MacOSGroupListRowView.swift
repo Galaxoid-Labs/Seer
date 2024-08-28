@@ -10,8 +10,8 @@ import SwiftData
 
 struct MacOSGroupListRowView: View {
     
-    let group: GroupVM
-    let lastMessage: ChatMessageVM?
+    let group: Group
+    let lastMessage: ChatMessage?
     
     var body: some View {
         VStack(alignment: .leading) {

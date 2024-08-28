@@ -17,7 +17,12 @@ struct SeerApp: App {
         let schema = Schema([
             OwnerAccount.self,
             Relay.self,
-            DBEvent.self
+            DBEvent.self,
+            PublicKeyMetadata.self,
+            ChatMessage.self,
+            Group.self,
+            GroupMember.self,
+            GroupAdmin.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -50,6 +55,7 @@ struct SeerApp: App {
                 .task {
                     //appState.modelContainer = PreviewData.container
                     appState.modelContainer = sharedModelContainer
+                    appState.initialSetup()
                     appState.connectAllNip29Relays()
                     appState.connectAllMetadataRelays()
                 }

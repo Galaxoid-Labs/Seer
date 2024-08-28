@@ -14,9 +14,9 @@ import Translation
 struct MacOSMessageBubbleView: View {
     
     let owner: Bool
-    let chatMessage: ChatMessageVM
-    let publicKeyMetadata: PublicKeyMetadataVM?
-    let replyTo: (chatMessage: ChatMessageVM, publicKeyMetadata: PublicKeyMetadataVM?)?
+    let chatMessage: ChatMessage
+    let publicKeyMetadata: PublicKeyMetadata?
+    let replyTo: (chatMessage: ChatMessage, publicKeyMetadata: PublicKeyMetadata?)?
     @Binding var showTranslation: Bool
     
     var body: some View {
@@ -72,7 +72,7 @@ struct MacOSMessageBubbleView: View {
                         
                     }
                     
-                    Text(chatMessage.contentFormated)
+                    Text(chatMessage.formatedContent() ?? "")
                         .foregroundStyle(.white)
                         .textSelection(.enabled)
                     
@@ -95,12 +95,10 @@ struct MacOSMessageBubbleView: View {
                 
                 if let links = chatMessage.urls["links"] {
                     ForEach(links, id: \.self) { link in
-                        
                         Link(destination: link) {
                             LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
                         }
                         .buttonStyle(.plain)
-                        
                     }
                 }
                 
@@ -116,34 +114,4 @@ struct MacOSMessageBubbleView: View {
     }
 }
 
-//#Preview {
-//    
-////    let container = PreviewData.container
-////    let messageA = EventMessage(id: "abc", relayUrl: "wss://groups.fiatjaf.com", publicKey: "e958cd75b9546e8ad2ebc096816be5a8bc22a75702257838a47ef848dd2dd03a", createdAt: .now.addingTimeInterval(-6000), groupId: "016fb665", content: "Hey! Whats going on? https://www.autosport.com https://galaxoidlabs.com https://opensats.org/blog/bitcoin-grants-july-2024")
-////    
-////    return ZStack {
-////        Image("tile_pattern_2")
-////            .resizable(resizingMode: .tile)
-////            //.colorMultiply(Color("Secondary"))
-////            .opacity(0.1)
-////            .edgesIgnoringSafeArea(.all)
-////            .overlay(
-////                LinearGradient(gradient: Gradient(colors: [.clear, Color("Secondary").opacity(0.1)]), startPoint: .top, endPoint: .bottom)
-////            )
-////        
-////        List {
-////            MacOSMessageBubbleView(owner: false, eventMessage: messageA)
-////                .modelContainer(container)
-////                .environmentObject(AppState.shared)
-////            
-////            MacOSMessageBubbleView(owner: true, eventMessage: messageA)
-////                .modelContainer(container)
-////                .environmentObject(AppState.shared)
-////        }
-////        .listStyle(.plain)
-////        .scrollContentBackground(.hidden)
-////        
-////    }
-//
-//}
 #endif

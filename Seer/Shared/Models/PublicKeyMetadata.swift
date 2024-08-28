@@ -1,28 +1,27 @@
 //
-//  PublicKeyMetadataVM.swift
+//  PublicKeyMetadata.swift
 //  Seer
 //
-//  Created by Jacob Davis on 7/31/24.
+//  Created by Jacob Davis on 8/21/24.
 //
 
 import Foundation
 import SwiftData
 import Nostr
 
-struct PublicKeyMetadataVM: Identifiable, Hashable {
+@Model
+final class PublicKeyMetadata {
+   
+    @Attribute(.unique) var publicKey: String
+    var bech32PublicKey: String
     
-    var id: String { return publicKey }
-    
-    let publicKey: String
-    let bech32PublicKey: String
-    
-    let name: String?
-    let about: String?
-    let picture: String?
-    let nip05: String?
-    let lud06: String?
-    let lud16: String?
-    let createdAt: Date
+    var name: String?
+    var about: String?
+    var picture: String?
+    var nip05: String?
+    var lud06: String?
+    var lud16: String?
+    var createdAt: Date
     var nip05Verified: Bool
     
     init(publicKey: String, bech32PublicKey: String, name: String?, about: String?, picture: String?, nip05: String?, lud06: String?, lud16: String?, createdAt: Date, nip05Verified: Bool) {
@@ -38,7 +37,7 @@ struct PublicKeyMetadataVM: Identifiable, Hashable {
         self.nip05Verified = nip05Verified
     }
     
-    init?(event: DBEvent) {
+    init?(event: Event) {
         guard let bech32PublicKey = try? event.pubkey.bech32FromHex(hrp: "npub") else { return nil }
         self.publicKey = event.pubkey
         self.bech32PublicKey = bech32PublicKey
@@ -51,7 +50,7 @@ struct PublicKeyMetadataVM: Identifiable, Hashable {
         self.lud16 = contentData?.lud16 ?? ""
         self.nip05 = contentData?.nip05 ?? ""
         
-        self.createdAt = event.createdAt
+        self.createdAt = event.createdAt.date
         self.nip05Verified = false // TODO: Fetch this.
     }
     
@@ -96,4 +95,8 @@ struct MetadataContentData: Codable {
     var lud16: String?
     var display_name: String?
     var website: String?
+}
+
+extension PublicKeyMetadata: Hashable, Identifiable {
+    var id: String { return publicKey }
 }

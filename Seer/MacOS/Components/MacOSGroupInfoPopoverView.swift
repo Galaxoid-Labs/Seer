@@ -10,24 +10,24 @@ import SDWebImageSwiftUI
 
 struct MacOSGroupInfoPopoverView: View {
     
-    let group: GroupVM
-    let members: [GroupMemberVM]
-    let admins: [GroupAdminVM]
+    let group: Group
+    let members: [GroupMember]
+    let admins: [GroupAdmin]
     let selectedOwnerAccount: OwnerAccount
     
-    var filteredMembers: [GroupMemberVM] {
+    var filteredMembers: [GroupMember] {
         return members.filter({ gm in !admins.contains { gma in
             gma.publicKey == gm.publicKey
         }})
     }
     
-    var selectedOwnerAccountAdmin: GroupAdminVM? {
+    var selectedOwnerAccountAdmin: GroupAdmin? {
         return admins.first(where: { $0.publicKey == selectedOwnerAccount.publicKey })
     }
     
     var canRemoveUsers: Bool {
         guard let selectedOwnerAccountAdmin else { return false}
-        return Set([GroupAdminVM.Capability.RemoveUser])
+        return Set([GroupAdmin.Capability.RemoveUser])
         .isSubset(of: selectedOwnerAccountAdmin.capabilities)
     }
     
@@ -91,13 +91,13 @@ struct MacOSGroupInfoPopoverView: View {
                         
                     }
                 }
-
+                
                 Divider()
                 
                 VStack(alignment: .leading, spacing: 16) {
                     Section {
                         
-                        if let selectedOwnerAccountAdmin, Set([GroupAdminVM.Capability.AddPermission, GroupAdminVM.Capability.AddUser]).isSubset(of: selectedOwnerAccountAdmin.capabilities) {
+                        if let selectedOwnerAccountAdmin, Set([GroupAdmin.Capability.AddPermission, GroupAdmin.Capability.AddUser]).isSubset(of: selectedOwnerAccountAdmin.capabilities) {
                             
                             Button(action: {}, label: {
                                 Image(systemName: "plus")
@@ -117,23 +117,23 @@ struct MacOSGroupInfoPopoverView: View {
                         if canRemoveUsers {
                             
                             ForEach(admins) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
-                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
-                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
-                                                       canRemove: true, action: {})
+                                MacOSGroupInfoMemberListRowView(iconUrl:  "",
+                                                                name: member.publicKey,
+                                                                publicKey:  member.publicKey,
+                                                                canRemove: true, action: {})
                             }
                             
                         } else {
                             
                             ForEach(admins) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
-                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
-                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
-                                                       canRemove: false, action: {})
+                                MacOSGroupInfoMemberListRowView(iconUrl: "",
+                                                                name: member.publicKey,
+                                                                publicKey: member.publicKey,
+                                                                canRemove: false, action: {})
                             }
                             
                         }
-
+                        
                     } header: {
                         Text("Admins")
                             .font(.caption)
@@ -143,7 +143,7 @@ struct MacOSGroupInfoPopoverView: View {
                     Section {
                         
                         if let selectedOwnerAccountAdmin,
-                            selectedOwnerAccountAdmin.capabilities.contains(.AddUser) {
+                           selectedOwnerAccountAdmin.capabilities.contains(.AddUser) {
                             
                             Button(action: { addMemberPopoverShowing = true }, label: {
                                 Image(systemName: "plus")
@@ -167,19 +167,19 @@ struct MacOSGroupInfoPopoverView: View {
                         if canRemoveUsers {
                             
                             ForEach(filteredMembers) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
-                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
-                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
-                                                       canRemove: true, action: {})
+                                MacOSGroupInfoMemberListRowView(iconUrl: "",
+                                                                name: member.publicKey,
+                                                                publicKey: member.publicKey,
+                                                                canRemove: true, action: {})
                             }
                             
                         } else {
                             
                             ForEach(filteredMembers) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl: member.metadata?.picture ?? "",
-                                                       name: member.metadata?.bestPublicName ?? member.publicKey,
-                                                       publicKey: member.metadata?.bech32PublicKey ?? member.publicKey,
-                                                       canRemove: false, action: {})
+                                MacOSGroupInfoMemberListRowView(iconUrl:"",
+                                                                name: member.publicKey,
+                                                                publicKey: member.publicKey,
+                                                                canRemove: false, action: {})
                             }
                             
                         }
@@ -189,12 +189,11 @@ struct MacOSGroupInfoPopoverView: View {
                             .font(.caption)
                             .bold()
                     }
-
+                    
                 }
- 
+                
             }
             .padding()
-            
         }
         
     }
@@ -240,11 +239,3 @@ struct MacOSGroupInfoMemberListRowView: View {
     }
 }
 
-#Preview {
-    MacOSGroupInfoPopoverView(group: .init(id: "abc123", relayUrl: "wss://groups.fiatjaf.com", name: "Horse", picture: "https://fiatjaf.com/static/favicon.jpg", about: "A group non-related to horses", isPublic: true, isOpen: true), members: [
-            GroupMemberVM(publicKey: "abc", groupId: "abc123"),
-            GroupMemberVM(publicKey: "def", groupId: "abc123"),
-    ], admins: [GroupAdminVM(publicKey: "abc", groupId: "abc123", 
-                             capabilities: Set(GroupAdminVM.Capability.allCases))], selectedOwnerAccount: OwnerAccount.init(publicKey: "abc", selected: true, metadataRelayIds: [], messageRelayIds: []))
-        .frame(width: 300, height: 400)
-}

@@ -30,7 +30,15 @@ class AppState: ObservableObject {
     static let shared = AppState()
     
     @Published var showOnboarding = false
+    @Published var selectedOwnerAccount: OwnerAccount?
     @Published var selectedRelay: Relay?
+    @Published var selectedGroup: Group? {
+        didSet {
+            chatMessageNumResults = 50
+        }
+    }
+    @Published var chatMessageNumResults: Int = 50
+    
     @State private var statuses: [String: Bool] = [:]
     var relayConnectionStatus: [String: Binding<Bool>] {
         Dictionary(uniqueKeysWithValues: statuses.map { key, value in
@@ -43,6 +51,12 @@ class AppState: ObservableObject {
     
     private init() {
         nostrClient.delegate = self
+    }
+    
+    @MainActor func initialSetup() {
+        var selectedAccountDescriptor = FetchDescriptor<OwnerAccount>(predicate: #Predicate { $0.selected })
+        selectedAccountDescriptor.fetchLimit = 1
+        self.selectedOwnerAccount = try? modelContainer?.mainContext.fetch(selectedAccountDescriptor).first
     }
     
     // This function is meant to be called anytime there has been a change
@@ -62,21 +76,25 @@ class AppState: ObservableObject {
         var pubkeys = Set([selectedAccount.publicKey])
         
         // Get other pubkeys
-        // TODO: Maybe just get pubkeys from groupMember, groupAdmins events?
-        let otherAccountsDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindSetMetdata || $0.kind == kindGroupChatMessage })
-        if let otherAccounts = try? modelContainer?.mainContext.fetch(otherAccountsDescriptor) {
-            for otherAccount in otherAccounts {
-                pubkeys.insert(otherAccount.pubkey)
+        // TODO: Maybe get pubkeys from chatMessages?
+//        let otherAccountsDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindSetMetdata || $0.kind == kindGroupChatMessage })
+//        if let otherAccounts = try? modelContainer?.mainContext.fetch(otherAccountsDescriptor) {
+//            for otherAccount in otherAccounts {
+//                pubkeys.insert(otherAccount.pubkey)
+//            }
+//        }
+        
+        let membersDescriptor = FetchDescriptor<GroupMember>()
+        if let members = try? modelContainer?.mainContext.fetch(membersDescriptor) {
+            for member in members {
+                pubkeys.insert(member.publicKey)
             }
         }
         
-        let membersDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindGroupMembers || $0.kind == kindGroupAdmins })
-        if let otherAccounts = try? modelContainer?.mainContext.fetch(membersDescriptor) {
-            let members = otherAccounts.map({ $0.tags.filter({ $0.id == "p" })
-                .compactMap({ $0.otherInformation.last }) })
-                .reduce([], +).filter({ $0.isValidPublicKey })
-            for member in members {
-                pubkeys.insert(member)
+        let adminsDescriptor = FetchDescriptor<GroupAdmin>()
+        if let admins = try? modelContainer?.mainContext.fetch(adminsDescriptor) {
+            for admin in admins {
+                pubkeys.insert(admin.publicKey)
             }
         }
         
@@ -133,17 +151,13 @@ class AppState: ObservableObject {
     // a no-op if nothing has actually changed in subscriptions, etc.
     @MainActor func subscribeGroups(withRelayUrl relayUrl: String) {
         
-        let kindsPredicate = #Predicate<DBEvent> { $0.kind == kindGroupMetadata
-            || $0.kind == kindGroupChatMessage || $0.kind == kindGroupChatMessageReply
-            || $0.kind == kindGroupForumMessage || $0.kind == kindGroupForumMessageReply }
-        let relayPredicate = #Predicate<DBEvent> { $0.relayUrl == relayUrl }
-        
-        let descriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { kindsPredicate.evaluate($0) && relayPredicate.evaluate($0) })
+        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl  })
         if let events = try? modelContainer?.mainContext.fetch(descriptor) {
             
             // Get latest message and use since filter so we don't keep getting the same shit
-            let since = events.min(by: { $0.createdAt > $1.createdAt })
-            let groupIds = events.filter({ $0.kind == kindGroupMetadata }).compactMap({ GroupVM(event: $0)?.id }).sorted()
+            //let since = events.min(by: { $0.createdAt > $1.createdAt })
+            // TODO: use the since fitler
+            let groupIds = events.compactMap({ $0.id }).sorted()
             let sub = Subscription(filters: [
                 Filter(kinds: [
                     Kind.groupChatMessage,
@@ -200,43 +214,88 @@ class AppState: ObservableObject {
         return try? modelContext?.fetch(desc).first
     }
     
-    func processDBEvent(event: Event, relayUrl: String) {
+    func process(event: Event, relayUrl: String) {
         Task.detached {
-            guard let dbEvent = DBEvent(event: event, relayUrl: relayUrl) else { return }
             guard let modelContext = self.backgroundContext() else { return }
-            
-            let kind = Int(event.kind.id)
-            let kindPredicate = #Predicate<DBEvent> { $0.kind == kind }
-            let pubkeyPredicate = #Predicate<DBEvent> { $0.pubkey == event.pubkey }
-            let relayPredicate = #Predicate<DBEvent> { $0.relayUrl == relayUrl }
-
-            // Since replacable events have diffrent Id's
-            // We need to delete current version if it's there
-            // before inserting. Anything else with same Id
-            // will simply be overwritten
             switch event.kind {
                 case Kind.setMetadata:
-                    let combinedPredicate = #Predicate<DBEvent> { kindPredicate.evaluate($0) && pubkeyPredicate.evaluate($0) }
-                    try? modelContext.delete(model: DBEvent.self, where: combinedPredicate)
-                    try? modelContext.save()
-                case Kind.groupMetadata, Kind.groupMembers, Kind.groupAdmins:
+                    
+                    if let publicKeyMetadata = PublicKeyMetadata(event: event) {
+                        modelContext.insert(publicKeyMetadata)
+                        try? modelContext.save()
+                    }
+                    
+                case Kind.groupMetadata:
+                    
+                    if let group = Group(event: event, relayUrl: relayUrl) {
+                        let groupId = group.id
+                        try? modelContext.delete(model: Group.self, where: #Predicate<Group> { $0.id == groupId })
+                        try? modelContext.save()
+                        modelContext.insert(group)
+                        try? modelContext.save()
+                    }
+                    
+                case Kind.groupMembers:
+                    
                     let tags = event.tags.map({ $0 })
-                    guard let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first else { return }
-                    let searchGroupId = "d\(DBEvent.infoDelimiter)\(groupId)"
-                    let groupPredicate = #Predicate<DBEvent> { $0.serializedTags.contains(searchGroupId) }
-                    let combinedPredicate = #Predicate<DBEvent> { kindPredicate.evaluate($0) && pubkeyPredicate.evaluate($0) && relayPredicate.evaluate($0) && groupPredicate.evaluate($0) }
-                    try? modelContext.delete(model: DBEvent.self, where: combinedPredicate)
-                    try? modelContext.save()
+                    if let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first {
+                        let members = tags.filter({ $0.id == "p" })
+                            .compactMap({ $0.otherInformation.last })
+                            .filter({ $0.isValidPublicKey })
+                            .map({ GroupMember(publicKey: $0, groupId: groupId, relayUrl: relayUrl) })
+                        
+                        for member in members {
+                            modelContext.insert(member)
+                        }
+                        
+                        try? modelContext.save()
+                    }
+                    
+                case Kind.groupAdmins:
+                    
+                    let tags = event.tags.map({ $0 })
+                    if let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first {
+                        let admins = tags.filter({ $0.id == "p" })
+                            .compactMap({ $0.otherInformation })
+                            .compactMap({ GroupAdmin(publicKey: $0.first, groupId: groupId, capabilities: Array($0[2...]),
+                                                     relayUrl: relayUrl) })
+                            .filter({ $0.publicKey.isValidPublicKey })
+                        
+                        for admin in admins {
+                            modelContext.insert(admin)
+                        }
+                        
+                        try? modelContext.save()
+                    }
+                    
+                case Kind.groupChatMessage:
+                    
+                    if let chatMessage = ChatMessage(event: event, relayUrl: relayUrl) {
+                        modelContext.insert(chatMessage)
+                        try? modelContext.save()
+                    }
+                    
                 default: ()
-
             }
-            
-            modelContext.insert(dbEvent)
-            try? modelContext.save()
         }
     }
     
-    func joinGroup(ownerAccount: OwnerAccount, group: GroupVM) {
+    func createGroup(ownerAccount: OwnerAccount) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        guard let selectedRelay else { return }
+        let groupId = "help"
+        var createGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
+                                  kind: .groupCreate, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
+        do {
+            try createGroupEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+
+        nostrClient.send(event: createGroupEvent, onlyToRelayUrls: [selectedRelay.url])
+    }
+    
+    func joinGroup(ownerAccount: OwnerAccount, group: Group) {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -252,7 +311,7 @@ class AppState: ObservableObject {
         nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
     }
     
-    func addMember(ownerAccount: OwnerAccount, group: GroupVM, publicKey: String) {
+    func addMember(ownerAccount: OwnerAccount, group: Group, publicKey: String) {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -268,7 +327,7 @@ class AppState: ObservableObject {
         nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
     }
     
-    func removeMember(ownerAccount: OwnerAccount, group: GroupVM, publicKey: String) {
+    func removeMember(ownerAccount: OwnerAccount, group: Group, publicKey: String) {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -284,7 +343,7 @@ class AppState: ObservableObject {
         nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
     }
     
-    func sendChatMessage(ownerAccount: OwnerAccount, group: GroupVM, withText text: String) {
+    func sendChatMessage(ownerAccount: OwnerAccount, group: Group, withText text: String) {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -304,7 +363,7 @@ class AppState: ObservableObject {
         nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
     }
     
-    func sendChatMessageReply(ownerAccount: OwnerAccount, group: GroupVM, withText text: String, replyChatMessage: ChatMessageVM) {
+    func sendChatMessageReply(ownerAccount: OwnerAccount, group: Group, withText text: String, replyChatMessage: ChatMessage) {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -357,7 +416,7 @@ extension AppState: NostrClientDelegate {
         switch message {
         case .event(_, let event):
             if event.isValid() {
-                processDBEvent(event: event, relayUrl: relayUrl)
+                process(event: event, relayUrl: relayUrl)
             } else {
                 print("\(event.id ?? "") is an invalid event on \(relayUrl)")
             }
