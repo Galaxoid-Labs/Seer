@@ -13,7 +13,12 @@ struct MacOSGroupInfoPopoverView: View {
     let group: Group
     let members: [GroupMember]
     let admins: [GroupAdmin]
+    let publicKeyMetadata: [PublicKeyMetadata]
     let selectedOwnerAccount: OwnerAccount
+    
+    func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadata? { // TODO: This may be inefficient. Calling it many many times...
+        return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
+    }
     
     var filteredMembers: [GroupMember] {
         return members.filter({ gm in !admins.contains { gma in
@@ -47,8 +52,6 @@ struct MacOSGroupInfoPopoverView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 }
-                
-
                 
                 AnimatedImage(url: URL(string: group.picture ?? ""), placeholder: {
                     Image(systemName: "rectangle.3.group.bubble")
@@ -101,7 +104,9 @@ struct MacOSGroupInfoPopoverView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Section {
                         
-                        if let selectedOwnerAccountAdmin, Set([GroupAdmin.Capability.AddPermission, GroupAdmin.Capability.AddUser]).isSubset(of: selectedOwnerAccountAdmin.capabilities) {
+                        if let selectedOwnerAccountAdmin, Set([GroupAdmin.Capability.AddPermission, 
+                                                               GroupAdmin.Capability.AddUser])
+                            .isSubset(of: selectedOwnerAccountAdmin.capabilities) {
                             
                             Button(action: {}, label: {
                                 Image(systemName: "plus")
@@ -121,18 +126,18 @@ struct MacOSGroupInfoPopoverView: View {
                         if canRemoveUsers {
                             
                             ForEach(admins) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl:  "",
-                                                                name: member.publicKey,
-                                                                publicKey:  member.publicKey,
+                                MacOSGroupInfoMemberListRowView(iconUrl:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.picture ?? "",
+                                                                name: getPublicKeyMetadata(forPublicKey: member.publicKey)?.bestPublicName ?? member.publicKey,
+                                                                publicKey:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.bech32PublicKey ?? member.publicKey,
                                                                 canRemove: true, action: {})
                             }
                             
                         } else {
                             
                             ForEach(admins) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl: "",
-                                                                name: member.publicKey,
-                                                                publicKey: member.publicKey,
+                                MacOSGroupInfoMemberListRowView(iconUrl:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.picture ?? "",
+                                                                name: getPublicKeyMetadata(forPublicKey: member.publicKey)?.bestPublicName ?? member.publicKey,
+                                                                publicKey:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.bech32PublicKey ?? member.publicKey,
                                                                 canRemove: false, action: {})
                             }
                             
@@ -171,18 +176,18 @@ struct MacOSGroupInfoPopoverView: View {
                         if canRemoveUsers {
                             
                             ForEach(filteredMembers) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl: "",
-                                                                name: member.publicKey,
-                                                                publicKey: member.publicKey,
+                                MacOSGroupInfoMemberListRowView(iconUrl:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.picture ?? "",
+                                                                name: getPublicKeyMetadata(forPublicKey: member.publicKey)?.bestPublicName ?? member.publicKey,
+                                                                publicKey:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.bech32PublicKey ?? member.publicKey,
                                                                 canRemove: true, action: {})
                             }
                             
                         } else {
                             
                             ForEach(filteredMembers) { member in
-                                MacOSGroupInfoMemberListRowView(iconUrl:"",
-                                                                name: member.publicKey,
-                                                                publicKey: member.publicKey,
+                                MacOSGroupInfoMemberListRowView(iconUrl:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.picture ?? "",
+                                                                name: getPublicKeyMetadata(forPublicKey: member.publicKey)?.bestPublicName ?? member.publicKey,
+                                                                publicKey:  getPublicKeyMetadata(forPublicKey: member.publicKey)?.bech32PublicKey ?? member.publicKey,
                                                                 canRemove: false, action: {})
                             }
                             

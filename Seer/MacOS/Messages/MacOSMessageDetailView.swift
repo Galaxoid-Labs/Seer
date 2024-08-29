@@ -42,7 +42,8 @@ struct MacOSMessageDetailView: View {
     init(relayUrl: String, groupId: String, chatMessageNumResults: Binding<Int>) {
         self.relayUrl = relayUrl
         self.groupId = groupId
-        _allMessages = Query(filter: #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }, sort: [SortDescriptor(\.createdAt, order: .forward)], animation: .interactiveSpring)
+        _allMessages = Query(filter: #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }, 
+                             sort: [SortDescriptor(\.createdAt, order: .forward)], animation: .interactiveSpring)
         _groupMembers = Query(filter: #Predicate<GroupMember>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
         _groupAdmins = Query(filter: #Predicate<GroupAdmin>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
     }
@@ -304,7 +305,8 @@ struct MacOSMessageDetailView: View {
                             .offset(y: 1)
                     }
                     .popover(isPresented: $infoPopoverPresented, arrowEdge: .bottom, content: {
-                        MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers, admins: groupAdmins,
+                        MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers, 
+                                                  admins: groupAdmins, publicKeyMetadata: publicKeyMetadata,
                                                   selectedOwnerAccount: selectedOwnerAccount)
                         .frame(width: 300, height: 400)
                     })
