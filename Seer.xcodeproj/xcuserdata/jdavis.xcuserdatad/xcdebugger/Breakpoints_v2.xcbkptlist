@@ -3,22 +3,4 @@
    uuid = "D623897C-A72F-4CBA-B362-717F14657744"
    type = "1"
    version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0942D11E-04D2-427A-A803-18E3E8BFD625"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Seer/Shared/Models/ChatMessage.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
-            landmarkName = "init(id:kind:publicKey:createdAt:groupId:content:imageUrls:videoUrls:urls:relayUrl:rootEventId:replyToEventId:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
 </Bucket>

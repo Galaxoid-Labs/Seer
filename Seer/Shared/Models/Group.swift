@@ -58,3 +58,9 @@ final class Group: Hashable, Identifiable {
         hasher.combine(relayUrl)
     }
 }
+
+extension Group {
+    static func predicate(relayUrl: String) -> Predicate<Group> {
+        return #Predicate<Group> { $0.relayUrl == relayUrl && $0.name != nil }
+    }
+}

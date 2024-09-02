@@ -16,7 +16,6 @@ struct MacOSRootView: View {
     @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     @Query private var ownerAccounts: [OwnerAccount]
-    @Query private var publicKeyMetadata: [PublicKeyMetadata]
 
     var body: some View {
         ZStack {

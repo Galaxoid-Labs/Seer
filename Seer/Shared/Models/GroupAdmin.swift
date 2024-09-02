@@ -57,3 +57,9 @@ final class GroupAdmin: Hashable, Identifiable {
     }
     
 }
+
+extension GroupAdmin {
+    static func predicate(byGroupId groupId: String, relayUrl: String) -> Predicate<GroupAdmin> {
+        return #Predicate<GroupAdmin> { $0.groupId == groupId && $0.relayUrl == relayUrl }
+    }
+}

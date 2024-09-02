@@ -357,9 +357,9 @@ class AppState: ObservableObject {
             print(error.localizedDescription)
         }
         
-//        if let clientMessage = try? ClientMessage.event(event).string() {
-//           print(clientMessage)
-//        }
+        if let clientMessage = try? ClientMessage.event(event).string() {
+           print(clientMessage)
+        }
         
         nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
     }

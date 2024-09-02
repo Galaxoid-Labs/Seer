@@ -42,10 +42,10 @@ struct MacOSMessageDetailView: View {
     init(relayUrl: String, groupId: String, chatMessageNumResults: Binding<Int>) {
         self.relayUrl = relayUrl
         self.groupId = groupId
-        _allMessages = Query(filter: #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }, 
+        _groupMembers = Query(filter: GroupMember.predicate(byGroupId: groupId, relayUrl: relayUrl))
+        _groupAdmins = Query(filter: GroupAdmin.predicate(byGroupId: groupId, relayUrl: relayUrl))
+        _allMessages = Query(filter: ChatMessage.predicate(byGroupId: groupId, relayUrl: relayUrl),
                              sort: [SortDescriptor(\.createdAt, order: .forward)], animation: .interactiveSpring)
-        _groupMembers = Query(filter: #Predicate<GroupMember>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
-        _groupAdmins = Query(filter: #Predicate<GroupAdmin>{ $0.groupId == groupId && $0.relayUrl == relayUrl })
     }
     
     func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadata? {

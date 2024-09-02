@@ -141,6 +141,16 @@ final class ChatMessage: Identifiable, Hashable {
     
 }
 
+extension ChatMessage {
+    static func predicate(byGroupId groupId: String, relayUrl: String) -> Predicate<ChatMessage> {
+        return #Predicate<ChatMessage> { $0.groupId == groupId && $0.relayUrl == relayUrl }
+    }
+    
+    static func predicate(relayUrl: String) -> Predicate<ChatMessage> {
+        return #Predicate<ChatMessage> { $0.relayUrl == relayUrl }
+    }
+}
+
 
 @propertyWrapper
 struct Cached<T> {

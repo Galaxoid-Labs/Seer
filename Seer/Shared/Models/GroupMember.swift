@@ -35,3 +35,9 @@ final class GroupMember: Hashable, Identifiable {
     }
     
 }
+
+extension GroupMember {
+    static func predicate(byGroupId groupId: String, relayUrl: String) -> Predicate<GroupMember> {
+        return #Predicate<GroupMember> { $0.groupId == groupId && $0.relayUrl == relayUrl }
+    }
+}
