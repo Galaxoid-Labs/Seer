@@ -26,12 +26,17 @@ final class ChatMessage: Identifiable, Hashable {
     var rootEventId: String?
     var replyToEventId: String?
     
+    @Relationship(deleteRule: .nullify) var rootChatMessage: ChatMessage?
+    @Relationship(deleteRule: .nullify) var replyToChatMessage: ChatMessage?
+    @Relationship(deleteRule: .nullify) var publicKeyMetadata: PublicKeyMetadata?
+    
     @Transient @Cached
     var contentFormated: AttributedString?
 
     init(id: String, kind: Int, publicKey: String, createdAt: Date, groupId: String, content: String,
          imageUrls: [URL], videoUrls: [URL], urls: [String: [URL]],
-         relayUrl: String, rootEventId: String? = nil, replyToEventId: String? = nil) {
+         relayUrl: String, rootEventId: String? = nil, replyToEventId: String? = nil, publicKeyMetadata: PublicKeyMetadata? = nil,
+         rootChatMessage: ChatMessage? = nil, replyToChatMessage: ChatMessage? = nil) {
         self.id = id
         self.kind = kind
         self.publicKey = publicKey
@@ -44,6 +49,9 @@ final class ChatMessage: Identifiable, Hashable {
         self.relayUrl = relayUrl
         self.rootEventId = rootEventId
         self.replyToEventId = replyToEventId
+        self.publicKeyMetadata = publicKeyMetadata
+        self.rootChatMessage = rootChatMessage
+        self.replyToChatMessage = replyToChatMessage
         self.contentFormated = ChatMessage.format(content: content)
     }
     

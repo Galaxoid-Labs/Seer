@@ -17,12 +17,14 @@ final class GroupMember: Hashable, Identifiable {
     var publicKey: String
     var groupId: String
     var relayUrl: String
+    @Relationship(deleteRule: .nullify) var publicKeyMetadata: PublicKeyMetadata?
     
-    init(publicKey: String, groupId: String, relayUrl: String) {
+    init(publicKey: String, groupId: String, relayUrl: String, publicKeyMetadata: PublicKeyMetadata? = nil) {
         self.id = publicKey + ":m:" + groupId
         self.publicKey = publicKey
         self.groupId = groupId
         self.relayUrl = relayUrl
+        self.publicKeyMetadata = publicKeyMetadata
     }
     
     static func == (lhs: GroupMember, rhs: GroupMember) -> Bool {

@@ -21,7 +21,6 @@ struct MacOSMessageDetailView: View {
     @Query private var allMessages: [ChatMessage]
     @Query var groupMembers: [GroupMember]
     @Query var groupAdmins: [GroupAdmin]
-    @Query var publicKeyMetadata: [PublicKeyMetadata]
     
     var chatMessages: [ChatMessage] {
         return Array(allMessages.suffix(appState.chatMessageNumResults))
@@ -48,20 +47,6 @@ struct MacOSMessageDetailView: View {
                              sort: [SortDescriptor(\.createdAt, order: .forward)], animation: .interactiveSpring)
     }
     
-    func getPublicKeyMetadata(forPublicKey publicKey: String) -> PublicKeyMetadata? {
-        return publicKeyMetadata.first(where: { $0.publicKey == publicKey })
-    }
-    
-    func getPubicKeyMetadata(forChatMessage chatMessage: ChatMessage?) -> PublicKeyMetadata? {
-        guard let chatMessage else { return nil }
-        return publicKeyMetadata.first(where: { $0.publicKey == chatMessage.publicKey })
-    }
-    
-    func getReplyTo(forId id: String?) -> (chatMessage: ChatMessage, publicKeyMetadata: PublicKeyMetadata?)? {
-        guard let chatMessage = chatMessages.first(where: { $0.id == id }) else { return nil }
-        return (chatMessage: chatMessage, publicKeyMetadata: getPubicKeyMetadata(forChatMessage: chatMessage))
-    }
-    
     var body: some View {
         
         ZStack {
@@ -75,8 +60,7 @@ struct MacOSMessageDetailView: View {
             ScrollViewReader { reader in
                 List(chatMessages) { message in
                     MacOSMessageBubbleView(owner: message.publicKey == appState.selectedOwnerAccount?.publicKey,
-                                           chatMessage: message, publicKeyMetadata: getPublicKeyMetadata(forPublicKey: message.publicKey),
-                                           replyTo: getReplyTo(forId: message.replyToEventId),
+                                           chatMessage: message,
                                            showTranslation: $showTranslation)
                     .contextMenu(ContextMenu(menuItems: {
                         Button("Reply") {
@@ -114,7 +98,7 @@ struct MacOSMessageDetailView: View {
                 })
                 .onAppear {
                     scroll = reader
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                         if let last = chatMessages.last {
                             scroll?.scrollTo(last.id, anchor: .top)
                         }
@@ -136,7 +120,7 @@ struct MacOSMessageDetailView: View {
                                 .padding(.vertical, 4)
                             
                             VStack(alignment: .leading) {
-                                Text(getPublicKeyMetadata(forPublicKey: replyMessage.publicKey)?.bestPublicName ?? replyMessage.publicKey)
+                                Text(replyMessage.publicKeyMetadata?.bestPublicName ?? replyMessage.publicKey)
                                     .font(.subheadline)
                                     .foregroundStyle(.accent)
                                     .bold()
@@ -287,14 +271,14 @@ struct MacOSMessageDetailView: View {
                 
                 if let selectedGroup = appState.selectedGroup, let selectedOwnerAccount = appState.selectedOwnerAccount {
                    
-                    if appState.chatMessageNumResults < allMessages.count {
-                        Button(action: {
-                            appState.chatMessageNumResults *= 2
-                        }) {
-                            Text("Load More")
-                                //.foregroundStyle(.white)
-                        }
-                    }
+//                    if appState.chatMessageNumResults < allMessages.count {
+//                        Button(action: {
+//                            appState.chatMessageNumResults *= 2
+//                        }) {
+//                            Text("Load More")
+//                                //.foregroundStyle(.white)
+//                        }
+//                    }
                     
                     ShareLink(item: selectedGroup.relayUrl + "'" + selectedGroup.id)
                         .fontWeight(.semibold)
@@ -306,7 +290,7 @@ struct MacOSMessageDetailView: View {
                     }
                     .popover(isPresented: $infoPopoverPresented, arrowEdge: .bottom, content: {
                         MacOSGroupInfoPopoverView(group: selectedGroup, members: groupMembers, 
-                                                  admins: groupAdmins, publicKeyMetadata: publicKeyMetadata,
+                                                  admins: groupAdmins,
                                                   selectedOwnerAccount: selectedOwnerAccount)
                         .frame(width: 300, height: 400)
                     })
@@ -322,14 +306,15 @@ struct MacOSMessageDetailView: View {
     }
     
     func isMember() -> Bool {
-        if groupMembers.count > 0 {
-            if let selectedOwnerAccount = appState.selectedOwnerAccount {
-                if  groupMembers.contains(where: { $0.publicKey == selectedOwnerAccount.publicKey }) {
-                    return true
-                }
-            }
-        }
-        return false
+        return true
+//        if groupMembers.count > 0 {
+//            if let selectedOwnerAccount = appState.selectedOwnerAccount {
+//                if  groupMembers.contains(where: { $0.publicKey == selectedOwnerAccount.publicKey }) {
+//                    return true
+//                }
+//            }
+//        }
+//        return false
     }
 }
 

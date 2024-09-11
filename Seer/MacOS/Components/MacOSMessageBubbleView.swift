@@ -15,15 +15,13 @@ struct MacOSMessageBubbleView: View {
     
     let owner: Bool
     let chatMessage: ChatMessage
-    let publicKeyMetadata: PublicKeyMetadata?
-    let replyTo: (chatMessage: ChatMessage, publicKeyMetadata: PublicKeyMetadata?)?
     @Binding var showTranslation: Bool
     
     var body: some View {
         HStack(alignment: .top) {
             
             if !owner {
-                AvatarView(avatarUrl: publicKeyMetadata?.picture ?? "", size: 40)
+                AvatarView(avatarUrl: chatMessage.publicKeyMetadata?.picture ?? "", size: 40)
                     .offset(y: 8)
             }
             
@@ -32,11 +30,11 @@ struct MacOSMessageBubbleView: View {
                 if !owner {
                     HStack {
                         
-                        Text(publicKeyMetadata?.name ?? chatMessage.publicKey.prefix(12).lowercased())
+                        Text(chatMessage.publicKeyMetadata?.name ?? chatMessage.publicKey.prefix(12).lowercased())
                             .bold()
                             .padding(.leading, 8)
                         
-                        if let nip05 = publicKeyMetadata?.nip05 { // TODO: Check nip verified
+                        if let nip05 = chatMessage.publicKeyMetadata?.nip05 { // TODO: Check nip verified
                             HStack(spacing: 2) {
                                 Text(verbatim: nip05)
                                     .foregroundStyle(.secondary)
@@ -48,7 +46,7 @@ struct MacOSMessageBubbleView: View {
                 
                 VStack(alignment: .leading) {
                     
-                    if let replyTo {
+                    if let replyToChatMessage = chatMessage.replyToChatMessage {
                         
                         HStack(spacing: 0) {
                             Color
@@ -56,11 +54,11 @@ struct MacOSMessageBubbleView: View {
                                 .frame(width: 3)
                             
                             VStack(alignment: .leading) {
-                                Text(replyTo.publicKeyMetadata?.bestPublicName ?? replyTo.chatMessage.publicKey)
+                                Text(replyToChatMessage.publicKeyMetadata?.bestPublicName ?? replyToChatMessage.publicKey)
                                     .font(.subheadline)
                                     .foregroundStyle(.white)
                                     .bold()
-                                Text(replyTo.chatMessage.content)
+                                Text(replyToChatMessage.content)
                                     .foregroundStyle(.white)
                                     .lineLimit(1)
                             }
@@ -68,7 +66,7 @@ struct MacOSMessageBubbleView: View {
                             
                         }
                         .background((owner ? Color.accentColor : .gray).brightness(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         
                     }
                     
@@ -90,8 +88,9 @@ struct MacOSMessageBubbleView: View {
                 }
                 .padding(8)
                 .background(owner ? Color.accentColor : .gray)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: 15))
                 .padding(owner ? .leading : .trailing, 150)
+                .shadow(radius: 2, x: 1, y: 1)
                 
                 if let links = chatMessage.urls["links"] {
                     ForEach(links, id: \.self) { link in

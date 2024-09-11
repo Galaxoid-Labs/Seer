@@ -208,6 +208,11 @@ class AppState: ObservableObject {
         return ModelContext(modelContainer)
     }
     
+    func getModels<T: PersistentModel>(context: ModelContext, modelType: T.Type, predicate: Predicate<T>) -> [T]? {
+        let descriptor = FetchDescriptor<T>(predicate: predicate)
+        return try? context.fetch(descriptor)
+    }
+    
     func getOwnerAccount(forPublicKey publicKey: String, modelContext: ModelContext?) async -> OwnerAccount? {
         let desc = FetchDescriptor<OwnerAccount>(predicate: #Predicate<OwnerAccount>{ pkm in
             pkm.publicKey == publicKey
@@ -217,12 +222,25 @@ class AppState: ObservableObject {
     
     func process(event: Event, relayUrl: String) {
         Task.detached {
+            
+            guard let eventId = event.id else { return }
+            let publicKey = event.pubkey
+            
             guard let modelContext = self.backgroundContext() else { return }
             switch event.kind {
                 case Kind.setMetadata:
                     
                     if let publicKeyMetadata = PublicKeyMetadata(event: event) {
                         modelContext.insert(publicKeyMetadata)
+                        
+                        // Fetch all ChatMessages with publicKey and assign publicKeyMetadata relationship
+                        if let messages = self.getModels(context: modelContext, modelType: ChatMessage.self,
+                                                         predicate: #Predicate<ChatMessage> { $0.publicKey == publicKey }) {
+                            for message in messages {
+                                message.publicKeyMetadata = publicKeyMetadata
+                            }
+                        }
+                        
                         try? modelContext.save()
                     }
                     
@@ -245,9 +263,24 @@ class AppState: ObservableObject {
                             .filter({ $0.isValidPublicKey })
                             .map({ GroupMember(publicKey: $0, groupId: groupId, relayUrl: relayUrl) })
                         
+                        // Check if message is already saved. Only write if its new.
+                        
                         for member in members {
                             modelContext.insert(member)
                         }
+                        
+                        let publicKeys = members.map({ $0.publicKey })
+                        if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
+                                                                   predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
+                            
+                            for member in members {
+                                member.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == member.publicKey })
+                            }
+                            
+                        }
+                        
+                        // Only Fetch publickeymatadata if insert happend and all publickeymetadata's and assign publicKeyMetadata relationship
+                        
                         
                         try? modelContext.save()
                     }
@@ -262,9 +295,23 @@ class AppState: ObservableObject {
                                                      relayUrl: relayUrl) })
                             .filter({ $0.publicKey.isValidPublicKey })
                         
+                        // Check if message is already saved. Only write if its new.
+                        
                         for admin in admins {
                             modelContext.insert(admin)
                         }
+                        
+                        let publicKeys = admins.map({ $0.publicKey })
+                        if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
+                                                                   predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
+                            
+                            for admin in admins {
+                                admin.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == admin.publicKey })
+                            }
+                            
+                        }
+                        
+                        // Only Fetch publickeymatadata if insert happend and all publickeymetadata's and assign publicKeyMetadata relationship
                         
                         try? modelContext.save()
                     }
@@ -272,8 +319,36 @@ class AppState: ObservableObject {
                 case Kind.groupChatMessage:
                     
                     if let chatMessage = ChatMessage(event: event, relayUrl: relayUrl) {
-                        modelContext.insert(chatMessage)
-                        try? modelContext.save()
+                        
+                        if let chatMessages = self.getModels(context: modelContext, modelType: ChatMessage.self,
+                                                             predicate: #Predicate<ChatMessage> { $0.id == eventId }), chatMessages.count == 0 {
+                            
+                            modelContext.insert(chatMessage)
+                            
+                            if let publicKeyMetadata = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
+                                                                      predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })?.first {
+                                chatMessage.publicKeyMetadata = publicKeyMetadata
+                            }
+                            
+                            if let replyToEventId = chatMessage.replyToEventId {
+                                if let replyToChatMessage = self.getModels(context: modelContext, modelType: ChatMessage.self,
+                                                                        predicate: #Predicate<ChatMessage> { $0.id == replyToEventId })?.first {
+                                    chatMessage.replyToChatMessage = replyToChatMessage
+                                }
+                            }
+                            
+                            // Check if any messages point to me?
+                            if let replies = self.getModels(context: modelContext, modelType: ChatMessage.self, predicate: #Predicate<ChatMessage> { $0.replyToEventId == eventId }) {
+                                
+                                for message in replies {
+                                    message.replyToChatMessage = chatMessage
+                                }
+                                
+                            }
+                            
+                            try? modelContext.save()
+
+                        }
                     }
                     
                 default: ()

@@ -18,14 +18,14 @@ struct MacOSAddGroupMemberPopoverView: View {
     let selectedGroup: Group
     let selectedOwnerAccount: OwnerAccount
    
-    @Query var publicKeyMetadata: [PublicKeyMetadata]
-    var filteredPublicKeyMetadata: [PublicKeyMetadata] {
-        return publicKeyMetadata.filter { pmd in
-            !members.contains { gm in
-                gm.publicKey == pmd.publicKey
-            }
-        }
-    }
+//    @Query var publicKeyMetadata: [PublicKeyMetadata]
+//    var filteredPublicKeyMetadata: [PublicKeyMetadata] {
+//        return publicKeyMetadata.filter { pmd in
+//            !members.contains { gm in
+//                gm.publicKey == pmd.publicKey
+//            }
+//        }
+//    }
     
     @State private var inputText = ""
     
@@ -37,16 +37,16 @@ struct MacOSAddGroupMemberPopoverView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
             
-            ForEach(publicKeyMetadata) { pmd in
+            ForEach(members, id: \.id) { member in
                 HStack {
-                    AvatarView(avatarUrl: pmd.picture ?? "", size: 30)
+                    AvatarView(avatarUrl: member.publicKeyMetadata?.picture ?? "", size: 30)
                     
                     VStack(alignment: .leading) {
-                        Text(verbatim: pmd.bestPublicName)
+                        Text(verbatim: member.publicKeyMetadata?.bestPublicName ?? member.publicKey)
                             .lineLimit(1)
                             .font(.subheadline)
                             .bold()
-                        Text(pmd.bech32PublicKey)
+                        Text(member.publicKeyMetadata?.bech32PublicKey ?? member.publicKey)
                             .lineLimit(1)
                             .font(.caption)
                             .foregroundStyle(.tertiary)
@@ -58,7 +58,7 @@ struct MacOSAddGroupMemberPopoverView: View {
                     Button(action: {
                         Task {
                             appState.addMember(ownerAccount: selectedOwnerAccount,
-                                               group: selectedGroup, publicKey: pmd.publicKey)
+                                               group: selectedGroup, publicKey: member.publicKey)
                         }
                         dismiss()
                     }) {

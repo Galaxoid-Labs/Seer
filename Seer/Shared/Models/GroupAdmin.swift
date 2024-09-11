@@ -28,22 +28,25 @@ final class GroupAdmin: Hashable, Identifiable {
     var groupId: String
     var capabilities: Set<Capability>
     var relayUrl: String
+    @Relationship(deleteRule: .nullify) var publicKeyMetadata: PublicKeyMetadata?
     
-    init(publicKey: String, groupId: String, capabilities: Set<Capability>, relayUrl: String) {
+    init(publicKey: String, groupId: String, capabilities: Set<Capability>, relayUrl: String, publicKeyMetadata: PublicKeyMetadata? = nil) {
         self.id = publicKey + ":a:" + groupId
         self.publicKey = publicKey
         self.groupId = groupId
         self.capabilities = capabilities
         self.relayUrl = relayUrl
+        self.publicKeyMetadata = publicKeyMetadata
     }
     
-    init?(publicKey: String?, groupId: String, capabilities: [String], relayUrl: String) {
+    init?(publicKey: String?, groupId: String, capabilities: [String], relayUrl: String, publicKeyMetadata: PublicKeyMetadata? = nil) {
         guard let publicKey else { return nil }
         self.id = publicKey + ":a:" + groupId
         self.publicKey = publicKey
         self.groupId = groupId
         self.capabilities = Set(capabilities.compactMap({ Capability(rawValue: $0) }))
         self.relayUrl = relayUrl
+        self.publicKeyMetadata = publicKeyMetadata
     }
     
     static func == (lhs: GroupAdmin, rhs: GroupAdmin) -> Bool {
