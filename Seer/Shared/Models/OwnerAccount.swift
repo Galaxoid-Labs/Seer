@@ -12,7 +12,7 @@ import Nostr
 
 @Model final class OwnerAccount {
     
-    @Attribute(.unique) let publicKey: String
+    @Attribute(.unique) var publicKey: String
     var selected: Bool
     var metadataRelayIds: Set<String>
     var messageRelayIds: Set<String>

@@ -248,10 +248,22 @@ class AppState: ObservableObject {
                     
                     if let group = Group(event: event, relayUrl: relayUrl) {
                         let groupId = group.id
-                        try? modelContext.delete(model: Group.self, where: #Predicate<Group> { $0.id == groupId })
-                        try? modelContext.save()
                         modelContext.insert(group)
+                        
+                        if let selectedOwnerAccount = self.selectedOwnerAccount {
+                            
+                            let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
+                            
+                            group.isMember = self.getModels(context: modelContext, modelType: GroupMember.self,
+                                                            predicate: #Predicate<GroupMember> { $0.publicKey == selectedOwnerPublicKey && $0.groupId == groupId && $0.relayUrl == relayUrl })?.first != nil
+                            
+                            group.isAdmin = self.getModels(context: modelContext, modelType: GroupAdmin.self,
+                                                           predicate: #Predicate<GroupAdmin> { $0.publicKey == selectedOwnerPublicKey && $0.groupId == groupId  && $0.relayUrl == relayUrl })?.first != nil
+                            
+                        }
+                        
                         try? modelContext.save()
+                        
                     }
                     
                 case Kind.groupMembers:
@@ -263,8 +275,6 @@ class AppState: ObservableObject {
                             .filter({ $0.isValidPublicKey })
                             .map({ GroupMember(publicKey: $0, groupId: groupId, relayUrl: relayUrl) })
                         
-                        // Check if message is already saved. Only write if its new.
-                        
                         for member in members {
                             modelContext.insert(member)
                         }
@@ -272,15 +282,20 @@ class AppState: ObservableObject {
                         let publicKeys = members.map({ $0.publicKey })
                         if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
                                                                    predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
-                            
                             for member in members {
                                 member.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == member.publicKey })
                             }
-                            
                         }
                         
-                        // Only Fetch publickeymatadata if insert happend and all publickeymetadata's and assign publicKeyMetadata relationship
-                        
+                        // Set group isAdmin/isMember just incase we got the members/admins after the group was fetched
+                        if let groups = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate { $0.relayUrl == relayUrl && $0.id == groupId }) {
+                            if let selectedOwnerAccount = self.selectedOwnerAccount {
+                                let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
+                                for group in groups {
+                                    group.isMember = members.first(where: { $0.publicKey == selectedOwnerPublicKey }) != nil
+                                }
+                            }
+                        }
                         
                         try? modelContext.save()
                     }
@@ -295,8 +310,6 @@ class AppState: ObservableObject {
                                                      relayUrl: relayUrl) })
                             .filter({ $0.publicKey.isValidPublicKey })
                         
-                        // Check if message is already saved. Only write if its new.
-                        
                         for admin in admins {
                             modelContext.insert(admin)
                         }
@@ -304,14 +317,19 @@ class AppState: ObservableObject {
                         let publicKeys = admins.map({ $0.publicKey })
                         if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
                                                                    predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
-                            
                             for admin in admins {
                                 admin.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == admin.publicKey })
                             }
-                            
                         }
                         
-                        // Only Fetch publickeymatadata if insert happend and all publickeymetadata's and assign publicKeyMetadata relationship
+                        if let groups = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate { $0.relayUrl == relayUrl && $0.id == groupId }) {
+                            if let selectedOwnerAccount = self.selectedOwnerAccount {
+                                let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
+                                for group in groups {
+                                    group.isAdmin = admins.first(where: { $0.publicKey == selectedOwnerPublicKey }) != nil
+                                }
+                            }
+                        }
                         
                         try? modelContext.save()
                     }

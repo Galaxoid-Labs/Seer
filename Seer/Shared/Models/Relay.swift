@@ -11,7 +11,7 @@ import NostrClient
 
 @Model final class Relay: Identifiable {
     
-    @Attribute(.unique) let url: String
+    @Attribute(.unique) var url: String
     var name: String
     var desc: String
     var publicKey: String

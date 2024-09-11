@@ -79,7 +79,6 @@ struct SeerApp: App {
             case .background:
                 print("👁️ Seer => Entered Background Phase")
             case .active:
-                    //setupCatalyst()
                 print("👁️ Seer => Entered Active Phase")
                 // MACOS - Window start/not in dock
             case .inactive:

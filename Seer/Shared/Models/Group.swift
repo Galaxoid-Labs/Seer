@@ -12,16 +12,18 @@ import Nostr
 @Model
 final class Group: Hashable, Identifiable {
     
-    @Attribute(.unique) let id: String
+    @Attribute(.unique) var id: String
     var relayUrl: String
     var name: String?
     var picture: String?
     var about: String?
     var isPublic: Bool
     var isOpen: Bool
+    var isMember: Bool
+    var isAdmin: Bool
     
     init(id: String, relayUrl: String, name: String? = nil, picture: String? = nil, about: String? = nil,
-         isPublic: Bool, isOpen: Bool) {
+         isPublic: Bool, isOpen: Bool, isMember: Bool, isAdmin: Bool) {
         self.id = id
         self.relayUrl = relayUrl
         self.name = name
@@ -29,6 +31,8 @@ final class Group: Hashable, Identifiable {
         self.about = about
         self.isPublic = isPublic
         self.isOpen = isOpen
+        self.isMember = isMember
+        self.isAdmin = isAdmin
     }
     
     init?(event: Event, relayUrl: String) {
@@ -47,6 +51,8 @@ final class Group: Hashable, Identifiable {
         self.about = about
         self.isPublic = isPublic
         self.isOpen = isOpen
+        self.isMember = false
+        self.isAdmin = false
     }
     
     static func == (lhs: Group, rhs: Group) -> Bool {

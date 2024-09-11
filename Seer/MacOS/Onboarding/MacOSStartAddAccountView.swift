@@ -100,6 +100,7 @@ struct MacOSStartAddAccountView: View {
                             }
                             ownerAccount.selected = true
                             modelContext.insert(ownerAccount)
+                            appState.selectedOwnerAccount = ownerAccount
                             Task {
                                 appState.connectAllNip29Relays()
                                 appState.connectAllMetadataRelays()

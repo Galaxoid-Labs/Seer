@@ -69,7 +69,7 @@ struct MacOSMessageDetailView: View {
                                 self.inputFocused = true
                             }
                         }
-                        .disabled(appState.selectedGroup == nil || !isMember())
+                        .disabled(appState.selectedGroup == nil || !isMemberOrAdmin())
                         
                         Button("Copy Text") {
                             appState.copyToClipboard(message.content)
@@ -151,7 +151,7 @@ struct MacOSMessageDetailView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if appState.selectedGroup != nil && isMember() {
+            if appState.selectedGroup != nil && isMemberOrAdmin() {
                 ZStack(alignment: .leading) {
                     
                     Color(.textBackgroundColor)
@@ -252,7 +252,7 @@ struct MacOSMessageDetailView: View {
                 
                 Spacer()
                 
-                if !isMember() && groupMembers.count > 0 {
+                if !isMemberOrAdmin() && groupMembers.count > 0 {
                     
                     Button(action: {
                         guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
@@ -305,16 +305,11 @@ struct MacOSMessageDetailView: View {
         }
     }
     
-    func isMember() -> Bool {
-        return true
-//        if groupMembers.count > 0 {
-//            if let selectedOwnerAccount = appState.selectedOwnerAccount {
-//                if  groupMembers.contains(where: { $0.publicKey == selectedOwnerAccount.publicKey }) {
-//                    return true
-//                }
-//            }
-//        }
-//        return false
+    func isMemberOrAdmin() -> Bool {
+        if let selectedGroup = appState.selectedGroup {
+            return selectedGroup.isMember || selectedGroup.isAdmin
+        }
+        return false
     }
 }
 
