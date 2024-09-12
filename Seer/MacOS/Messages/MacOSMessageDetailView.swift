@@ -62,11 +62,16 @@ struct MacOSMessageDetailView: View {
                     MacOSMessageBubbleView(owner: message.publicKey == appState.selectedOwnerAccount?.publicKey,
                                            chatMessage: message,
                                            showTranslation: $showTranslation)
+                    .transition(.move(edge: .bottom))
+                    .id(message.id)
                     .contextMenu(ContextMenu(menuItems: {
                         Button("Reply") {
                             withAnimation {
                                 self.replyMessage = message
                                 self.inputFocused = true
+                                if let last = chatMessages.last {
+                                    self.scroll?.scrollTo(last.id, anchor: .bottom)
+                                }
                             }
                         }
                         .disabled(appState.selectedGroup == nil || !isMemberOrAdmin())
@@ -93,15 +98,13 @@ struct MacOSMessageDetailView: View {
                 .scrollContentBackground(.hidden)
                 .onChange(of: chatMessages, initial: true, { oldValue, newValue in
                     if let last = chatMessages.last {
-                        scroll?.scrollTo(last.id, anchor: .top)
+                        scroll?.scrollTo(last.id, anchor: .bottom)
                     }
                 })
                 .onAppear {
                     scroll = reader
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        if let last = chatMessages.last {
-                            scroll?.scrollTo(last.id, anchor: .top)
-                        }
+                    if let last = chatMessages.last {
+                        scroll?.scrollTo(last.id, anchor: .bottom)
                     }
                 }
                 
@@ -161,19 +164,33 @@ struct MacOSMessageDetailView: View {
                         } else {
                             guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
                             guard let selectedGroup = appState.selectedGroup else { return }
-                            withAnimation {
-                                if let replyMessage {
-                                    appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
-                                                                  withText: messageText.trimmingCharacters(in: .newlines),
-                                                                  replyChatMessage: replyMessage)
-                                   
-                                    self.replyMessage = nil
+                            if let replyMessage {
+                                let text = messageText.trimmingCharacters(in: .newlines)
+                                let reply = replyMessage
+                                Task {
+                                    await appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
+                                                                  withText: text,
+                                                                        replyChatMessage: reply)
                                     
-                                } else {
-                                    appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
-                                                             group: selectedGroup, withText: messageText.trimmingCharacters(in: .newlines))
+                                    if let last = chatMessages.last {
+                                        self.scroll?.scrollTo(last.id, anchor: .bottom)
+                                    }
                                 }
-                                
+
+                                self.replyMessage = nil
+                                messageText = ""
+
+                            } else {
+                                let text = messageText.trimmingCharacters(in: .newlines)
+                                Task {
+                                    await appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
+                                                                   group: selectedGroup, withText: text)
+                                    
+                                    if let last = chatMessages.last {
+                                        self.scroll?.scrollTo(last.id, anchor: .bottom)
+                                    }
+                                    
+                                }
                                 messageText = ""
                             }
                         }
@@ -262,14 +279,14 @@ struct MacOSMessageDetailView: View {
                 
                 if let selectedGroup = appState.selectedGroup, let selectedOwnerAccount = appState.selectedOwnerAccount {
                    
-//                    if appState.chatMessageNumResults < allMessages.count {
-//                        Button(action: {
-//                            appState.chatMessageNumResults *= 2
-//                        }) {
-//                            Text("Load More")
-//                                //.foregroundStyle(.white)
-//                        }
-//                    }
+                    if appState.chatMessageNumResults < allMessages.count {
+                        Button(action: {
+                            appState.chatMessageNumResults *= 2
+                        }) {
+                            Text("Load More")
+                                //.foregroundStyle(.white)
+                        }
+                    }
                     
                     ShareLink(item: selectedGroup.relayUrl + "'" + selectedGroup.id)
                         .fontWeight(.semibold)

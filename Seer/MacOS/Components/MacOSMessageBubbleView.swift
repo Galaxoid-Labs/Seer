@@ -92,14 +92,14 @@ struct MacOSMessageBubbleView: View {
                 .padding(owner ? .leading : .trailing, 150)
                 .shadow(radius: 2, x: 1, y: 1)
                 
-                if let links = chatMessage.urls["links"] {
-                    ForEach(links, id: \.self) { link in
-                        Link(destination: link) {
-                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
+//                if let links = chatMessage.urls["links"] {
+//                    ForEach(links, id: \.self) { link in
+//                        Link(destination: link) {
+//                            LinkPreviewView(owner: owner, viewModel: .init(link.absoluteString))
+//                        }
+//                        .buttonStyle(.plain)
+//                    }
+//                }
                 
                 Text(chatMessage.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)

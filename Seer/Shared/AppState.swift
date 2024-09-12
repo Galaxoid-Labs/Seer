@@ -433,8 +433,9 @@ class AppState: ObservableObject {
 
         nostrClient.send(event: joinEvent, onlyToRelayUrls: [relayUrl])
     }
-    
-    func sendChatMessage(ownerAccount: OwnerAccount, group: Group, withText text: String) {
+   
+    @MainActor
+    func sendChatMessage(ownerAccount: OwnerAccount, group: Group, withText text: String) async {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -451,15 +452,23 @@ class AppState: ObservableObject {
            print(clientMessage)
         }
         
-        nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+        guard let mainContext = modelContainer?.mainContext else { return }
+        let publicKey = ownerAccount.publicKey
+        let ownerPublicKeyMetadata = try? mainContext.fetch(FetchDescriptor(predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })).first
+        if let chatMessage = ChatMessage(event: event, relayUrl: relayUrl) {
+            chatMessage.publicKeyMetadata = ownerPublicKeyMetadata
+            withAnimation {
+                mainContext.insert(chatMessage)
+                try? mainContext.save()
+
+            }
+            nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+        }
         
-        // Go ahead and insert TODO:
-        // fetch owner publickeymetadata
-        // create chatmessage
-        // insert
     }
-    
-    func sendChatMessageReply(ownerAccount: OwnerAccount, group: Group, withText text: String, replyChatMessage: ChatMessage) {
+   
+    @MainActor
+    func sendChatMessageReply(ownerAccount: OwnerAccount, group: Group, withText text: String, replyChatMessage: ChatMessage) async {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
@@ -480,7 +489,19 @@ class AppState: ObservableObject {
             print(error.localizedDescription)
         }
         
-        nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+        guard let mainContext = modelContainer?.mainContext else { return }
+        let publicKey = ownerAccount.publicKey
+        let ownerPublicKeyMetadata = try? mainContext.fetch(FetchDescriptor(predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })).first
+        if let chatMessage = ChatMessage(event: event, relayUrl: relayUrl) {
+            chatMessage.publicKeyMetadata = ownerPublicKeyMetadata
+            chatMessage.replyToChatMessage = replyChatMessage
+            withAnimation {
+                mainContext.insert(chatMessage)
+                try? mainContext.save()
+
+            }
+            nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+        }
     }
     
     #if os(macOS)
