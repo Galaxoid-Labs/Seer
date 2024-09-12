@@ -44,6 +44,7 @@
 		4785976E2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */; };
 		478894C22BCEB28D00A3A7FB /* MacOSSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */; };
 		478894C42BCEBB7D00A3A7FB /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478894C32BCEBB7D00A3A7FB /* Relay.swift */; };
+		479327C12C933A9B00702022 /* MessageInputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479327C02C933A9B00702022 /* MessageInputComponent.swift */; };
 		47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD662C4EF5A500C75C91 /* RootView.swift */; };
 		47E1FD6A2C50024E00C75C91 /* MacOSStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD692C50024E00C75C91 /* MacOSStartView.swift */; };
 		47E1FD6E2C50332200C75C91 /* MacOSStartAddChatRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */; };
@@ -87,6 +88,7 @@
 		4785976D2BD1640900609EE2 /* MacOSSettingsAccountListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsAccountListRowView.swift; sourceTree = "<group>"; };
 		478894C12BCEB28D00A3A7FB /* MacOSSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSSettingsView.swift; sourceTree = "<group>"; };
 		478894C32BCEBB7D00A3A7FB /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
+		479327C02C933A9B00702022 /* MessageInputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputComponent.swift; sourceTree = "<group>"; };
 		47E1FD662C4EF5A500C75C91 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		47E1FD692C50024E00C75C91 /* MacOSStartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartView.swift; sourceTree = "<group>"; };
 		47E1FD6D2C50332200C75C91 /* MacOSStartAddChatRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSStartAddChatRelay.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 				473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */,
 				475BDB5D2C63EBA500A12E84 /* MacOSGroupInfoPopoverView.swift */,
 				475BDB612C65359300A12E84 /* MacOSAddGroupMemberPopoverView.swift */,
+				479327C02C933A9B00702022 /* MessageInputComponent.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
 				47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */,
 				4714FE772C76AE7D00656031 /* PublicKeyMetadata.swift in Sources */,
+				479327C12C933A9B00702022 /* MessageInputComponent.swift in Sources */,
 				4714FE792C76AF5C00656031 /* ChatMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

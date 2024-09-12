@@ -40,14 +40,6 @@ class AppState: ObservableObject {
     @Published var chatMessageNumResults: Int = 50
     
     @Published var statuses: [String: Bool] = [:]
-//    var relayConnectionStatus: [String: Binding<Bool>] {
-//        Dictionary(uniqueKeysWithValues: statuses.map { key, value in
-//            (key, Binding(
-//                get: { self.statuses[key, default: false] },
-//                set: { self.statuses[key] = $0 }
-//            ))
-//        })
-//    }
     
     private init() {
         nostrClient.delegate = self
@@ -74,15 +66,6 @@ class AppState: ObservableObject {
         guard let selectedAccount = try? modelContainer?.mainContext.fetch(selectedAccountDescriptor).first else { return }
         
         var pubkeys = Set([selectedAccount.publicKey])
-        
-        // Get other pubkeys
-        // TODO: Maybe get pubkeys from chatMessages?
-//        let otherAccountsDescriptor = FetchDescriptor<DBEvent>(predicate: #Predicate<DBEvent> { $0.kind == kindSetMetdata || $0.kind == kindGroupChatMessage })
-//        if let otherAccounts = try? modelContainer?.mainContext.fetch(otherAccountsDescriptor) {
-//            for otherAccount in otherAccounts {
-//                pubkeys.insert(otherAccount.pubkey)
-//            }
-//        }
         
         let membersDescriptor = FetchDescriptor<GroupMember>()
         if let members = try? modelContainer?.mainContext.fetch(membersDescriptor) {
@@ -232,7 +215,7 @@ class AppState: ObservableObject {
                     if let publicKeyMetadata = PublicKeyMetadata(event: event) {
                         modelContext.insert(publicKeyMetadata)
                         
-                        try? modelContext.save()
+                        //try? modelContext.save()
                         
                         // Fetch all ChatMessages with publicKey and assign publicKeyMetadata relationship
                         if let messages = self.getModels(context: modelContext, modelType: ChatMessage.self,
@@ -252,7 +235,7 @@ class AppState: ObservableObject {
                         let groupId = group.id
                         modelContext.insert(group)
                         
-                        try? modelContext.save()
+                        //try? modelContext.save()
                         
                         if groupId == "8577cd" {
                             print(group)
@@ -287,7 +270,7 @@ class AppState: ObservableObject {
                             modelContext.insert(member)
                         }
                         
-                        try? modelContext.save()
+                        //try? modelContext.save()
                         
                         let publicKeys = members.map({ $0.publicKey })
                         if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
@@ -324,7 +307,7 @@ class AppState: ObservableObject {
                             modelContext.insert(admin)
                         }
                         
-                        try? modelContext.save()
+                        //try? modelContext.save()
                         
                         let publicKeys = admins.map({ $0.publicKey })
                         if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
@@ -355,7 +338,7 @@ class AppState: ObservableObject {
                             
                             modelContext.insert(chatMessage)
                             
-                            try? modelContext.save()
+                            //try? modelContext.save()
                             
                             if let publicKeyMetadata = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
                                                                       predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })?.first {
@@ -469,6 +452,11 @@ class AppState: ObservableObject {
         }
         
         nostrClient.send(event: event, onlyToRelayUrls: [relayUrl])
+        
+        // Go ahead and insert TODO:
+        // fetch owner publickeymetadata
+        // create chatmessage
+        // insert
     }
     
     func sendChatMessageReply(ownerAccount: OwnerAccount, group: Group, withText text: String, replyChatMessage: ChatMessage) {

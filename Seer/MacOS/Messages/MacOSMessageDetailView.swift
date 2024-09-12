@@ -113,6 +113,7 @@ struct MacOSMessageDetailView: View {
                                 .imageScale(.large)
                                 .foregroundStyle(.accent)
                                 .frame(width: 50, height: 50)
+                                .transition(.move(edge: .bottom))
                             
                             Color
                                 .accentColor
@@ -144,80 +145,70 @@ struct MacOSMessageDetailView: View {
                     .background(.background)
                     .frame(height: 50)
                     .padding(.vertical, -8)
-                    .transition(.move(edge: .bottom))
-                    
                 }
-                
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if appState.selectedGroup != nil && isMemberOrAdmin() {
-                ZStack(alignment: .leading) {
-                    
-                    Color(.textBackgroundColor)
-                        .frame(height: max(0,textEditorHeight))
-                    
-                    Text(messageText)
-                        .font(.system(.body))
-                        .foregroundColor(.clear)
-                        .padding()
-                        .background(GeometryReader {
-                            Color.clear.preference(key: ViewHeightKey.self,
-                                                   value: $0.frame(in: .local).size.height)
-                        })
-                    
-                    TextEditor(text: $messageText)
-                        .font(.system(.body))
-                        .padding(.vertical)
-                        .padding(.trailing, 50)
-                        .padding(.leading)
-                        .scrollDisabled(true)
-                        .frame(height: max(0,textEditorHeight))
-                        .onChange(of: messageText) { oldValue, newValue in
-                            if let last = newValue.last {
-                                if last == "\n" && !CGKeyCode.kVK_Shift.isPressed {
-                                    guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
-                                    guard let selectedGroup = appState.selectedGroup else { return }
-                                    withAnimation {
-                                        if let replyMessage {
-                                            appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
-                                                                          withText: messageText.trimmingCharacters(in: .newlines),
-                                                                          replyChatMessage: replyMessage)
-                                           
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                                                self.replyMessage = nil
-                                            }
-                                            
-                                        } else {
-                                            appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
-                                                                     group: selectedGroup, withText: messageText.trimmingCharacters(in: .newlines))
-                                        }
-                                        
-                                        messageText = ""
-                                    }
-                                }
-                            }
-                        }
-                        .overlay(alignment: .top, content: {
-                            Rectangle()
-                                .fill(.secondary.opacity(0.3))
-                                .frame(height: 1)
-                                .shadow(radius: 3)
-                        })
-                        .overlay(alignment: .trailing) {
-                            Button("😀") {
-                                NSApp.orderFrontCharacterPalette($messageText)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            .padding()
-                        }
-                        .focused($inputFocused)
-                    
-                }
-                .onPreferenceChange(ViewHeightKey.self) { textEditorHeight = $0 }
-                .keyboardShortcut(.return)
-            }
+            //if appState.selectedGroup != nil && isMemberOrAdmin() {
             
+            HStack(spacing: 8) {
+                
+                TextField("Write something", text: $messageText, axis: .vertical)
+                    .textFieldStyle(.plain)
+                    .onSubmit(of: .text, {
+                        if CGKeyCode.kVK_Shift.isPressed {
+                            messageText += "\n"
+                        } else {
+                            guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
+                            guard let selectedGroup = appState.selectedGroup else { return }
+                            withAnimation {
+                                if let replyMessage {
+                                    appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
+                                                                  withText: messageText.trimmingCharacters(in: .newlines),
+                                                                  replyChatMessage: replyMessage)
+                                   
+                                    self.replyMessage = nil
+                                    
+                                } else {
+                                    appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
+                                                             group: selectedGroup, withText: messageText.trimmingCharacters(in: .newlines))
+                                }
+                                
+                                messageText = ""
+                            }
+                        }
+                    })
+                    .padding(.leading, 12)
+                    .padding(.trailing, 16)
+                    .padding(.vertical, 8)
+                    .background(.background)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(style: .init(lineWidth: 1))
+                            .foregroundStyle(.secondary.opacity(0.6))
+                    )
+                    .overlay(alignment: .trailing) {
+                        Button("", systemImage: "face.smiling") {
+                            Task {
+                                NSApp.orderFrontCharacterPalette($messageText) // TODO: Fix where this comes up
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .imageScale(.large)
+                    }
+                    .focused($inputFocused)
+
+            }
+            .padding(.horizontal)
+            .padding(.vertical)
+            .background(
+                .background
+            )
+            .overlay(alignment: .top) {
+                Color.secondary.opacity(0.3)
+                    .frame(height: 1)
+            }
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
