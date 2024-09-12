@@ -39,15 +39,15 @@ class AppState: ObservableObject {
     }
     @Published var chatMessageNumResults: Int = 50
     
-    @State private var statuses: [String: Bool] = [:]
-    var relayConnectionStatus: [String: Binding<Bool>] {
-        Dictionary(uniqueKeysWithValues: statuses.map { key, value in
-            (key, Binding(
-                get: { self.statuses[key, default: false] },
-                set: { self.statuses[key] = $0 }
-            ))
-        })
-    }
+    @Published var statuses: [String: Bool] = [:]
+//    var relayConnectionStatus: [String: Binding<Bool>] {
+//        Dictionary(uniqueKeysWithValues: statuses.map { key, value in
+//            (key, Binding(
+//                get: { self.statuses[key, default: false] },
+//                set: { self.statuses[key] = $0 }
+//            ))
+//        })
+//    }
     
     private init() {
         nostrClient.delegate = self
@@ -181,7 +181,6 @@ class AppState: ObservableObject {
     func removeDataFor(relayUrl: String) async -> Void {
         Task.detached {
             guard let modelContext = self.backgroundContext() else { return }
-            // TODO: Fix this
             //try? modelContext.delete(model: DBEvent.self, where: #Predicate<DBEvent> { $0.relayUrl == relayUrl })
             try? modelContext.save()
         }
@@ -233,6 +232,8 @@ class AppState: ObservableObject {
                     if let publicKeyMetadata = PublicKeyMetadata(event: event) {
                         modelContext.insert(publicKeyMetadata)
                         
+                        try? modelContext.save()
+                        
                         // Fetch all ChatMessages with publicKey and assign publicKeyMetadata relationship
                         if let messages = self.getModels(context: modelContext, modelType: ChatMessage.self,
                                                          predicate: #Predicate<ChatMessage> { $0.publicKey == publicKey }) {
@@ -242,6 +243,7 @@ class AppState: ObservableObject {
                         }
                         
                         try? modelContext.save()
+
                     }
                     
                 case Kind.groupMetadata:
@@ -249,6 +251,12 @@ class AppState: ObservableObject {
                     if let group = Group(event: event, relayUrl: relayUrl) {
                         let groupId = group.id
                         modelContext.insert(group)
+                        
+                        try? modelContext.save()
+                        
+                        if groupId == "8577cd" {
+                            print(group)
+                        }
                         
                         if let selectedOwnerAccount = self.selectedOwnerAccount {
                             
@@ -278,6 +286,8 @@ class AppState: ObservableObject {
                         for member in members {
                             modelContext.insert(member)
                         }
+                        
+                        try? modelContext.save()
                         
                         let publicKeys = members.map({ $0.publicKey })
                         if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
@@ -314,6 +324,8 @@ class AppState: ObservableObject {
                             modelContext.insert(admin)
                         }
                         
+                        try? modelContext.save()
+                        
                         let publicKeys = admins.map({ $0.publicKey })
                         if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
                                                                    predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
@@ -343,6 +355,8 @@ class AppState: ObservableObject {
                             
                             modelContext.insert(chatMessage)
                             
+                            try? modelContext.save()
+                            
                             if let publicKeyMetadata = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
                                                                       predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })?.first {
                                 chatMessage.publicKeyMetadata = publicKeyMetadata
@@ -365,7 +379,7 @@ class AppState: ObservableObject {
                             }
                             
                             try? modelContext.save()
-
+                            
                         }
                     }
                     
@@ -497,13 +511,15 @@ class AppState: ObservableObject {
 
 extension AppState: NostrClientDelegate {
     func didConnect(relayUrl: String) {
-        statuses[relayUrl] = true
-        relayConnectionStatus[relayUrl]?.wrappedValue = true
+        DispatchQueue.main.async {
+            self.statuses[relayUrl] = true
+        }
     }
     
     func didDisconnect(relayUrl: String) {
-        statuses[relayUrl] = false
-        relayConnectionStatus[relayUrl]?.wrappedValue = false
+        DispatchQueue.main.async {
+            self.statuses[relayUrl] = false
+        }
     }
     
     func didReceive(message: Nostr.RelayMessage, relayUrl: String) {

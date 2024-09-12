@@ -38,17 +38,20 @@ final class PublicKeyMetadata {
     }
     
     init?(event: Event) {
-        guard let bech32PublicKey = try? event.pubkey.bech32FromHex(hrp: "npub") else { return nil }
+        guard let bech32PublicKey = try? event.pubkey.bech32FromHex(hrp: "npub") else
+        {
+            return nil
+        }
         self.publicKey = event.pubkey
         self.bech32PublicKey = bech32PublicKey
         
-        let contentData = try? JSONDecoder().decode(MetadataContentData.self, from: Data(event.content.utf8))
-        self.name = contentData?.name ?? ""
-        self.about = contentData?.about ?? ""
-        self.picture = contentData?.picture ?? ""
-        self.lud06 = contentData?.lud06 ?? ""
-        self.lud16 = contentData?.lud16 ?? ""
-        self.nip05 = contentData?.nip05 ?? ""
+        guard let contentData = try? JSONDecoder().decode(MetadataContentData.self, from: Data(event.content.utf8)) else { return nil }
+        self.name = contentData.name ?? ""
+        self.about = contentData.about ?? ""
+        self.picture = contentData.picture ?? ""
+        self.lud06 = contentData.lud06 ?? ""
+        self.lud16 = contentData.lud16 ?? ""
+        self.nip05 = contentData.nip05 ?? ""
         
         self.createdAt = event.createdAt.date
         self.nip05Verified = false // TODO: Fetch this.

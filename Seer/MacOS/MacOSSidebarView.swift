@@ -25,6 +25,10 @@ struct MacOSSidebarView: View {
         return publicKeyMetadata.first(where: { $0.publicKey == selectedOwnerAccount.publicKey })
     }
     
+    func connectionStatus(for relayUrl: String) -> Bool {
+        return appState.statuses.first(where: { $0.key == relayUrl })?.value ?? false
+    }
+    
     @Binding var columnVisibility: NavigationSplitViewVisibility
     @State var tapped: Int = 0
     
@@ -34,7 +38,7 @@ struct MacOSSidebarView: View {
             Section("Chat Relays") {
                 ForEach(chatRelays, id: \.url) { relay in
                     NavigationLink(value: relay) {
-                        MacOSSidebarRelayListRowView(iconUrl: relay.icon, relayUrl: relay.urlStringWithoutProtocol)
+                        MacOSSidebarRelayListRowView(iconUrl: relay.icon, relayUrl: relay.url, connected: connectionStatus(for: relay.url))
                     }
                 }
             }

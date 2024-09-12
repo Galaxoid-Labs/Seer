@@ -34,7 +34,7 @@ final class ChatMessage: Identifiable, Hashable {
     var contentFormated: AttributedString?
 
     init(id: String, kind: Int, publicKey: String, createdAt: Date, groupId: String, content: String,
-         imageUrls: [URL], videoUrls: [URL], urls: [String: [URL]],
+         imageUrls: [URL] = [], videoUrls: [URL] = [], urls: [String: [URL]] = [:],
          relayUrl: String, rootEventId: String? = nil, replyToEventId: String? = nil, publicKeyMetadata: PublicKeyMetadata? = nil,
          rootChatMessage: ChatMessage? = nil, replyToChatMessage: ChatMessage? = nil) {
         self.id = id
