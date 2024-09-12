@@ -34,6 +34,9 @@ struct MacOSMessageDetailView: View {
     @State private var showTranslation: Bool = false
     @State private var replyMessage: ChatMessage?
     
+    @State private var highlightedMessageId: String?
+    @State private var isHighlitedMessageAnimating = false
+    
     @FocusState private var inputFocused: Bool
 
     private let maxHeight : CGFloat = 350
@@ -64,6 +67,15 @@ struct MacOSMessageDetailView: View {
                                            showTranslation: $showTranslation)
                     .transition(.move(edge: .bottom))
                     .id(message.id)
+                    .onTapGesture {
+                        if let replyMessage = message.replyToChatMessage {
+                            withAnimation {
+                                self.scroll?.scrollTo(replyMessage.id, anchor: .center)
+                            }
+                        }
+                    }
+                    .background((isHighlitedMessageAnimating && highlightedMessageId == message.id) ? Color.accentColor.opacity(0.2) : Color.clear)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .contextMenu(ContextMenu(menuItems: {
                         Button("Reply") {
                             withAnimation {
@@ -75,6 +87,24 @@ struct MacOSMessageDetailView: View {
                             }
                         }
                         .disabled(appState.selectedGroup == nil || !isMemberOrAdmin())
+                        
+                        if let replyMessage = message.replyToChatMessage {
+                            Button("Go to Reply") {
+                                withAnimation {
+                                    isHighlitedMessageAnimating = true
+                                    highlightedMessageId = replyMessage.id
+                                    
+                                    // Remove the highlight after a delay
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                        withAnimation {
+                                            isHighlitedMessageAnimating = false
+                                        }
+                                    }
+                                    
+                                    self.scroll?.scrollTo(replyMessage.id, anchor: .center)
+                                }
+                            }
+                        }
                         
                         Button("Copy Text") {
                             appState.copyToClipboard(message.content)
