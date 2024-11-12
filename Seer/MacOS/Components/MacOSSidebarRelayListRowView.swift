@@ -32,12 +32,11 @@ struct MacOSSidebarRelayListRowView: View {
     var body: some View {
         HStack {
             AnimatedImage(url: URL(string: iconUrl), placeholder: {
-                Image(systemName: "network")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 18))
+                Image(systemName: "bolt.horizontal.fill")
+                    .imageScale(.large)
             })
             .resizable()
-            .frame(width: 30, height: 30)
+            .frame(width: 40, height: 40)
             .aspectRatio(contentMode: .fill)
             .background(.gray)
             .clipShape(RoundedRectangle(cornerRadius: 4))

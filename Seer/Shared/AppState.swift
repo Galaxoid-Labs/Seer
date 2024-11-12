@@ -119,8 +119,10 @@ class AppState: ObservableObject {
                     ], id: IdSubGroupList),
                     Subscription(filters: [
                         Filter(kinds: [
-                            Kind.groupMembers,
-                            Kind.groupAdmins
+                            //Kind.groupMembers,
+                            Kind.groupAdmins,
+                            Kind.groupAddUser,
+                            Kind.groupRemoveUser
                         ])
                     ], id: IdSubGroupMembers)
                 ])
@@ -237,10 +239,6 @@ class AppState: ObservableObject {
                         
                         //try? modelContext.save()
                         
-                        if groupId == "8577cd" {
-                            print(group)
-                        }
-                        
                         if let selectedOwnerAccount = self.selectedOwnerAccount {
                             
                             let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
@@ -257,41 +255,41 @@ class AppState: ObservableObject {
                         
                     }
                     
-                case Kind.groupMembers:
-                    
-                    let tags = event.tags.map({ $0 })
-                    if let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first {
-                        let members = tags.filter({ $0.id == "p" })
-                            .compactMap({ $0.otherInformation.last })
-                            .filter({ $0.isValidPublicKey })
-                            .map({ GroupMember(publicKey: $0, groupId: groupId, relayUrl: relayUrl) })
-                        
-                        for member in members {
-                            modelContext.insert(member)
-                        }
-                        
-                        //try? modelContext.save()
-                        
-                        let publicKeys = members.map({ $0.publicKey })
-                        if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
-                                                                   predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
-                            for member in members {
-                                member.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == member.publicKey })
-                            }
-                        }
-                        
-                        // Set group isAdmin/isMember just incase we got the members/admins after the group was fetched
-                        if let groups = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate { $0.relayUrl == relayUrl && $0.id == groupId }) {
-                            if let selectedOwnerAccount = self.selectedOwnerAccount {
-                                let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
-                                for group in groups {
-                                    group.isMember = members.first(where: { $0.publicKey == selectedOwnerPublicKey }) != nil
-                                }
-                            }
-                        }
-                        
-                        try? modelContext.save()
-                    }
+//                case Kind.groupMembers:
+//                    
+//                    let tags = event.tags.map({ $0 })
+//                    if let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first {
+//                        let members = tags.filter({ $0.id == "p" })
+//                            .compactMap({ $0.otherInformation.last })
+//                            .filter({ $0.isValidPublicKey })
+//                            .map({ GroupMember(publicKey: $0, groupId: groupId, relayUrl: relayUrl) })
+//                        
+//                        for member in members {
+//                            modelContext.insert(member)
+//                        }
+//                        
+//                        //try? modelContext.save()
+//                        
+//                        let publicKeys = members.map({ $0.publicKey })
+//                        if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
+//                                                                   predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
+//                            for member in members {
+//                                member.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == member.publicKey })
+//                            }
+//                        }
+//                        
+//                        // Set group isAdmin/isMember just incase we got the members/admins after the group was fetched
+//                        if let groups = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate { $0.relayUrl == relayUrl && $0.id == groupId }) {
+//                            if let selectedOwnerAccount = self.selectedOwnerAccount {
+//                                let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
+//                                for group in groups {
+//                                    group.isMember = members.first(where: { $0.publicKey == selectedOwnerPublicKey }) != nil
+//                                }
+//                            }
+//                        }
+//                        
+//                        try? modelContext.save()
+//                    }
                     
                 case Kind.groupAdmins:
                     
@@ -366,17 +364,47 @@ class AppState: ObservableObject {
                         }
                     }
                     
+                case Kind.groupAddUser:
+                    print(event)
+                    
+                case Kind.groupRemoveUser:
+                    print(event)
+                    
                 default: ()
             }
         }
     }
     
+    func editGroup(ownerAccount: OwnerAccount, group: Group) {
+        guard let key = ownerAccount.getKeyPair() else { return }
+        guard let selectedRelay else { return }
+        let groupId = group.id
+        var editGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
+                                   kind: .groupEditMetadata, tags:
+                                    [Tag(id: "h", otherInformation: groupId),
+                                     Tag(underlyingData: ["name", "Cool Group"]),
+                                     Tag(underlyingData: ["about", "This is a cool group"]),
+                                     Tag(underlyingData: ["picture", "https://img.freepik.com/premium-vector/friendly-monkey-avatar_706143-7913.jpg"]),
+                                     Tag(underlyingData: ["closed"])
+                                    ]
+                                   , content: "")
+        do {
+            try editGroupEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        nostrClient.send(event: editGroupEvent, onlyToRelayUrls: [selectedRelay.url])
+    }
+    
     func createGroup(ownerAccount: OwnerAccount) {
         guard let key = ownerAccount.getKeyPair() else { return }
         guard let selectedRelay else { return }
-        let groupId = "help"
+        let groupId = "testgroup"
+        //var createGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
+         //                         kind: .groupCreate, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
         var createGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
-                                  kind: .groupCreate, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
+                                     kind: .groupCreate, tags: [], content: "")
         do {
             try createGroupEvent.sign(with: key)
         } catch {

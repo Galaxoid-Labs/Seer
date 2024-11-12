@@ -13,13 +13,12 @@ import Nostr
 final class GroupAdmin: Hashable, Identifiable {
     
     enum Capability: String, CaseIterable, Codable {
-        case AddUser = "add-user"
+        case PutUser = "put-user"
         case EditMetadata = "edit-metadata"
         case DeleteEvent = "delete-event"
         case RemoveUser = "remove-user"
         case AddPermission = "add-permission"
         case RemovePermission = "remove-permission"
-        case EditGroupStatus = "edit-group-status"
     }
     
     @Attribute(.unique) var id: String

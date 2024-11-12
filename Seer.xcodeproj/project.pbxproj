@@ -53,6 +53,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4710F4742C9A0C4A00EB8BCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
 		4714FE782C76AF5C00656031 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		4714FE7A2C76B0B700656031 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
@@ -132,6 +133,7 @@
 		47202DE82BB341EC00A06030 /* Seer */ = {
 			isa = PBXGroup;
 			children = (
+				4710F4742C9A0C4A00EB8BCD /* Info.plist */,
 				47583E212BC481B2001A25E2 /* MacOS */,
 				47583E202BC481A3001A25E2 /* Shared */,
 				47202DED2BB341ED00A06030 /* Assets.xcassets */,
@@ -542,6 +544,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Seer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Seer;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -584,6 +587,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Seer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Seer;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;

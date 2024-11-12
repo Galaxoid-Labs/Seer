@@ -127,14 +127,18 @@ struct MacOSMessageDetailView: View {
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
                 .onChange(of: chatMessages, initial: true, { oldValue, newValue in
-                    if let last = chatMessages.last {
-                        scroll?.scrollTo(last.id, anchor: .bottom)
+                    DispatchQueue.main.async {
+                        if let last = chatMessages.last {
+                            scroll?.scrollTo(last.id, anchor: .bottom)
+                        }
                     }
                 })
                 .onAppear {
                     scroll = reader
-                    if let last = chatMessages.last {
-                        scroll?.scrollTo(last.id, anchor: .bottom)
+                    DispatchQueue.main.async {
+                        if let last = chatMessages.last {
+                            scroll?.scrollTo(last.id, anchor: .bottom)
+                        }
                     }
                 }
                 
@@ -173,88 +177,105 @@ struct MacOSMessageDetailView: View {
                             })
                             .buttonStyle(.plain)
                         }
-                        .padding(.trailing)
+                        .padding(.trailing, 24)
                     }
                     .background(.background)
                     .frame(height: 50)
                     .padding(.vertical, -8)
+                    .onTapGesture {
+                        withAnimation {
+                            isHighlitedMessageAnimating = true
+                            highlightedMessageId = replyMessage.id
+                            
+                            // Remove the highlight after a delay
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                withAnimation {
+                                    isHighlitedMessageAnimating = false
+                                }
+                            }
+                            
+                            self.scroll?.scrollTo(replyMessage.id, anchor: .center)
+                        }
+                    }
                 }
+                
             }
         }
         .safeAreaInset(edge: .bottom) {
-            //if appState.selectedGroup != nil && isMemberOrAdmin() {
-            
-            HStack(spacing: 8) {
+            if appState.selectedGroup != nil && isMemberOrAdmin() {
                 
-                TextField("Write something", text: $messageText, axis: .vertical)
-                    .textFieldStyle(.plain)
-                    .onSubmit(of: .text, {
-                        if CGKeyCode.kVK_Shift.isPressed {
-                            messageText += "\n"
-                        } else {
-                            guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
-                            guard let selectedGroup = appState.selectedGroup else { return }
-                            if let replyMessage {
-                                let text = messageText.trimmingCharacters(in: .newlines)
-                                let reply = replyMessage
-                                Task {
-                                    await appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
-                                                                  withText: text,
-                                                                        replyChatMessage: reply)
-                                    
-                                    if let last = chatMessages.last {
-                                        self.scroll?.scrollTo(last.id, anchor: .bottom)
-                                    }
-                                }
-
-                                self.replyMessage = nil
-                                messageText = ""
-
+                HStack(spacing: 8) {
+                    
+                    TextField("Write a message...", text: $messageText, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .onSubmit(of: .text, {
+                            if CGKeyCode.kVK_Shift.isPressed {
+                                messageText += "\n"
                             } else {
-                                let text = messageText.trimmingCharacters(in: .newlines)
-                                Task {
-                                    await appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
-                                                                   group: selectedGroup, withText: text)
-                                    
-                                    if let last = chatMessages.last {
-                                        self.scroll?.scrollTo(last.id, anchor: .bottom)
+                                guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
+                                guard let selectedGroup = appState.selectedGroup else { return }
+                                if let replyMessage {
+                                    let text = messageText.trimmingCharacters(in: .newlines)
+                                    let reply = replyMessage
+                                    Task {
+                                        await appState.sendChatMessageReply(ownerAccount: selectedOwnerAccount, group: selectedGroup,
+                                                                            withText: text,
+                                                                            replyChatMessage: reply)
+                                        
+                                        if let last = chatMessages.last {
+                                            self.scroll?.scrollTo(last.id, anchor: .bottom)
+                                        }
                                     }
                                     
+                                    self.replyMessage = nil
+                                    messageText = ""
+                                    
+                                } else {
+                                    let text = messageText.trimmingCharacters(in: .newlines)
+                                    Task {
+                                        await appState.sendChatMessage(ownerAccount: selectedOwnerAccount,
+                                                                       group: selectedGroup, withText: text)
+                                        
+                                        if let last = chatMessages.last {
+                                            self.scroll?.scrollTo(last.id, anchor: .bottom)
+                                        }
+                                        
+                                    }
+                                    messageText = ""
                                 }
-                                messageText = ""
                             }
-                        }
-                    })
-                    .padding(.leading, 12)
-                    .padding(.trailing, 16)
-                    .padding(.vertical, 8)
-                    .background(.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(style: .init(lineWidth: 1))
-                            .foregroundStyle(.secondary.opacity(0.6))
-                    )
-                    .overlay(alignment: .trailing) {
-                        Button("", systemImage: "face.smiling") {
-                            Task {
-                                NSApp.orderFrontCharacterPalette($messageText) // TODO: Fix where this comes up
+                        })
+                        .padding(.leading, 12)
+                        .padding(.trailing, 16)
+                        .padding(.vertical, 8)
+                        .background(.background)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                    //                    .background(
+                    //                        RoundedRectangle(cornerRadius: 16)
+                    //                            .stroke(style: .init(lineWidth: 1))
+                    //                            .foregroundStyle(.secondary.opacity(0.6))
+                    //                    )
+                        .overlay(alignment: .trailing) {
+                            Button("", systemImage: "face.smiling") {
+                                Task {
+                                    NSApp.orderFrontCharacterPalette($messageText) // TODO: Fix where this comes up
+                                }
                             }
+                            .buttonStyle(.plain)
+                            .imageScale(.large)
                         }
-                        .buttonStyle(.plain)
-                        .imageScale(.large)
-                    }
-                    .focused($inputFocused)
-
-            }
-            .padding(.horizontal)
-            .padding(.vertical)
-            .background(
-                .background
-            )
-            .overlay(alignment: .top) {
-                Color.secondary.opacity(0.3)
-                    .frame(height: 1)
+                        .focused($inputFocused)
+                    
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .background(
+                    .background
+                )
+                .overlay(alignment: .top) {
+                    Color.secondary.opacity(0.3)
+                        .frame(height: 1)
+                }
             }
         }
         .toolbar {
@@ -339,6 +360,7 @@ struct MacOSMessageDetailView: View {
         .onChange(of: appState.selectedGroup) { oldValue, newValue in
             if oldValue != newValue {
                 self.replyMessage = nil
+
             }
         }
     }

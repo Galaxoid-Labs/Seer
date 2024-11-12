@@ -14,6 +14,7 @@ struct MacOSGroupInfoPopoverView: View {
     let members: [GroupMember]
     let admins: [GroupAdmin]
     let selectedOwnerAccount: OwnerAccount
+    @EnvironmentObject var appState: AppState 
     
     var filteredMembers: [GroupMember] {
         return members.filter({ gm in !admins.contains { gma in
@@ -90,8 +91,9 @@ struct MacOSGroupInfoPopoverView: View {
                 
                 if let selectedOwnerAccountAdmin {
                     Button("Edit Group", systemImage: "rectangle.3.group.bubble") {
-                        
+                        appState.editGroup(ownerAccount: appState.selectedOwnerAccount!, group: group)
                     }
+                    
                 }
                 
                 Divider()
@@ -100,7 +102,7 @@ struct MacOSGroupInfoPopoverView: View {
                     Section {
                         
                         if let selectedOwnerAccountAdmin, Set([GroupAdmin.Capability.AddPermission, 
-                                                               GroupAdmin.Capability.AddUser])
+                                                               GroupAdmin.Capability.PutUser])
                             .isSubset(of: selectedOwnerAccountAdmin.capabilities) {
                             
                             Button(action: {}, label: {
@@ -147,7 +149,7 @@ struct MacOSGroupInfoPopoverView: View {
                     Section {
                         
                         if let selectedOwnerAccountAdmin,
-                           selectedOwnerAccountAdmin.capabilities.contains(.AddUser) {
+                           selectedOwnerAccountAdmin.capabilities.contains(.PutUser) {
                             
                             Button(action: { addMemberPopoverShowing = true }, label: {
                                 Image(systemName: "plus")

@@ -37,6 +37,19 @@ struct MacOSAddGroupMemberPopoverView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding()
             
+            Button(action: {
+                Task {
+                    appState.addMember(ownerAccount: selectedOwnerAccount,
+                                       group: selectedGroup, publicKey: "da74a59afbd81e797eb71a338c6d40829948ce5cbff440641b79a8b54ec28c82")
+                }
+                dismiss()
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .imageScale(.large)
+                    .foregroundStyle(.accent)
+            }
+            .buttonStyle(.plain)
+            
             ForEach(members, id: \.id) { member in
                 HStack {
                     AvatarView(avatarUrl: member.publicKeyMetadata?.picture ?? "", size: 30)
@@ -55,18 +68,7 @@ struct MacOSAddGroupMemberPopoverView: View {
                     
                     Spacer()
                     
-                    Button(action: {
-                        Task {
-                            appState.addMember(ownerAccount: selectedOwnerAccount,
-                                               group: selectedGroup, publicKey: member.publicKey)
-                        }
-                        dismiss()
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .imageScale(.large)
-                            .foregroundStyle(.accent)
-                    }
-                    .buttonStyle(.plain)
+
                     
                 }
             }
