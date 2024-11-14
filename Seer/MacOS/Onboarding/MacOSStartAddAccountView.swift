@@ -83,8 +83,8 @@ struct MacOSStartAddAccountView: View {
                             ownerAccount.selected = true
                             modelContext.insert(ownerAccount)
                             Task {
-                                appState.connectAllNip29Relays()
-                                appState.connectAllMetadataRelays()
+                                await appState.connectAllNip29Relays()
+                                await appState.connectAllMetadataRelays()
                             }
                             appState.showOnboarding = false
                         }
@@ -102,8 +102,8 @@ struct MacOSStartAddAccountView: View {
                             modelContext.insert(ownerAccount)
                             appState.selectedOwnerAccount = ownerAccount
                             Task {
-                                appState.connectAllNip29Relays()
-                                appState.connectAllMetadataRelays()
+                                await appState.connectAllNip29Relays()
+                                await appState.connectAllMetadataRelays()
                             }
                             appState.showOnboarding = false
                         } else {

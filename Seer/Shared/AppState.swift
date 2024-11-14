@@ -17,6 +17,7 @@ let IdSubPublicMetadata = "IdPublicMetadata"
 let IdSubOwnerMetadata = "IdOwnerMetadata"
 let IdSubGroupList = "IdGroupList"
 let IdSubGroupMembers = "IdSubGroupMembers"
+let IdSubGroupAdmins = "IdSubGroupAdmins"
 
 class AppState: ObservableObject {
     
@@ -45,7 +46,7 @@ class AppState: ObservableObject {
         nostrClient.delegate = self
     }
     
-    @MainActor func initialSetup() {
+    @MainActor func initialSetup() async {
         var selectedAccountDescriptor = FetchDescriptor<OwnerAccount>(predicate: #Predicate { $0.selected })
         selectedAccountDescriptor.fetchLimit = 1
         self.selectedOwnerAccount = try? modelContainer?.mainContext.fetch(selectedAccountDescriptor).first
@@ -54,7 +55,7 @@ class AppState: ObservableObject {
     // This function is meant to be called anytime there has been a change
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
-    @MainActor func connectAllMetadataRelays() {
+    @MainActor func connectAllMetadataRelays() async {
         
         // Metadata relays
         let relaysDescriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.supportsNip1 })
@@ -107,7 +108,7 @@ class AppState: ObservableObject {
     // This function is meant to be called anytime there has been a change
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
-    @MainActor func connectAllNip29Relays() {
+    @MainActor func connectAllNip29Relays() async {
         let descriptor = FetchDescriptor<Relay>(predicate: #Predicate { $0.supportsNip29 })
         if let relays = try? modelContainer?.mainContext.fetch(descriptor) {
             for relay in relays {
@@ -116,25 +117,18 @@ class AppState: ObservableObject {
                         Filter(kinds: [
                             Kind.groupMetadata
                         ])
-                    ], id: IdSubGroupList),
-                    Subscription(filters: [
-                        Filter(kinds: [
-                            //Kind.groupMembers,
-                            Kind.groupAdmins,
-                            Kind.groupAddUser,
-                            Kind.groupRemoveUser
-                        ])
-                    ], id: IdSubGroupMembers)
+                    ], id: IdSubGroupList)
                 ])
             }
             self.selectedRelay = relays.first // TODO: Need better selection here...
         }
     }
     
+    
     // This function is meant to be called anytime there has been a change
     // In subscriptions, etc. It should handle the case where it's simply
     // a no-op if nothing has actually changed in subscriptions, etc.
-    @MainActor func subscribeGroups(withRelayUrl relayUrl: String) {
+    @MainActor func subscribeGroups(withRelayUrl relayUrl: String) async {
         
         let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl  })
         if let events = try? modelContainer?.mainContext.fetch(descriptor) {
@@ -151,6 +145,45 @@ class AppState: ObservableObject {
                     //Kind.groupForumMessageReply
                 ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds)]),
             ], id: IdSubChatMessages)
+            
+            nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
+        }
+    }
+    
+    @MainActor func subscribeGroupMemberships(withRelayUrl relayUrl: String) async {
+        
+        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl  })
+        if let events = try? modelContainer?.mainContext.fetch(descriptor) {
+            
+            // Get latest message and use since filter so we don't keep getting the same shit
+            //let since = events.min(by: { $0.createdAt > $1.createdAt })
+            // TODO: use the since fitler
+            let groupIds = events.compactMap({ $0.id }).sorted()
+            let sub = Subscription(filters: [
+                Filter(kinds: [
+                    Kind.groupAddUser,
+                    Kind.groupRemoveUser
+                ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds)]),
+            ], id: IdSubGroupMembers)
+            
+            nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
+        }
+    }
+    
+    @MainActor func subscribeGroupAdmins(withRelayUrl relayUrl: String) async {
+        
+        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl  })
+        if let events = try? modelContainer?.mainContext.fetch(descriptor) {
+            
+            // Get latest message and use since filter so we don't keep getting the same shit
+            //let since = events.min(by: { $0.createdAt > $1.createdAt })
+            // TODO: use the since fitler
+            let groupIds = events.compactMap({ $0.id }).sorted()
+            let sub = Subscription(filters: [
+                Filter(kinds: [
+                    Kind.groupAdmins
+                ], since: nil, tags: [Tag(id: "d", otherInformation: groupIds)]),
+            ], id: IdSubGroupAdmins)
             
             nostrClient.add(relayWithUrl: relayUrl, subscriptions: [sub])
         }
@@ -577,6 +610,8 @@ extension AppState: NostrClientDelegate {
                 case IdSubGroupList:
                     Task {
                         await subscribeGroups(withRelayUrl: relayUrl)
+                        await subscribeGroupMemberships(withRelayUrl: relayUrl)
+                        await subscribeGroupAdmins(withRelayUrl: relayUrl)
                     }
                 case IdSubChatMessages,IdSubGroupList:
                     Task {

@@ -84,7 +84,9 @@ struct MacOSWelcomeView: View {
                                     }
                                     ownerAccount.selected = true
                                     modelContext.insert(ownerAccount)
-                                    appState.connectAllMetadataRelays()
+                                    Task {
+                                        await appState.connectAllMetadataRelays()
+                                    }
                                     dismiss()
                                 } else {
                                     print("damn")
