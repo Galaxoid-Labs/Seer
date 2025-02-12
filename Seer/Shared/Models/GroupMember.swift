@@ -17,6 +17,12 @@ final class GroupMember: Hashable, Identifiable {
     var publicKey: String
     var groupId: String
     var relayUrl: String
+    
+    // We use these to determine membership
+    // We only keep one or the the other
+    var addedAt: Date?
+    var removedAt: Date?
+    
     @Relationship(deleteRule: .nullify) var publicKeyMetadata: PublicKeyMetadata?
     
     init(publicKey: String, groupId: String, relayUrl: String, publicKeyMetadata: PublicKeyMetadata? = nil) {

@@ -311,7 +311,7 @@ struct MacOSMessageDetailView: View {
                 
                 Spacer()
                 
-                if !isMemberOrAdmin() && groupMembers.count > 0 {
+                if !isMemberOrAdmin() {
                     
                     Button(action: {
                         guard let selectedOwnerAccount = appState.selectedOwnerAccount else { return }
