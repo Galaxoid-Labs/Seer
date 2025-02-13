@@ -19,6 +19,8 @@ final class GroupAdmin: Hashable, Identifiable {
         case RemoveUser = "remove-user"
         case AddPermission = "add-permission"
         case RemovePermission = "remove-permission"
+        case CreateInvite = "create-invite"
+        case DeleteGroup = "delete-group"
     }
     
     @Attribute(.unique) var id: String

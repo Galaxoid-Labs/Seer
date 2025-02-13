@@ -14,8 +14,8 @@
             filePath = "Seer/Shared/AppState.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "452"
-            endingLineNumber = "452"
+            startingLineNumber = "450"
+            endingLineNumber = "450"
             landmarkName = "process(event:relayUrl:)"
             landmarkType = "7">
          </BreakpointContent>

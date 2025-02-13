@@ -140,10 +140,8 @@ class AppState: ObservableObject {
             let groupIds = events.compactMap({ $0.id }).sorted()
             let sub = Subscription(filters: [
                 Filter(kinds: [
-                    Kind.groupChatMessage,
-                    //Kind.groupChatMessageReply,
-                    Kind.groupForumMessage,
-                    //Kind.groupForumMessageReply
+                    Kind.chatMessage,
+                    Kind.threadMessage,
                 ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds)]),
             ], id: IdSubChatMessages)
             
@@ -167,7 +165,7 @@ class AppState: ObservableObject {
             let groupIds = events.compactMap({ $0.id }).sorted()
             let sub = Subscription(filters: [
                 Filter(kinds: [
-                    Kind.groupAddUser,
+                    Kind.groupPutUser,
                     Kind.groupRemoveUser
                 ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds),
                                       Tag(id: "p", otherInformation: [selectedAccount.publicKey])]),
@@ -188,7 +186,7 @@ class AppState: ObservableObject {
             let groupIds = events.compactMap({ $0.id }).sorted()
             let sub = Subscription(filters: [
                 Filter(kinds: [
-                    Kind.groupAddUser,
+                    Kind.groupPutUser,
                     Kind.groupRemoveUser
                 ], since: nil, tags: [Tag(id: "h", otherInformation: groupIds)]),
             ], id: IdSubGroupMembers)
@@ -385,7 +383,7 @@ class AppState: ObservableObject {
                         try? modelContext.save()
                     }
                     
-                case Kind.groupChatMessage:
+                case Kind.chatMessage:
                     
                     if let chatMessage = ChatMessage(event: event, relayUrl: relayUrl) {
                         
@@ -422,7 +420,7 @@ class AppState: ObservableObject {
                         }
                     }
                     
-                case Kind.groupAddUser:
+                case Kind.groupPutUser:
                     let tags = event.tags.map({ $0 })
                     guard let groupId = tags.first(where: { $0.id == "h" })?.otherInformation.first else { return }
                     guard let pubkey = tags.first(where: { $0.id == "p" })?.otherInformation.first else { return }
@@ -562,7 +560,7 @@ class AppState: ObservableObject {
         guard let key = ownerAccount.getKeyPair() else { return }
         let relayUrl = group.relayUrl
         let groupId = group.id
-        var joinEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupAddUser,
+        var joinEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupPutUser,
                               tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "p", otherInformation: publicKey)], content: "")
 
         do {
@@ -596,7 +594,7 @@ class AppState: ObservableObject {
         let relayUrl = group.relayUrl
         let groupId = group.id
     
-        var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
+        var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .chatMessage,
                           tags: [Tag(id: "h", otherInformation: groupId)], content: text)
         do {
             try event.sign(with: key)
@@ -637,7 +635,7 @@ class AppState: ObservableObject {
             tags.append(Tag(id: "e", otherInformation: [replyChatMessage.id, relayUrl, "reply", replyChatMessage.publicKey]))
         }
         
-        var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .groupChatMessage,
+        var event = Event(pubkey: ownerAccount.publicKey, createdAt: .init(), kind: .chatMessage,
                           tags: tags, content: text)
         do {
             try event.sign(with: key)
