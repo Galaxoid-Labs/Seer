@@ -177,7 +177,7 @@ class AppState: ObservableObject {
     
     @MainActor func subscribeGroupMemberships(withRelayUrl relayUrl: String) async {
         
-        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl  })
+        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl && $0.isMember == true  })
         if let events = try? modelContainer?.mainContext.fetch(descriptor) {
             
             // Get latest message and use since filter so we don't keep getting the same shit
@@ -197,7 +197,7 @@ class AppState: ObservableObject {
     
     @MainActor func subscribeGroupAdmins(withRelayUrl relayUrl: String) async {
         
-        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl  })
+        let descriptor = FetchDescriptor<Group>(predicate: #Predicate { $0.relayUrl == relayUrl && $0.isMember == true  })
         if let events = try? modelContainer?.mainContext.fetch(descriptor) {
             
             // Get latest message and use since filter so we don't keep getting the same shit
@@ -269,6 +269,7 @@ class AppState: ObservableObject {
             let publicKey = event.pubkey
             
             guard let modelContext = self.backgroundContext() else { return }
+            modelContext.processPendingChanges()
             switch event.kind {
                 case Kind.setMetadata:
                     
@@ -439,11 +440,12 @@ class AppState: ObservableObject {
                             }
                             member.addedAt = event.createdAt.date
                         }
-                        
-                        if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
-                            group.isMember = true
+                        if pubkey == self.selectedOwnerAccount?.publicKey {
+                            if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
+                                group.isMember = true
+                            }
                         }
-                        
+
                         try? modelContext.save()
                         
                     } else {
@@ -451,10 +453,12 @@ class AppState: ObservableObject {
                         member.addedAt = event.createdAt.date
                         modelContext.insert(member)
                         
-                        if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
-                            group.isMember = true
+                        if pubkey == self.selectedOwnerAccount?.publicKey {
+                            if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
+                                group.isMember = true
+                            }
                         }
-                        
+
                         try? modelContext.save()
                     }
                     
@@ -477,9 +481,11 @@ class AppState: ObservableObject {
                             }
                             member.removedAt = event.createdAt.date
                         }
-                        
-                        if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
-                            group.isMember = false
+                       
+                        if pubkey == self.selectedOwnerAccount?.publicKey {
+                            if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
+                                group.isMember = false
+                            }
                         }
                         
                         try? modelContext.save()
@@ -488,9 +494,11 @@ class AppState: ObservableObject {
                         let member = GroupMember(publicKey: pubkey, groupId: groupId, relayUrl: relayUrl)
                         member.removedAt = event.createdAt.date
                         modelContext.insert(member)
-                        
-                        if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
-                            group.isMember = false
+                       
+                        if pubkey == self.selectedOwnerAccount?.publicKey {
+                            if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
+                                group.isMember = false
+                            }
                         }
                         
                         try? modelContext.save()
@@ -701,11 +709,6 @@ extension AppState: NostrClientDelegate {
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
             switch id {
                 case IdSubGroupList: ()
-//                    Task {
-//                        await subscribeGroups(withRelayUrl: relayUrl)
-////                        await subscribeGroupMemberships(withRelayUrl: relayUrl)
-////                        await subscribeGroupAdmins(withRelayUrl: relayUrl)
-//                    }
                     Task {
                         await subscribeOwnerGroupMembership(withRelayUrl: relayUrl)
                     }
@@ -714,11 +717,11 @@ extension AppState: NostrClientDelegate {
                         await connectAllMetadataRelays()
                     }
                 case IdSubOwnerGroupMembership:
-                    guard let context = self.backgroundContext() else { return }
-                    
-                    // grab memeber from db
-                    let members = try? context.fetch(FetchDescriptor<GroupMember>())
-                    print(members)
+                    Task {
+                        await subscribeGroupAdmins(withRelayUrl: relayUrl)
+                        await subscribeGroupMemberships(withRelayUrl: relayUrl)
+                        await subscribeGroups(withRelayUrl: relayUrl)
+                    }
                 default:
                     ()
             }

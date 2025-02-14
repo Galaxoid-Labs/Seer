@@ -66,7 +66,10 @@ final class Group: Hashable, Identifiable {
 }
 
 extension Group {
-    static func predicate(relayUrl: String) -> Predicate<Group> {
+    static func predicate(relayUrl: String, isMember: Bool) -> Predicate<Group> {
+        if isMember {
+            return #Predicate<Group> { $0.relayUrl == relayUrl && $0.name != nil && $0.isMember }
+        }
         return #Predicate<Group> { $0.relayUrl == relayUrl && $0.name != nil }
     }
 }

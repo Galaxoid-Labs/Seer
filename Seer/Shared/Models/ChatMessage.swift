@@ -117,6 +117,14 @@ final class ChatMessage: Identifiable, Hashable {
             }
         }
         
+        // TODO: Maybe just use q tags from NIP-C7
+        // https://github.com/nostr-protocol/nips/blob/master/C7.md
+        if let qtag = tags.first(where: { $0.id == "e" && $0.otherInformation.contains("root") })?.otherInformation {
+            if let eventId = qtag.first, eventId != "" {
+                self.replyToEventId = eventId
+            }
+        }
+        
     }
     
     func formatedContent() -> AttributedString? {
