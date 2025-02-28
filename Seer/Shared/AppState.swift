@@ -270,6 +270,7 @@ class AppState: ObservableObject {
             
             guard let modelContext = self.backgroundContext() else { return }
             modelContext.processPendingChanges()
+            
             switch event.kind {
                 case Kind.setMetadata:
                     
@@ -286,6 +287,16 @@ class AppState: ObservableObject {
                             }
                         }
                         
+                        if let members = self.getModels(
+                            context: modelContext,
+                            modelType: GroupMember.self,
+                            predicate: #Predicate<GroupMember> { $0.publicKey == publicKey }
+                        ) {
+                            for member in members {
+                                member.publicKeyMetadata = publicKeyMetadata
+                            }
+                        }
+                        
                         try? modelContext.save()
 
                     }
@@ -295,8 +306,6 @@ class AppState: ObservableObject {
                     if let group = Group(event: event, relayUrl: relayUrl) {
                         let groupId = group.id
                         modelContext.insert(group)
-                        
-                        //try? modelContext.save()
                         
                         if let selectedOwnerAccount = self.selectedOwnerAccount {
                             
@@ -313,42 +322,6 @@ class AppState: ObservableObject {
                         try? modelContext.save()
                         
                     }
-                    
-//                case Kind.groupMembers:
-//                    
-//                    let tags = event.tags.map({ $0 })
-//                    if let groupId = tags.first(where: { $0.id == "d" })?.otherInformation.first {
-//                        let members = tags.filter({ $0.id == "p" })
-//                            .compactMap({ $0.otherInformation.last })
-//                            .filter({ $0.isValidPublicKey })
-//                            .map({ GroupMember(publicKey: $0, groupId: groupId, relayUrl: relayUrl) })
-//                        
-//                        for member in members {
-//                            modelContext.insert(member)
-//                        }
-//                        
-//                        //try? modelContext.save()
-//                        
-//                        let publicKeys = members.map({ $0.publicKey })
-//                        if let publicKeyMetadatas = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
-//                                                                   predicate: #Predicate<PublicKeyMetadata> { publicKeys.contains($0.publicKey) }) {
-//                            for member in members {
-//                                member.publicKeyMetadata = publicKeyMetadatas.first(where: { $0.publicKey == member.publicKey })
-//                            }
-//                        }
-//                        
-//                        // Set group isAdmin/isMember just incase we got the members/admins after the group was fetched
-//                        if let groups = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate { $0.relayUrl == relayUrl && $0.id == groupId }) {
-//                            if let selectedOwnerAccount = self.selectedOwnerAccount {
-//                                let selectedOwnerPublicKey = selectedOwnerAccount.publicKey
-//                                for group in groups {
-//                                    group.isMember = members.first(where: { $0.publicKey == selectedOwnerPublicKey }) != nil
-//                                }
-//                            }
-//                        }
-//                        
-//                        try? modelContext.save()
-//                    }
                     
                 case Kind.groupAdmins:
                     
@@ -392,8 +365,6 @@ class AppState: ObservableObject {
                                                              predicate: #Predicate<ChatMessage> { $0.id == eventId }), chatMessages.count == 0 {
                             
                             modelContext.insert(chatMessage)
-                            
-                            //try? modelContext.save()
                             
                             if let publicKeyMetadata = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
                                                                       predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })?.first {
@@ -440,10 +411,19 @@ class AppState: ObservableObject {
                             }
                             member.addedAt = event.createdAt.date
                         }
+
                         if pubkey == self.selectedOwnerAccount?.publicKey {
                             if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
                                 group.isMember = true
                             }
+                        }
+                        
+                        if let publicKeyMetadata = self.getModels(
+                            context: modelContext,
+                            modelType: PublicKeyMetadata.self,
+                            predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == pubkey }
+                        ) {
+                            member.publicKeyMetadata = publicKeyMetadata.first
                         }
 
                         try? modelContext.save()
@@ -457,6 +437,14 @@ class AppState: ObservableObject {
                             if let group = self.getModels(context: modelContext, modelType: Group.self, predicate: #Predicate<Group> { $0.id == groupId })?.first {
                                 group.isMember = true
                             }
+                        }
+                        
+                        if let publicKeyMetadata = self.getModels(
+                            context: modelContext,
+                            modelType: PublicKeyMetadata.self,
+                            predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == pubkey }
+                        ) {
+                            member.publicKeyMetadata = publicKeyMetadata.first
                         }
 
                         try? modelContext.save()
@@ -712,7 +700,7 @@ extension AppState: NostrClientDelegate {
                     Task {
                         await subscribeOwnerGroupMembership(withRelayUrl: relayUrl)
                     }
-                case IdSubChatMessages:
+                case IdSubChatMessages,IdSubGroupAdmins,IdSubGroupMembers:
                     Task {
                         await connectAllMetadataRelays()
                     }
