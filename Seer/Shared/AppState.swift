@@ -277,7 +277,7 @@ class AppState: ObservableObject {
                     if let publicKeyMetadata = PublicKeyMetadata(event: event) {
                         modelContext.insert(publicKeyMetadata)
                         
-                        //try? modelContext.save()
+                        try? modelContext.save()
                         
                         // Fetch all ChatMessages with publicKey and assign publicKeyMetadata relationship
                         if let messages = self.getModels(context: modelContext, modelType: ChatMessage.self,

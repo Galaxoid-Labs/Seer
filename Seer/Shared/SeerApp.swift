@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 import Nostr
 import NostrClient
+import SDWebImageWebPCoder
+import SDWebImage
 
 @main
 struct SeerApp: App {
@@ -104,7 +106,8 @@ struct SeerApp: App {
 #if os(macOS)
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
-        //SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
+        SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
+        SDWebImageDownloader.shared.setValue("image/webp,image/apng,image/*,*/*;q=0.8", forHTTPHeaderField: "Accept")
         
         let _ = NSApplication.shared.windows.map { $0.tabbingMode = .disallowed }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		471217392D774D68007E6D51 /* SDWebImageWebPCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 471217382D774D68007E6D51 /* SDWebImageWebPCoder */; };
 		4714FE772C76AE7D00656031 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */; };
 		4714FE792C76AF5C00656031 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE782C76AF5C00656031 /* ChatMessage.swift */; };
 		4714FE7B2C76B0B700656031 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE7A2C76B0B700656031 /* Group.swift */; };
@@ -105,6 +106,7 @@
 				47310B5F2C208A3E003A1827 /* NostrClient in Frameworks */,
 				478597682BD15EBF00609EE2 /* SDWebImageSwiftUI in Frameworks */,
 				47583DFB2BC45F5B001A25E2 /* KeychainAccess in Frameworks */,
+				471217392D774D68007E6D51 /* SDWebImageWebPCoder in Frameworks */,
 				47202DFA2BB3420B00A06030 /* NostrClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,6 +287,7 @@
 				47583DFA2BC45F5B001A25E2 /* KeychainAccess */,
 				478597672BD15EBF00609EE2 /* SDWebImageSwiftUI */,
 				47310B5E2C208A3E003A1827 /* NostrClient */,
+				471217382D774D68007E6D51 /* SDWebImageWebPCoder */,
 			);
 			productName = Seer;
 			productReference = 47202DE62BB341EC00A06030 /* Seer.app */;
@@ -318,6 +321,7 @@
 				47583DF92BC45F5B001A25E2 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				478597662BD15EBE00609EE2 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				47310B5D2C208A3E003A1827 /* XCRemoteSwiftPackageReference "NostrClient" */,
+				471217372D774D68007E6D51 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */,
 			);
 			productRefGroup = 47202DE72BB341EC00A06030 /* Products */;
 			projectDirPath = "";
@@ -640,6 +644,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		471217372D774D68007E6D51 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageWebPCoder.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.14.6;
+			};
+		};
 		47310B5D2C208A3E003A1827 /* XCRemoteSwiftPackageReference "NostrClient" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Galaxoid-Labs/NostrClient";
@@ -661,12 +673,17 @@
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.2;
+				minimumVersion = 3.1.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		471217382D774D68007E6D51 /* SDWebImageWebPCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 471217372D774D68007E6D51 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */;
+			productName = SDWebImageWebPCoder;
+		};
 		47202DF92BB3420B00A06030 /* NostrClient */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = NostrClient;
