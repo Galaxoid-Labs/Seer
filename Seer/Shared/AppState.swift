@@ -43,6 +43,8 @@ class AppState: ObservableObject {
     
     @Published var statuses: [String: Bool] = [:]
     
+    @Published var eventIdsOfInterest: Set<String> = []
+    
     private init() {
         nostrClient.delegate = self
     }
@@ -519,21 +521,29 @@ class AppState: ObservableObject {
         nostrClient.send(event: editGroupEvent, onlyToRelayUrls: [selectedRelay.url])
     }
     
-    func createGroup(ownerAccount: OwnerAccount) {
+    func createGroup(
+        ownerAccount: OwnerAccount,
+        groupId: String,
+        name: String? = nil,
+        about: String? = nil,
+        picture: String? = nil,
+        completion: (((any Error)?) -> Void)? = nil
+    ) {
         guard let key = ownerAccount.getKeyPair() else { return }
         guard let selectedRelay else { return }
-        let groupId = "testgroup"
-        //var createGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
-         //                         kind: .groupCreate, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
         var createGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
-                                     kind: .groupCreate, tags: [], content: "")
+                                     kind: .groupCreate, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
         do {
             try createGroupEvent.sign(with: key)
         } catch {
             print(error.localizedDescription)
         }
 
-        nostrClient.send(event: createGroupEvent, onlyToRelayUrls: [selectedRelay.url])
+        nostrClient.send(event: createGroupEvent, onlyToRelayUrls: [selectedRelay.url], completion: completion)
+    }
+    
+    func updateGroup(ownerAccount: OwnerAccount, group: Group) {
+        
     }
     
     func joinGroup(ownerAccount: OwnerAccount, group: Group) {

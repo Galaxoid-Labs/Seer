@@ -18,6 +18,8 @@ struct MacOSGroupListView: View {
     @Query private var groups: [Group]
     @Query private var chatMessages: [ChatMessage]
     
+    @State private var showCreateGroupSheet: Bool = false
+    
     func latestMessage(for groupId: String) -> ChatMessage? {
         return chatMessages
             .filter({ $0.groupId == groupId })
@@ -45,16 +47,38 @@ struct MacOSGroupListView: View {
         .listStyle(.automatic)
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
-                Spacer()
-                Button(action: {
-                    appState.createGroup(ownerAccount: appState.selectedOwnerAccount!)
-                }) {
-                    Image(systemName: "plus.circle")
+                
+                Menu("", systemImage: "plus.circle") {
+                    Button {
+                        showCreateGroupSheet = true
+                    } label: {
+                        Label("Create a Group", systemImage: "person.3.fill")
+                    }
+                    .labelStyle(.titleAndIcon)
+                    
+                    Button {
+                        
+                    } label: {
+                        Label("Find a Group", systemImage: "magnifyingglass")
+                    }
+                    .labelStyle(.titleAndIcon)
                 }
+                
+                //Spacer()
+//                Button(action: {
+//                    appState.createGroup(ownerAccount: appState.selectedOwnerAccount!)
+//                }) {
+//                    Image(systemName: "plus.circle")
+//                }
                 
             }
             
         }
+        .sheet(isPresented: $showCreateGroupSheet, onDismiss: {
+            
+        }, content: {
+            MacOSCreateGroupView()
+        })
     }
 }
 

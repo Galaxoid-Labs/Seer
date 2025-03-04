@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		471217392D774D68007E6D51 /* SDWebImageWebPCoder in Frameworks */ = {isa = PBXBuildFile; productRef = 471217382D774D68007E6D51 /* SDWebImageWebPCoder */; };
+		4712173B2D777DE4007E6D51 /* MacOSCreateGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4712173A2D777DE3007E6D51 /* MacOSCreateGroupView.swift */; };
 		4714FE772C76AE7D00656031 /* PublicKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */; };
 		4714FE792C76AF5C00656031 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE782C76AF5C00656031 /* ChatMessage.swift */; };
 		4714FE7B2C76B0B700656031 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4714FE7A2C76B0B700656031 /* Group.swift */; };
@@ -55,6 +56,7 @@
 
 /* Begin PBXFileReference section */
 		4710F4742C9A0C4A00EB8BCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4712173A2D777DE3007E6D51 /* MacOSCreateGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSCreateGroupView.swift; sourceTree = "<group>"; };
 		4714FE762C76AE7D00656031 /* PublicKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKeyMetadata.swift; sourceTree = "<group>"; };
 		4714FE782C76AF5C00656031 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		4714FE7A2C76B0B700656031 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 		47310B582C1B3AE2003A1827 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4712173A2D777DE3007E6D51 /* MacOSCreateGroupView.swift */,
 				477FA2EE2C1A11F00016067B /* MacOSMessageBubbleView.swift */,
 				47310B532C1A4CE8003A1827 /* MacOSGroupListRowView.swift */,
 				473E42692C347A2100282484 /* MacOSSidebarRelayListRowView.swift */,
@@ -381,6 +384,7 @@
 				473E426E2C35A4DE00282484 /* LinkPreviewView.swift in Sources */,
 				4714FE7F2C76B1DA00656031 /* GroupAdmin.swift in Sources */,
 				473E42712C35A80E00282484 /* URL.swift in Sources */,
+				4712173B2D777DE4007E6D51 /* MacOSCreateGroupView.swift in Sources */,
 				47E1FD672C4EF5A500C75C91 /* RootView.swift in Sources */,
 				47EF15802C52E0E50012FB46 /* MacOSStartAddAccountView.swift in Sources */,
 				4714FE772C76AE7D00656031 /* PublicKeyMetadata.swift in Sources */,
