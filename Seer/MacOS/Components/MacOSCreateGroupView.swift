@@ -18,6 +18,9 @@ struct MacOSCreateGroupView: View {
     @State private var groupOpen: Bool = true
     @State private var groupPublic: Bool = true
     
+    @State private var isLoading: Bool = false
+    @State private var errorMessage: [String] = []
+    
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -32,7 +35,6 @@ struct MacOSCreateGroupView: View {
                 TextField("Image Url", text: $groupImageUrl)
             }
             .textFieldStyle(.roundedBorder)
-            //.formStyle(.grouped)
             
             HStack {
                 Spacer()
@@ -48,6 +50,12 @@ struct MacOSCreateGroupView: View {
             HStack {
                 Spacer()
                 
+                if isLoading {
+                    ProgressView()
+                        .scaleEffect(0.5)
+                        .offset(x: 3, y: 1)
+                }
+                
                 Button("Cancel") {
                     dismiss()
                 }
@@ -58,13 +66,19 @@ struct MacOSCreateGroupView: View {
                         guard let selectedOwnerAccount = appState.selectedOwnerAccount else {
                             return
                         }
-                        
-                        appState.createGroup(ownerAccount: selectedOwnerAccount, groupId: groupId) { error in
+                        self.isLoading = true
+                        self.errorMessage.removeAll()
+                        appState
+                            .createGroup(
+                                ownerAccount: selectedOwnerAccount,
+                                groupId: groupId,
+                                name: groupName
+                                , about: groupAbout, picture: groupImageUrl) { error in
                             if let error = error {
                                 print("Error creating group: \(error)")
                             }
                         }
-                        dismiss()
+                        //dismiss()
                     }
                     .buttonStyle(.borderedProminent)
                 } else {
@@ -76,12 +90,34 @@ struct MacOSCreateGroupView: View {
                 }
 
             }
+            
+            if errorMessage.count > 0 {
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(errorMessage, id: \.self) { m in
+                        Label(m, systemImage: "exclamationmark.octagon.fill")
+                            .foregroundColor(.red)
+                    }
+                }
+            }
         }
+        .disabled(isLoading)
         .padding()
+        .onChange(of: appState.eventSubmissions) { oldValue, newValue in
+            if newValue.count == 2 && self.appState.eventSubmissions.map({ $0.isError == false }).count == 2 {
+                dismiss()
+                self.isLoading = false
+                self.appState.eventSubmissions.removeAll()
+                // TODO handle adding new group stuff
+            } else if newValue.contains(where: { $0.isError }) {
+                self.isLoading = false
+                self.errorMessage = newValue.compactMap({ $0.errorMessage })
+                self.appState.eventSubmissions.removeAll()
+            }
+        }
     }
     
     func canCreate() -> Bool {
-        return groupId != "" && groupName != ""
+        return groupId != "" && groupName != "" && !isLoading
     }
 }
 

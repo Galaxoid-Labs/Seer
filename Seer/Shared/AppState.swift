@@ -43,7 +43,14 @@ class AppState: ObservableObject {
     
     @Published var statuses: [String: Bool] = [:]
     
-    @Published var eventIdsOfInterest: Set<String> = []
+    @Published var eventSubmissions: [EventSubmission] = []
+    
+    struct EventSubmission: Equatable {
+        let relayUrl: String
+        let eventId: String
+        var isError: Bool
+        var errorMessage: String?
+    }
     
     private init() {
         nostrClient.delegate = self
@@ -538,13 +545,40 @@ class AppState: ObservableObject {
         } catch {
             print(error.localizedDescription)
         }
+        
+        self.eventSubmissions
+            .append(EventSubmission(relayUrl: self.selectedRelay?.url ?? "", eventId: createGroupEvent.id ?? "", isError: false))
 
-        nostrClient.send(event: createGroupEvent, onlyToRelayUrls: [selectedRelay.url], completion: completion)
-    }
-    
-    func updateGroup(ownerAccount: OwnerAccount, group: Group) {
+        var updateGroupEvent = Event(
+            pubkey: ownerAccount.publicKey,
+            createdAt: .init(),
+            kind: .groupEditMetadata,
+            tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "name", otherInformation: name),
+                  Tag(id: "about", otherInformation: about), Tag(id: "picture", otherInformation: picture)],
+            content: ""
+        )
+        
+        do {
+            try updateGroupEvent.sign(with: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        self.eventSubmissions
+            .append(EventSubmission(relayUrl: self.selectedRelay?.url ?? "", eventId: updateGroupEvent.id ?? "", isError: false))
+
+        nostrClient.send(event: createGroupEvent, onlyToRelayUrls: [selectedRelay.url])
+        nostrClient.send(event: updateGroupEvent, onlyToRelayUrls: [selectedRelay.url])
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+//
+//        })
         
     }
+    
+//    func updateGroup(ownerAccount: OwnerAccount, group: Group) {
+//        
+//    }
     
     func joinGroup(ownerAccount: OwnerAccount, group: Group) {
         guard let key = ownerAccount.getKeyPair() else { return }
@@ -702,7 +736,14 @@ extension AppState: NostrClientDelegate {
         case .notice(let notice):
             print(notice)
         case .ok(let id, let acceptance, let m):
-            print(id, acceptance, m)
+            DispatchQueue.main.async {
+                if let indexOf = self.eventSubmissions.firstIndex(where: { $0.eventId == id && $0.relayUrl == relayUrl }) {
+                    if !acceptance {
+                        self.eventSubmissions[indexOf].isError = true
+                        self.eventSubmissions[indexOf].errorMessage = m
+                    }
+                }
+            }
         case .eose(let id):
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
             switch id {
