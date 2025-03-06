@@ -48,7 +48,7 @@ class AppState: ObservableObject {
     struct EventSubmission: Equatable {
         let relayUrl: String
         let eventId: String
-        var isError: Bool
+        var completed: Bool
         var errorMessage: String?
     }
     
@@ -506,79 +506,67 @@ class AppState: ObservableObject {
         }
     }
     
-    func editGroup(ownerAccount: OwnerAccount, group: Group) {
-        guard let key = ownerAccount.getKeyPair() else { return }
-        guard let selectedRelay else { return }
-        let groupId = group.id
+    func editGroup(ownerAccount: OwnerAccount,
+                   groupId: String,
+                   name: String? = nil,
+                   about: String? = nil,
+                   picture: String? = nil) -> Event? {
+        guard let key = ownerAccount.getKeyPair() else { return nil }
+        guard let selectedRelay else { return nil }
+        
+        var tags: [Tag] = [Tag(id: "h", otherInformation: groupId)]
+        
+        if let name {
+            tags.append(Tag(id: "name", otherInformation: name))
+        }
+        
+        if let about {
+            tags.append(Tag(id: "about", otherInformation: about))
+        }
+        
+        if let picture {
+            tags.append(Tag(id: "picture", otherInformation: picture))
+        }
+        
         var editGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
-                                   kind: .groupEditMetadata, tags:
-                                    [Tag(id: "h", otherInformation: groupId),
-                                     Tag(underlyingData: ["name", "Cool Group"]),
-                                     Tag(underlyingData: ["about", "This is a cool group"]),
-                                     Tag(underlyingData: ["picture", "https://img.freepik.com/premium-vector/friendly-monkey-avatar_706143-7913.jpg"]),
-                                     Tag(underlyingData: ["closed"])
-                                    ]
-                                   , content: "")
+                                   kind: .groupEditMetadata, tags: tags, content: "")
+        
         do {
             try editGroupEvent.sign(with: key)
         } catch {
             print(error.localizedDescription)
+            return nil
         }
         
+        self.eventSubmissions
+            .append(EventSubmission(relayUrl: selectedRelay.url, eventId: editGroupEvent.id ?? "", completed: false))
+        
         nostrClient.send(event: editGroupEvent, onlyToRelayUrls: [selectedRelay.url])
+        
+        return editGroupEvent
     }
     
-    func createGroup(
-        ownerAccount: OwnerAccount,
-        groupId: String,
-        name: String? = nil,
-        about: String? = nil,
-        picture: String? = nil,
-        completion: (((any Error)?) -> Void)? = nil
-    ) {
-        guard let key = ownerAccount.getKeyPair() else { return }
-        guard let selectedRelay else { return }
+    func createGroup(ownerAccount: OwnerAccount, groupId: String) -> Event? {
+        
+        guard let key = ownerAccount.getKeyPair() else { return nil }
+        guard let selectedRelay else { return nil }
         var createGroupEvent = Event(pubkey: ownerAccount.publicKey, createdAt: .init(),
                                      kind: .groupCreate, tags: [Tag(id: "h", otherInformation: groupId)], content: "")
         do {
             try createGroupEvent.sign(with: key)
         } catch {
             print(error.localizedDescription)
+            return nil
         }
         
         self.eventSubmissions
-            .append(EventSubmission(relayUrl: self.selectedRelay?.url ?? "", eventId: createGroupEvent.id ?? "", isError: false))
-
-        var updateGroupEvent = Event(
-            pubkey: ownerAccount.publicKey,
-            createdAt: .init(),
-            kind: .groupEditMetadata,
-            tags: [Tag(id: "h", otherInformation: groupId), Tag(id: "name", otherInformation: name),
-                  Tag(id: "about", otherInformation: about), Tag(id: "picture", otherInformation: picture)],
-            content: ""
-        )
+            .append(EventSubmission(relayUrl: selectedRelay.url, eventId: createGroupEvent.id ?? "", completed: false))
         
-        do {
-            try updateGroupEvent.sign(with: key)
-        } catch {
-            print(error.localizedDescription)
-        }
-        
-        self.eventSubmissions
-            .append(EventSubmission(relayUrl: self.selectedRelay?.url ?? "", eventId: updateGroupEvent.id ?? "", isError: false))
-
         nostrClient.send(event: createGroupEvent, onlyToRelayUrls: [selectedRelay.url])
-        nostrClient.send(event: updateGroupEvent, onlyToRelayUrls: [selectedRelay.url])
         
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-//
-//        })
+        return createGroupEvent
         
     }
-    
-//    func updateGroup(ownerAccount: OwnerAccount, group: Group) {
-//        
-//    }
     
     func joinGroup(ownerAccount: OwnerAccount, group: Group) {
         guard let key = ownerAccount.getKeyPair() else { return }
@@ -739,8 +727,10 @@ extension AppState: NostrClientDelegate {
             DispatchQueue.main.async {
                 if let indexOf = self.eventSubmissions.firstIndex(where: { $0.eventId == id && $0.relayUrl == relayUrl }) {
                     if !acceptance {
-                        self.eventSubmissions[indexOf].isError = true
+                        self.eventSubmissions[indexOf].completed = true
                         self.eventSubmissions[indexOf].errorMessage = m
+                    } else {
+                        self.eventSubmissions[indexOf].completed = true
                     }
                 }
             }

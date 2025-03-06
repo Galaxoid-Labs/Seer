@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Nostr
 
 struct MacOSCreateGroupView: View {
     
@@ -21,6 +22,9 @@ struct MacOSCreateGroupView: View {
     @State private var isLoading: Bool = false
     @State private var errorMessage: [String] = []
     
+    @State private var createGroupEvent: Event? = nil
+    @State private var updateGroupEvent: Event? = nil
+
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -68,17 +72,14 @@ struct MacOSCreateGroupView: View {
                         }
                         self.isLoading = true
                         self.errorMessage.removeAll()
-                        appState
-                            .createGroup(
-                                ownerAccount: selectedOwnerAccount,
-                                groupId: groupId,
-                                name: groupName
-                                , about: groupAbout, picture: groupImageUrl) { error in
-                            if let error = error {
-                                print("Error creating group: \(error)")
-                            }
+                        self.appState.eventSubmissions.removeAll()
+                        
+                        self.createGroupEvent = nil
+                        self.updateGroupEvent = nil
+                        
+                        if let ce = appState.createGroup(ownerAccount: selectedOwnerAccount, groupId: groupId) {
+                            self.createGroupEvent = ce
                         }
-                        //dismiss()
                     }
                     .buttonStyle(.borderedProminent)
                 } else {
@@ -103,16 +104,43 @@ struct MacOSCreateGroupView: View {
         .disabled(isLoading)
         .padding()
         .onChange(of: appState.eventSubmissions) { oldValue, newValue in
-            if newValue.count == 2 && self.appState.eventSubmissions.map({ $0.isError == false }).count == 2 {
-                dismiss()
-                self.isLoading = false
-                self.appState.eventSubmissions.removeAll()
-                // TODO handle adding new group stuff
-            } else if newValue.contains(where: { $0.isError }) {
-                self.isLoading = false
-                self.errorMessage = newValue.compactMap({ $0.errorMessage })
-                self.appState.eventSubmissions.removeAll()
+            
+            if self.appState.eventSubmissions
+                .contains(where: { $0.eventId == self.createGroupEvent?.id && $0.completed && $0.errorMessage == nil }) {
+                if let selectedOwnerAccount = appState.selectedOwnerAccount {
+                    self.appState.eventSubmissions.removeAll(where: { $0.eventId == self.createGroupEvent?.id })
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        if let ug = self.appState.editGroup(
+                            ownerAccount: selectedOwnerAccount,
+                            groupId: self.groupId,
+                            name: self.groupName,
+                            about: self.groupAbout,
+                            picture: self.groupImageUrl
+                        ) {
+                            self.updateGroupEvent = ug
+                        }
+                    }
+                }
             }
+            
+            // Finished Successfully
+            if self.appState.eventSubmissions
+                .contains(where: { $0.eventId == self.updateGroupEvent?.id && $0.completed && $0.errorMessage == nil }) {
+                self.isLoading = false
+                self.appState.eventSubmissions.removeAll()
+                dismiss()
+            }
+            
+            // Check for errors
+            if self.appState.eventSubmissions.contains(where: { $0.errorMessage != nil && $0.completed }) {
+                self.isLoading = false
+                self.errorMessage.removeAll()
+                self.errorMessage = self.appState.eventSubmissions.compactMap({ $0.errorMessage })
+            }
+            
+        }
+        .onDisappear {
+            self.appState.eventSubmissions.removeAll() // TODO: Only remove events we know about...
         }
     }
     

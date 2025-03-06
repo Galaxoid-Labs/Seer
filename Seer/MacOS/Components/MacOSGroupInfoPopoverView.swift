@@ -91,7 +91,8 @@ struct MacOSGroupInfoPopoverView: View {
                 
                 if let selectedOwnerAccountAdmin {
                     Button("Edit Group", systemImage: "rectangle.3.group.bubble") {
-                        appState.editGroup(ownerAccount: appState.selectedOwnerAccount!, group: group)
+                        //appState.editGroup(ownerAccount: appState.selectedOwnerAccount!, group: group)
+                        //_ = appState.editGroup(ownerAccount: appState.selectedOwnerAccount!, groupId: group.id, name: "MR BIG")
                     }
                     
                 }
