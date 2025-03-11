@@ -19,7 +19,8 @@ struct MacOSGroupListView: View {
     @Query private var chatMessages: [ChatMessage]
     
     @State private var showCreateGroupSheet: Bool = false
-    
+    @State private var showSearchGroupSheet: Bool = false
+
     func latestMessage(for groupId: String) -> ChatMessage? {
         return chatMessages
             .filter({ $0.groupId == groupId })
@@ -57,7 +58,7 @@ struct MacOSGroupListView: View {
                     .labelStyle(.titleAndIcon)
                     
                     Button {
-                        
+                        showSearchGroupSheet = true
                     } label: {
                         Label("Find a Group", systemImage: "magnifyingglass")
                     }
@@ -74,11 +75,17 @@ struct MacOSGroupListView: View {
             }
             
         }
-        .sheet(isPresented: $showCreateGroupSheet, onDismiss: {
+        .sheet(isPresented: $showCreateGroupSheet) {
             
-        }, content: {
+        } content: {
             MacOSCreateGroupView()
-        })
+        }
+        .sheet(isPresented: $showSearchGroupSheet) {
+            
+        } content: {
+            MacOSSearchGroupsView(relayUrl: self.relayUrl)
+        }
+
     }
 }
 
