@@ -11,6 +11,7 @@ import SwiftData
 struct MacOSSearchGroupsView: View {
     
     @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) var dismiss
     
     @Query private var groups: [Group]
     
@@ -22,16 +23,22 @@ struct MacOSSearchGroupsView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(groups, id: \.id) { group in
-                    NavigationLink(value: group) {
-                        MacOSSearchGroupListRowView(group: group)
-                    }
-                }
+        LazyVStack(spacing: 0) {
+            List(groups, id: \.id) { group in
+                MacOSSearchGroupListRowView(group: group)
             }
             .frame(minHeight: 400)
-            .navigationTitle(Text("Search Groups"))
+            Divider()
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            HStack {
+                Spacer()
+                Button("Close") {
+                    dismiss()
+                }
+            }
+            .padding()
+            .background(.thinMaterial)
         }
     }
 }
