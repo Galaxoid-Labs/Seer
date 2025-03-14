@@ -52,6 +52,9 @@ class AppState: ObservableObject {
         var errorMessage: String?
     }
     
+    // Key is relayUrl + subscription id
+    var eoseStatues: [String: Bool] = [:]
+    
     private init() {
         nostrClient.delegate = self
     }
@@ -97,6 +100,7 @@ class AppState: ObservableObject {
         // happening since its a no op if the Subscription is equal to current
         // subscription
         let sortedPubkeys = Array(pubkeys).sorted()
+        print(sortedPubkeys)
         
         for relay in relays {
             nostrClient.add(relayWithUrl: relay.url, subscriptions: [
@@ -286,9 +290,6 @@ class AppState: ObservableObject {
                     if let publicKeyMetadata = PublicKeyMetadata(event: event) {
                         modelContext.insert(publicKeyMetadata)
                         
-                        try? modelContext.save()
-                        
-                        // Fetch all ChatMessages with publicKey and assign publicKeyMetadata relationship
                         if let messages = self.getModels(context: modelContext, modelType: ChatMessage.self,
                                                          predicate: #Predicate<ChatMessage> { $0.publicKey == publicKey }) {
                             for message in messages {
@@ -303,6 +304,16 @@ class AppState: ObservableObject {
                         ) {
                             for member in members {
                                 member.publicKeyMetadata = publicKeyMetadata
+                            }
+                        }
+                        
+                        if let admins = self.getModels(
+                            context: modelContext,
+                            modelType: GroupAdmin.self,
+                            predicate: #Predicate<GroupAdmin> { $0.publicKey == publicKey }
+                        ) {
+                            for admin in admins {
+                                admin.publicKeyMetadata = publicKeyMetadata
                             }
                         }
                         
@@ -370,35 +381,30 @@ class AppState: ObservableObject {
                     
                     if let chatMessage = ChatMessage(event: event, relayUrl: relayUrl) {
                         
-                        if let chatMessages = self.getModels(context: modelContext, modelType: ChatMessage.self,
-                                                             predicate: #Predicate<ChatMessage> { $0.id == eventId }), chatMessages.count == 0 {
-                            
-                            modelContext.insert(chatMessage)
-                            
-                            if let publicKeyMetadata = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
-                                                                      predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })?.first {
-                                chatMessage.publicKeyMetadata = publicKeyMetadata
+                        modelContext.insert(chatMessage)
+                        
+                        if let publicKeyMetadata = self.getModels(context: modelContext, modelType: PublicKeyMetadata.self,
+                                                                  predicate: #Predicate<PublicKeyMetadata> { $0.publicKey == publicKey })?.first {
+                            chatMessage.publicKeyMetadata = publicKeyMetadata
+                        }
+                        
+                        if let replyToEventId = chatMessage.replyToEventId {
+                            if let replyToChatMessage = self.getModels(context: modelContext, modelType: ChatMessage.self,
+                                                                    predicate: #Predicate<ChatMessage> { $0.id == replyToEventId })?.first {
+                                chatMessage.replyToChatMessage = replyToChatMessage
                             }
+                        }
+                        
+                        // Check if any messages point to me?
+                        if let replies = self.getModels(context: modelContext, modelType: ChatMessage.self, predicate: #Predicate<ChatMessage> { $0.replyToEventId == eventId }) {
                             
-                            if let replyToEventId = chatMessage.replyToEventId {
-                                if let replyToChatMessage = self.getModels(context: modelContext, modelType: ChatMessage.self,
-                                                                        predicate: #Predicate<ChatMessage> { $0.id == replyToEventId })?.first {
-                                    chatMessage.replyToChatMessage = replyToChatMessage
-                                }
+                            for message in replies {
+                                message.replyToChatMessage = chatMessage
                             }
-                            
-                            // Check if any messages point to me?
-                            if let replies = self.getModels(context: modelContext, modelType: ChatMessage.self, predicate: #Predicate<ChatMessage> { $0.replyToEventId == eventId }) {
-                                
-                                for message in replies {
-                                    message.replyToChatMessage = chatMessage
-                                }
-                                
-                            }
-                            
-                            try? modelContext.save()
                             
                         }
+                        
+                        try? modelContext.save()
                     }
                     
                 case Kind.groupPutUser:
@@ -736,20 +742,31 @@ extension AppState: NostrClientDelegate {
             }
         case .eose(let id):
             print("EOSE => Subscription: \(id), relay: \(relayUrl)")
+            DispatchQueue.main.sync {
+                self.eoseStatues[relayUrl+id] = true
+            }
             switch id {
-                case IdSubGroupList: ()
+                case IdSubGroupList:
                     Task {
                         await subscribeOwnerGroupMembership(withRelayUrl: relayUrl)
+                        await subscribeGroupAdmins(withRelayUrl: relayUrl)
                     }
-                case IdSubChatMessages,IdSubGroupAdmins,IdSubGroupMembers:
+                case IdSubChatMessages:
+                    Task {
+                        await connectAllMetadataRelays()
+                    }
+                case IdSubGroupAdmins:
+                    Task {
+                        await connectAllMetadataRelays()
+                    }
+                case IdSubGroupMembers:
                     Task {
                         await connectAllMetadataRelays()
                     }
                 case IdSubOwnerGroupMembership:
                     Task {
-                        await subscribeGroupAdmins(withRelayUrl: relayUrl)
-                        await subscribeGroupMemberships(withRelayUrl: relayUrl)
                         await subscribeGroups(withRelayUrl: relayUrl)
+                        await subscribeGroupMemberships(withRelayUrl: relayUrl)
                     }
                 default:
                     ()

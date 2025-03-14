@@ -126,7 +126,8 @@ struct MacOSGroupInfoPopoverView: View {
                             ForEach(admins) { member in
                                 MacOSGroupInfoMemberListRowView(iconUrl:  member.publicKeyMetadata?.picture ?? "",
                                                                 name: member.publicKeyMetadata?.bestPublicName ?? member.publicKey,
-                                                                publicKey:  member.publicKeyMetadata?.bech32PublicKey ?? member.publicKey,
+                                                                //publicKey:  member.publicKeyMetadata?.bech32PublicKey ?? member.publicKey,
+                                                                publicKey:  member.publicKey,
                                                                 canRemove: true, action: {})
                             }
                             
@@ -135,7 +136,8 @@ struct MacOSGroupInfoPopoverView: View {
                             ForEach(admins) { member in
                                 MacOSGroupInfoMemberListRowView(iconUrl:  member.publicKeyMetadata?.picture ?? "",
                                                                 name: member.publicKeyMetadata?.bestPublicName ?? member.publicKey,
-                                                                publicKey:  member.publicKeyMetadata?.bech32PublicKey ?? member.publicKey,
+                                                                //publicKey:  member.publicKeyMetadata?.bech32PublicKey ?? member.publicKey,
+                                                                publicKey:  member.publicKey,
                                                                 canRemove: false, action: {})
                             }
                             

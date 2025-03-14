@@ -70,6 +70,8 @@ extension Group {
         if isMember {
             return #Predicate<Group> { $0.relayUrl == relayUrl && $0.name != nil && $0.isMember }
         }
-        return #Predicate<Group> { $0.relayUrl == relayUrl && $0.name != nil }
+        return #Predicate<Group> {
+            $0.relayUrl == relayUrl && $0.name != nil && $0.isPublic && $0.isOpen && !$0.isMember && !$0.isAdmin
+        }
     }
 }

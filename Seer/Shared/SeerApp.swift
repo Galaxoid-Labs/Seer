@@ -58,7 +58,6 @@ struct SeerApp: App {
                     appState.modelContainer = sharedModelContainer
                     await appState.initialSetup()
                     await appState.connectAllNip29Relays()
-                    await appState.connectAllMetadataRelays()
                 }
 #else
             RootView()
